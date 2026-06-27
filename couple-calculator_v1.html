@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>내 분수 계산기 — 이성 조건 계산기</title>
+  <meta name="description" content="나의 나이, 연봉, 자산, 외모, 신체, 학력을 입력하면 만날 수 있는 이성의 조건을 통계 기반으로 알려드립니다.">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff;
+      --bg2: #f5f5f3;
+      --bg3: #efefed;
+      --text: #1a1a18;
+      --text2: #5f5e5a;
+      --text3: #888780;
+      --border: rgba(0,0,0,0.12);
+      --border2: rgba(0,0,0,0.2);
+      --purple: #534AB7;
+      --purple-light: #EEEDFE;
+      --purple-dark: #3C3489;
+      --teal: #0F6E56;
+      --teal-light: #E1F5EE;
+      --amber: #BA7517;
+      --amber-light: #FAEEDA;
+      --amber-dark: #633806;
+      --amber-border: #EF9F27;
+      --red: #A32D2D;
+      --red-light: #FCEBEB;
+      --red-border: #F09595;
+      --green-light: #E1F5EE;
+      --green: #0F6E56;
+      --green-border: #5DCAA5;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1c1c1a;
+        --bg2: #252523;
+        --bg3: #2e2e2b;
+        --text: #f0efe8;
+        --text2: #b4b2a9;
+        --text3: #888780;
+        --border: rgba(255,255,255,0.1);
+        --border2: rgba(255,255,255,0.18);
+        --purple-light: #26215C;
+        --purple-dark: #CECBF6;
+        --teal-light: #04342C;
+        --amber-light: #412402;
+        --amber-dark: #FAC775;
+        --amber-border: #854F0B;
+        --red-light: #501313;
+        --red-border: #E24B4A;
+        --green-light: #04342C;
+        --green-border: #1D9E75;
+      }
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; background: var(--bg3); color: var(--text); line-height: 1.6; min-height: 100vh; }
+    .wrap { max-width: 640px; margin: 0 auto; padding: 0 0 3rem; }
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* 헤더 */
+    .top-bar { background: var(--bg); border-bottom: 0.5px solid var(--border); padding: 14px 1rem; display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; }
+    .top-bar .logo { font-size: 15px; font-weight: 600; color: var(--purple); }
+    .top-bar .badge { font-size: 10px; font-weight: 500; background: var(--purple-light); color: var(--purple); padding: 2px 8px; border-radius: 20px; }
+
+    /* 히어로 */
+    .hero { text-align: center; padding: 1.5rem 1rem 1.25rem; }
+    .hero h1 { font-size: 24px; font-weight: 700; color: var(--text); line-height: 1.3; margin-bottom: 6px; }
+    .hero p { font-size: 13px; color: var(--text2); }
+
+    /* 성별 토글 */
+    .g-row { display: flex; gap: 8px; justify-content: center; margin: 0 1rem 1rem; }
+    .g-btn { flex: 1; padding: 10px; border: 0.5px solid var(--border2); border-radius: var(--radius-md); background: var(--bg); color: var(--text2); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+    .g-btn.on { background: var(--purple); border-color: var(--purple); color: #fff; }
+
+    /* 카드 */
+    .card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem; margin: 0 1rem 1rem; }
+    .sec-title { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 1rem; }
+    .field { margin-bottom: 1rem; }
+    .field:last-child { margin-bottom: 0; }
+    .field label { display: block; font-size: 13px; color: var(--text2); margin-bottom: 6px; }
+    .field select, .field input[type=number] { width: 100%; padding: 10px 12px; border: 0.5px solid var(--border2); border-radius: var(--radius-sm); background: var(--bg); color: var(--text); font-size: 14px; outline: none; }
+    .field select:focus, .field input[type=number]:focus { border-color: var(--purple); }
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .sl-row { display: flex; align-items: center; gap: 10px; }
+    .sl-row input[type=range] { flex: 1; accent-color: var(--purple); }
+    .sl-val { font-size: 13px; font-weight: 600; color: var(--text); min-width: 82px; text-align: right; }
+    .field-hint { font-size: 11px; color: var(--text3); margin-top: 4px; }
+    .edu-warn { font-size: 11px; color: #D85A30; margin-top: 4px; display: none; }
+
+    /* 버튼 */
+    .calc-btn { display: block; width: calc(100% - 2rem); margin: 0 1rem; padding: 14px; background: var(--purple); color: #fff; border: none; border-radius: var(--radius-md); font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
+    .calc-btn:hover { opacity: 0.9; }
+
+    /* 인터스티셜 */
+    .interstitial { min-height: 480px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem 1rem; }
+    .inter-label { font-size: 11px; color: var(--text3); letter-spacing: 0.3px; margin-bottom: 28px; text-transform: uppercase; }
+    .spinner-wrap { position: relative; width: 88px; height: 88px; margin: 0 auto 28px; }
+    .spinner-ring { width: 88px; height: 88px; border-radius: 50%; border: 3px solid var(--border); border-top-color: var(--purple); animation: spin 1s linear infinite; }
+    .spinner-count { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 22px; font-weight: 700; color: var(--purple); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .inter-title { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .inter-sub { font-size: 13px; color: var(--text2); line-height: 1.7; margin-bottom: 32px; }
+    .ad-box { width: 100%; max-width: 380px; height: 130px; background: var(--bg2); border: 0.5px dashed var(--border2); border-radius: var(--radius-md); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; margin: 0 auto; }
+    .ad-box span:first-child { font-size: 11px; color: var(--text3); }
+    .ad-box span:last-child { font-size: 13px; color: var(--text2); font-weight: 500; }
+    .prog-bg { width: 100%; max-width: 380px; height: 3px; background: var(--border); border-radius: 2px; margin: 28px auto 0; overflow: hidden; }
+    .prog-fill { height: 3px; background: var(--purple); border-radius: 2px; width: 0%; transition: width 0.1s linear; }
+
+    /* 결과 */
+    .result-header { text-align: center; padding: 1.25rem 1rem 1rem; }
+    .result-badge { display: inline-block; font-size: 11px; font-weight: 600; color: var(--text3); background: var(--bg2); padding: 4px 12px; border-radius: 20px; }
+    .r-hero { background: var(--purple-light); border: 0.5px solid #AFA9EC; border-radius: var(--radius-md); padding: 1.75rem; text-align: center; margin: 0 1rem 1rem; }
+    .r-hero .lbl { font-size: 12px; color: var(--purple); font-weight: 600; margin-bottom: 6px; }
+    .r-hero .big { font-size: 56px; font-weight: 700; color: var(--purple-dark); line-height: 1; }
+    .r-hero .pct { font-size: 13px; color: var(--teal); margin-top: 8px; font-weight: 500; }
+    .r-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem; margin: 0 1rem 1rem; }
+    .r-card h3 { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1rem; }
+    .score-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .sc { background: var(--bg2); border-radius: var(--radius-sm); padding: 10px 12px; }
+    .sc-lbl { font-size: 11px; color: var(--text2); margin-bottom: 3px; }
+    .sc-val { font-size: 20px; font-weight: 700; color: var(--text); }
+    .bar-bg { height: 3px; background: var(--bg3); border-radius: 2px; margin-top: 6px; }
+    .bar-fill { height: 3px; border-radius: 2px; background: var(--purple); }
+    .r-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 0.5px solid var(--border); }
+    .r-row:last-child { border-bottom: none; }
+    .r-lbl { font-size: 13px; color: var(--text2); }
+    .r-val { font-size: 13px; font-weight: 600; color: var(--text); text-align: right; }
+    .tag { font-size: 11px; font-weight: 500; color: var(--purple); background: var(--purple-light); padding: 2px 7px; border-radius: 4px; margin-left: 5px; }
+    .life-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .lc { background: var(--bg2); border-radius: var(--radius-sm); padding: 12px; text-align: center; }
+    .lc-icon { font-size: 20px; color: var(--text3); margin-bottom: 4px; }
+    .lc-lbl { font-size: 11px; color: var(--text2); margin-bottom: 3px; }
+    .lc-val { font-size: 12px; font-weight: 600; color: var(--text); }
+
+    /* 재계산 */
+    .edit-section { background: var(--amber-light); border: 0.5px solid var(--amber-border); border-radius: var(--radius-md); padding: 1.25rem; margin: 0 1rem 1rem; }
+    .edit-section h4 { font-size: 14px; font-weight: 600; color: var(--amber-dark); margin-bottom: 4px; }
+    .edit-section p { font-size: 12px; color: var(--amber); margin-bottom: 14px; line-height: 1.6; }
+    .edit-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; border-radius: var(--radius-sm); padding: 9px 10px; transition: background 0.15s; }
+    .edit-row.locked { background: rgba(0,0,0,0.05); opacity: 0.45; }
+    .edit-row.locked .edit-input { pointer-events: none; }
+    .edit-row.active { background: rgba(255,255,255,0.8); border: 0.5px solid var(--amber-border); }
+    .edit-check { width: 16px; height: 16px; accent-color: var(--purple); flex-shrink: 0; cursor: pointer; }
+    .edit-label { font-size: 13px; color: var(--amber-dark); min-width: 64px; flex-shrink: 0; }
+    .edit-input { flex: 1; padding: 7px 10px; border: 0.5px solid var(--amber-border); border-radius: var(--radius-sm); background: var(--bg); color: var(--text); font-size: 13px; outline: none; }
+    .edit-unit { font-size: 12px; color: var(--amber); flex-shrink: 0; min-width: 20px; }
+    .recalc-note { font-size: 11px; color: var(--amber); margin-bottom: 10px; text-align: center; }
+    .recalc-btn { width: 100%; padding: 12px; background: var(--amber); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; }
+    .recalc-btn:hover { opacity: 0.9; }
+    .upd { font-size: 10px; color: var(--green); background: var(--green-light); border: 0.5px solid var(--green-border); padding: 2px 6px; border-radius: 4px; margin-left: 5px; vertical-align: middle; }
+    .down { font-size: 10px; color: var(--red); background: var(--red-light); border: 0.5px solid var(--red-border); padding: 2px 6px; border-radius: 4px; margin-left: 5px; vertical-align: middle; }
+    .reset-btn { display: block; width: calc(100% - 2rem); margin: 0 1rem; padding: 12px; background: transparent; border: 0.5px solid var(--border2); border-radius: var(--radius-md); color: var(--text2); font-size: 14px; cursor: pointer; }
+    .reset-btn:hover { background: var(--bg2); }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 페이지 1: 입력 -->
+  <div class="page active" id="page-input">
+    <div class="top-bar">
+      <span class="logo">내 분수 계산기</span>
+      <span class="badge">BASIC</span>
+    </div>
+    <div class="hero">
+      <h1>나는 어떤 이성을<br>만날 수 있을까?</h1>
+      <p>핵심 조건 6가지로 만날 수 있는 이성을 확인하세요</p>
+    </div>
+    <div class="g-row">
+      <button class="g-btn on" id="btn-m" onclick="setG('male')">남성으로 입력</button>
+      <button class="g-btn" id="btn-f" onclick="setG('female')">여성으로 입력</button>
+    </div>
+    <div class="card">
+      <div class="sec-title">기본 정보</div>
+      <div class="field">
+        <label>나이</label>
+        <div class="sl-row">
+          <input type="range" id="age" min="20" max="60" value="30" step="1" oninput="onAge()">
+          <span class="sl-val" id="age-v">30세</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>학력</label>
+        <select id="edu" onchange="onEduChange()">
+          <option value="30">고졸</option>
+          <option value="45">초대졸 (전문대)</option>
+          <option value="60" selected>대졸</option>
+          <option value="80">석사졸</option>
+          <option value="100">박사졸</option>
+        </select>
+        <div class="edu-warn" id="edu-hint">해당 나이에 취득하기 어려운 학력입니다</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-title">경제력</div>
+      <div class="field">
+        <label>연봉 (종합소득)</label>
+        <div class="sl-row">
+          <input type="range" id="salary" min="0" max="30000" step="100" value="4000" oninput="updateSal()">
+          <span class="sl-val" id="sal-v">4,000만원</span>
+        </div>
+        <div class="field-hint">100만원 단위 조절</div>
+      </div>
+      <div class="field">
+        <label>보유 자산 (현금·주식·부동산 등)</label>
+        <select id="asset">
+          <option value="-5000">-5,000만원 이상 (빚)</option>
+          <option value="-3000">-3,000만 ~ -5,000만원</option>
+          <option value="-1000">-1,000만 ~ -3,000만원</option>
+          <option value="-500">-500만 ~ -1,000만원</option>
+          <option value="0">0 ~ 500만원</option>
+          <option value="500">500만 ~ 2,000만원</option>
+          <option value="2000" selected>2,000만 ~ 5,000만원</option>
+          <option value="5000">5,000만 ~ 1억원</option>
+          <option value="10000">1억 ~ 3억원</option>
+          <option value="30000">3억 ~ 5억원</option>
+          <option value="50000">5억원 이상</option>
+        </select>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-title">외모</div>
+      <div class="row2">
+        <div class="field">
+          <label>키 (cm)</label>
+          <input type="number" id="height" value="175" min="140" max="210">
+        </div>
+        <div class="field">
+          <label>체중 (kg)</label>
+          <input type="number" id="weight" value="70" min="30" max="200">
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-title">신체</div>
+      <div class="field" id="mb">
+        <label>페니스 길이 (발기 시 기준)</label>
+        <select id="penis">
+          <option value="15">9cm 미만</option>
+          <option value="35">9 ~ 11cm</option>
+          <option value="60" selected>11 ~ 13cm</option>
+          <option value="78">13 ~ 15cm</option>
+          <option value="90">15 ~ 17cm</option>
+          <option value="98">17cm 이상</option>
+        </select>
+      </div>
+      <div class="field" id="fb" style="display:none">
+        <label>가슴 사이즈</label>
+        <select id="cup">
+          <option value="30">AA컵</option>
+          <option value="55" selected>A컵</option>
+          <option value="75">B컵</option>
+          <option value="88">C컵</option>
+          <option value="98">D컵 이상</option>
+        </select>
+      </div>
+    </div>
+    <button class="calc-btn" onclick="startCalc()">내 분수 계산하기</button>
+  </div>
+
+  <!-- 페이지 2: 인터스티셜 -->
+  <div class="page" id="page-inter">
+    <div class="interstitial">
+      <div class="inter-label">잠시만 기다려주세요</div>
+      <div class="spinner-wrap">
+        <div class="spinner-ring"></div>
+        <div class="spinner-count" id="inter-count">5</div>
+      </div>
+      <div class="inter-title">결과를 계산하고 있어요</div>
+      <div class="inter-sub">나이·연봉·자산·외모·신체·학력을<br>대한민국 통계 데이터와 대조 중입니다</div>
+      <div class="ad-box">
+        <!-- 실제 배포 시 아래 주석을 Google AdSense 코드로 교체하세요 -->
+        <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script> -->
+        <span>광고 영역</span>
+        <span>Google AdSense</span>
+      </div>
+      <div class="prog-bg">
+        <div class="prog-fill" id="prog-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 페이지 3: 결과 -->
+  <div class="page" id="page-result">
+    <div class="top-bar">
+      <span class="logo">내 분수 계산기</span>
+      <span class="badge">결과</span>
+    </div>
+    <div class="r-hero">
+      <div class="lbl">내 총점</div>
+      <div class="big" id="r-total">0</div>
+      <div class="pct" id="r-pct">-</div>
+    </div>
+    <div class="r-card">
+      <h3>항목별 점수</h3>
+      <div class="score-grid" id="score-grid"></div>
+    </div>
+    <div class="r-card">
+      <h3>만날 수 있는 이성 조건</h3>
+      <div id="partner"></div>
+    </div>
+    <div class="r-card">
+      <h3>이성 라이프스타일 예측</h3>
+      <div class="life-grid" id="life"></div>
+    </div>
+    <div class="edit-section">
+      <h4>이성 조건이 마음에 들지 않으신가요?</h4>
+      <p>원하는 항목을 체크하고 조건을 고정하세요. 체크하지 않은 항목은 음영 처리되며 그 대가로 낮아집니다. 최대 3개까지 선택 가능합니다.</p>
+      <div id="edit-rows"></div>
+      <div class="recalc-note" id="cnt-note">0 / 3개 선택됨</div>
+      <button class="recalc-btn" onclick="reCalc()">수정된 조건으로 재계산하기</button>
+    </div>
+    <button class="reset-btn" onclick="resetAll()">처음부터 다시 계산하기</button>
+  </div>
+
+</div>
+<script>
+let G='male';
+let baseTotal=0;
+let basePartner={};
+let interTimer=null;
+
+const ASSET_TIERS=[
+  {v:-5000,l:'-5,000만원 이상 빚'},{v:-3000,l:'-3,000만 ~ -5,000만원'},
+  {v:-1000,l:'-1,000만 ~ -3,000만원'},{v:-500,l:'-500만 ~ -1,000만원'},
+  {v:0,l:'0 ~ 500만원'},{v:500,l:'500만 ~ 2,000만원'},
+  {v:2000,l:'2,000만 ~ 5,000만원'},{v:5000,l:'5,000만 ~ 1억원'},
+  {v:10000,l:'1억 ~ 3억원'},{v:30000,l:'3억 ~ 5억원'},{v:50000,l:'5억원 이상'}
+];
+const EDU_TIERS=['고졸','초대졸','대졸','석사졸 이상','박사졸'];
+const BODY_F=['AA~A컵','A컵','B컵','C컵 이상'];
+const BODY_M=['11cm 미만','11~13cm','13~15cm','15cm 이상'];
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'instant'});
+}
+function sv(id,v){document.getElementById(id).textContent=v;}
+function setG(g){
+  G=g;
+  document.getElementById('btn-m').classList.toggle('on',g==='male');
+  document.getElementById('btn-f').classList.toggle('on',g==='female');
+  document.getElementById('mb').style.display=g==='male'?'block':'none';
+  document.getElementById('fb').style.display=g==='female'?'block':'none';
+}
+function onAge(){sv('age-v',document.getElementById('age').value+'세');onEduChange();}
+function onEduChange(){
+  const age=parseInt(document.getElementById('age').value);
+  const ev=parseInt(document.getElementById('edu').value);
+  const warn=(ev===45&&age<21)||(ev===60&&age<23)||(ev===80&&age<25)||(ev===100&&age<28);
+  document.getElementById('edu-hint').style.display=warn?'block':'none';
+}
+function updateSal(){
+  const v=parseInt(document.getElementById('salary').value);
+  sv('sal-v',v>=10000?(v/10000).toFixed(1)+'억원':v.toLocaleString()+'만원');
+}
+function htSc(h,g){
+  if(g==='male'){if(h<160)return 0;if(h<165)return 15;if(h<168)return 30;if(h<171)return 45;if(h<174)return 58;if(h<177)return 70;if(h<180)return 80;if(h<183)return 88;if(h<186)return 94;return 100;}
+  if(h<150)return 10;if(h<155)return 25;if(h<158)return 45;if(h<161)return 62;if(h<164)return 76;if(h<167)return 87;if(h<170)return 94;return 100;
+}
+function bmiSc(bmi,g){
+  if(g==='male'){if(bmi<16)return 10;if(bmi<18.5)return 40;if(bmi<21)return 88;if(bmi<23)return 95;if(bmi<25)return 80;if(bmi<27)return 60;if(bmi<30)return 35;return 10;}
+  if(bmi<15)return 10;if(bmi<17)return 40;if(bmi<19)return 80;if(bmi<21)return 95;if(bmi<23)return 88;if(bmi<25)return 70;if(bmi<28)return 40;return 10;
+}
+function ageSc(a,g){
+  const m=[[20,95],[25,85],[30,72],[35,55],[40,38],[45,25],[50,17],[55,10],[60,5]];
+  const f=[[20,95],[25,88],[30,65],[35,42],[40,25],[45,16],[50,10],[55,6],[60,2]];
+  const t=g==='male'?m:f;
+  for(let i=t.length-1;i>=0;i--)if(a>=t[i][0])return t[i][1];return 5;
+}
+function salSc(s,g){
+  if(g==='male'){if(s<1500)return 5;if(s<2500)return 20;if(s<3500)return 38;if(s<5000)return 57;if(s<7000)return 72;if(s<10000)return 85;return 97;}
+  if(s<1500)return 10;if(s<2500)return 35;if(s<3500)return 58;if(s<5000)return 76;if(s<7000)return 89;if(s<10000)return 96;return 99;
+}
+function astSc(a){
+  if(a<=-5000)return 0;if(a<-3000)return 3;if(a<-1000)return 6;if(a<-500)return 10;if(a<0)return 15;
+  if(a<500)return 20;if(a<2000)return 30;if(a<5000)return 50;if(a<10000)return 68;if(a<30000)return 82;if(a<50000)return 90;return 97;
+}
+function salJob(s){
+  if(s>=10000)return'임원급/전문직';if(s>=7000)return'대기업 고연봉';if(s>=5000)return'대기업';if(s>=3500)return'중견기업';if(s>=2500)return'중소기업';return'스타트업/기타';
+}
+function pctLabel(t){
+  if(t>=90)return'상위 5% 수준';if(t>=75)return'상위 15% 수준';if(t>=60)return'상위 30% 수준';if(t>=45)return'상위 50% 수준';if(t>=30)return'하위 40% 수준';return'하위 20% 수준';
+}
+function getPartner(total,pg,myAge){
+  const offset=total>=70?-5:total>=55?-3:total>=40?0:total>=25?3:6;
+  const base=pg==='female'?myAge-3:myAge+3;
+  const age=Math.max(20,Math.min(60,base+offset));
+  let salVal,salLabel;
+  if(pg==='female'){
+    if(total>=80){salVal=5000;salLabel='연 5,000만원';}else if(total>=65){salVal=3500;salLabel='연 3,500만원';}
+    else if(total>=50){salVal=2800;salLabel='연 2,800만원';}else if(total>=35){salVal=2200;salLabel='연 2,200만원';}
+    else{salVal=1800;salLabel='연 1,800만원';}
+  }else{
+    if(total>=80){salVal=8000;salLabel='연 8,000만원';}else if(total>=65){salVal=5500;salLabel='연 5,500만원';}
+    else if(total>=50){salVal=4000;salLabel='연 4,000만원';}else if(total>=35){salVal=3000;salLabel='연 3,000만원';}
+    else{salVal=2500;salLabel='연 2,500만원';}
+  }
+  const astIdx=total>=80?8:total>=65?7:total>=50?6:total>=35?5:total>=20?4:total>=10?3:2;
+  const astObj=ASSET_TIERS[Math.max(0,Math.min(astIdx,ASSET_TIERS.length-1))];
+  const eduIdx=total>=85?4:total>=70?3:total>=50?2:total>=35?1:0;
+  const edu=EDU_TIERS[eduIdx];
+  let body;
+  if(pg==='female'){body=total>=80?'C컵 이상':total>=60?'B컵':total>=40?'A컵':'AA~A컵';}
+  else{body=total>=80?'15cm 이상':total>=60?'13~15cm':total>=40?'11~13cm':'11cm 미만';}
+  return{age,salVal,salLabel,assetVal:astObj.v,asset:astObj.l,edu,body};
+}
+function getBodyTiers(pg){return pg==='female'?BODY_F:BODY_M;}
+function degradePartner(base,pg,fixedKeys,steps){
+  const d=JSON.parse(JSON.stringify(base));
+  const bt=getBodyTiers(pg);
+  ['age','salVal','assetVal','edu','body'].filter(k=>!fixedKeys.includes(k)).forEach(k=>{
+    if(k==='age'){d.age=pg==='female'?Math.min(60,base.age+Math.round(steps*3)):Math.max(20,base.age-Math.round(steps*3));}
+    if(k==='salVal'){const f=Math.max(0.3,1-steps*0.22);d.salVal=Math.round(base.salVal*f/100)*100;d.salLabel=d.salVal>=10000?(d.salVal/10000).toFixed(1)+'억원':d.salVal.toLocaleString()+'만원';}
+    if(k==='assetVal'){const ci=ASSET_TIERS.findIndex(t=>t.v===base.assetVal);const ni=Math.max(0,ci-steps*2);d.assetVal=ASSET_TIERS[ni].v;d.asset=ASSET_TIERS[ni].l;}
+    if(k==='edu'){const ci=EDU_TIERS.indexOf(base.edu);d.edu=EDU_TIERS[Math.max(0,ci-steps)];}
+    if(k==='body'){const ci=bt.indexOf(base.body);d.body=bt[Math.max(0,ci-steps)];}
+  });
+  return d;
+}
+function renderPartner(cur,base,pg,isUpdated){
+  const bl=pg==='female'?'가슴 사이즈':'페니스';
+  function badge(key,cv,bv){
+    if(!isUpdated)return'';
+    const chk=document.getElementById('chk-'+key);
+    if(chk&&chk.checked)return'<span class="upd">고정</span>';
+    return JSON.stringify(cv)!==JSON.stringify(bv)?'<span class="down">하향</span>':'';
+  }
+  document.getElementById('partner').innerHTML=`
+    <div class="r-row"><span class="r-lbl">나이</span><span class="r-val">${cur.age}세 ${badge('age',cur.age,base.age)}</span></div>
+    <div class="r-row"><span class="r-lbl">연봉 (종합소득)</span><span class="r-val">${cur.salLabel}<span class="tag">${salJob(cur.salVal)}</span> ${badge('salVal',cur.salVal,base.salVal)}</span></div>
+    <div class="r-row"><span class="r-lbl">보유 자산</span><span class="r-val">${cur.asset} ${badge('assetVal',cur.assetVal,base.assetVal)}</span></div>
+    <div class="r-row"><span class="r-lbl">학력</span><span class="r-val">${cur.edu} ${badge('edu',cur.edu,base.edu)}</span></div>
+    <div class="r-row" style="border-bottom:none"><span class="r-lbl">${bl}</span><span class="r-val">${cur.body} ${badge('body',cur.body,base.body)}</span></div>`;
+}
+function renderEditRows(base,pg){
+  const bl=pg==='female'?'가슴 사이즈':'페니스';
+  const bt=getBodyTiers(pg);
+  function sel(id,opts,cur){
+    return`<select class="edit-input" id="${id}">`+opts.map(o=>{const v=typeof o==='object'?o.v:o;const l=typeof o==='object'?o.l:o;return`<option value="${v}"${String(v)===String(cur)?' selected':''}>${l}</option>`;}).join('')+'</select>';
+  }
+  const rows=[
+    {key:'age',label:'나이',html:`<input class="edit-input" id="edit-age" type="number" value="${base.age}" min="20" max="60">`,unit:'세'},
+    {key:'salVal',label:'연봉',html:`<input class="edit-input" id="edit-salVal" type="number" value="${base.salVal}" min="0" max="30000">`,unit:'만원'},
+    {key:'assetVal',label:'자산',html:sel('edit-assetVal',ASSET_TIERS,base.assetVal),unit:''},
+    {key:'edu',label:'학력',html:sel('edit-edu',EDU_TIERS,base.edu),unit:''},
+    {key:'body',label:bl,html:sel('edit-body',bt,base.body),unit:''},
+  ];
+  document.getElementById('edit-rows').innerHTML=rows.map(r=>`
+    <div class="edit-row locked" id="erow-${r.key}">
+      <input type="checkbox" class="edit-check" id="chk-${r.key}" onchange="updateCnt(this)">
+      <span class="edit-label">${r.label}</span>${r.html}
+      <span class="edit-unit">${r.unit}</span>
+    </div>`).join('');
+}
+function updateCnt(el){
+  const checks=[...document.querySelectorAll('.edit-check')];
+  if(checks.filter(c=>c.checked).length>3){el.checked=false;}
+  checks.forEach(c=>{const k=c.id.replace('chk-','');const row=document.getElementById('erow-'+k);if(c.checked){row.classList.remove('locked');row.classList.add('active');}else{row.classList.remove('active');row.classList.add('locked');}});
+  sv('cnt-note',checks.filter(c=>c.checked).length+' / 3개 선택됨');
+}
+function lifestyle(gap){
+  if(gap>=20)return{sm:'비흡연',dr:'월 1~2회',ch:'2명 이상',sx:'월 12회+'};
+  if(gap>=-10)return{sm:'하루 5개비',dr:'주 1회',ch:'1명',sx:'월 8회'};
+  if(gap>=-25)return{sm:'하루 반갑',dr:'주 2~3회',ch:'미정',sx:'월 4회'};
+  if(gap>=-40)return{sm:'하루 1갑',dr:'주 4~5회',ch:'원치 않음',sx:'월 1~2회'};
+  return{sm:'하루 5갑',dr:'매일 음주',ch:'절대 NO + 강아지 2마리',sx:'월 0회'};
+}
+function renderLife(gap){
+  const lf=lifestyle(gap);
+  document.getElementById('life').innerHTML=`
+    <div class="lc"><div class="lc-icon"><i class="ti ti-smoking"></i></div><div class="lc-lbl">흡연량</div><div class="lc-val">${lf.sm}</div></div>
+    <div class="lc"><div class="lc-icon"><i class="ti ti-beer"></i></div><div class="lc-lbl">음주량</div><div class="lc-val">${lf.dr}</div></div>
+    <div class="lc"><div class="lc-icon"><i class="ti ti-baby-carriage"></i></div><div class="lc-lbl">자녀 계획</div><div class="lc-val">${lf.ch}</div></div>
+    <div class="lc"><div class="lc-icon"><i class="ti ti-heart"></i></div><div class="lc-lbl">월 섹스 횟수</div><div class="lc-val">${lf.sx}</div></div>`;
+}
+function reCalc(){
+  const pg=G==='male'?'female':'male';
+  const checks=[...document.querySelectorAll('.edit-check')];
+  const fixedKeys=checks.filter(c=>c.checked).map(c=>c.id.replace('chk-',''));
+  if(fixedKeys.length===0){alert('수정할 항목을 최소 1개 체크해주세요.');return;}
+  const degraded=degradePartner(basePartner,pg,fixedKeys,fixedKeys.length);
+  fixedKeys.forEach(k=>{
+    const inp=document.getElementById('edit-'+k);if(!inp)return;
+    if(k==='age')degraded.age=parseInt(inp.value)||basePartner.age;
+    else if(k==='salVal'){degraded.salVal=parseInt(inp.value)||basePartner.salVal;degraded.salLabel=degraded.salVal>=10000?(degraded.salVal/10000).toFixed(1)+'억원':degraded.salVal.toLocaleString()+'만원';}
+    else if(k==='assetVal'){const av=parseInt(inp.value);const found=ASSET_TIERS.find(t=>t.v===av)||ASSET_TIERS[6];degraded.assetVal=found.v;degraded.asset=found.l;}
+    else if(k==='edu'){degraded.edu=inp.value;}
+    else if(k==='body'){degraded.body=inp.value;}
+  });
+  renderPartner(degraded,basePartner,pg,true);
+  renderLife(-fixedKeys.length*20);
+  document.getElementById('partner').scrollIntoView({behavior:'smooth'});
+}
+function startCalc(){
+  const age=parseInt(document.getElementById('age').value);
+  const edu=parseInt(document.getElementById('edu').value);
+  const sal=parseInt(document.getElementById('salary').value);
+  const ast=parseInt(document.getElementById('asset').value);
+  const h=parseInt(document.getElementById('height').value);
+  const w=parseInt(document.getElementById('weight').value);
+  const bmi=w/((h/100)**2);
+  const looks=Math.round(htSc(h,G)*0.4+bmiSc(bmi,G)*0.6);
+  const bv=G==='male'?parseInt(document.getElementById('penis').value):parseInt(document.getElementById('cup').value);
+  const sc={나이:ageSc(age,G),연봉:salSc(sal,G),보유자산:astSc(ast),외모:looks,신체:bv,학력:edu};
+  const total=Math.round(Object.values(sc).reduce((a,b)=>a+b,0)/6);
+  baseTotal=total;
+  const pg=G==='male'?'female':'male';
+  basePartner=getPartner(total,pg,age);
+  let sgHtml='';
+  for(const[k,v] of Object.entries(sc)){sgHtml+=`<div class="sc"><div class="sc-lbl">${k}</div><div class="sc-val">${Math.round(v)}점</div><div class="bar-bg"><div class="bar-fill" style="width:${v}%"></div></div></div>`;}
+  document.getElementById('score-grid').innerHTML=sgHtml;
+  sv('r-total',total);sv('r-pct',pctLabel(total));
+  renderPartner(basePartner,basePartner,pg,false);
+  renderEditRows(basePartner,pg);
+  renderLife(0);
+  showPage('page-inter');
+  runInterstitial();
+}
+function runInterstitial(){
+  const fillEl=document.getElementById('prog-fill');
+  const countEl=document.getElementById('inter-count');
+  fillEl.style.width='0%';countEl.textContent='5';
+  let elapsed=0;const total=5000;const tick=100;
+  if(interTimer)clearInterval(interTimer);
+  interTimer=setInterval(()=>{
+    elapsed+=tick;
+    fillEl.style.width=Math.min(100,Math.round(elapsed/total*100))+'%';
+    const rem=Math.ceil((total-elapsed)/1000);
+    countEl.textContent=rem>0?rem:0;
+    if(elapsed>=total){clearInterval(interTimer);showPage('page-result');}
+  },tick);
+}
+function resetAll(){if(interTimer)clearInterval(interTimer);showPage('page-input');}
+updateSal();
+</script>
+</body>
+</html>
