@@ -7,18 +7,44 @@
   <meta name="description" content="나이, 연봉, 자산, 외모, 학력을 입력하면 만날 수 있는 이성의 조건을 대한민국 통계 기반으로 알려드립니다.">
   <meta name="keywords" content="내게맞는이성, 잘맞는이성찾기, 이성계산기, 조건계산기, 상대방조건, 이성조건, 결혼조건매칭, 결혼필요한돈">
   <meta name="author" content="meetcal">
-  <link rel="canonical" href="https://www.meetcal.co.kr/">
+  <link rel="canonical" href="https://meetcal.co.kr/">
   <meta property="og:type" content="website">
   <meta property="og:title" content="내게 맞는 이성 찾기 | 이성 조건 매칭기">
   <meta property="og:description" content="나이, 연봉, 자산, 외모, 학력을 입력하면 만날 수 있는 이성의 조건을 알려드립니다.">
-  <meta property="og:url" content="https://www.meetcal.co.kr/">
+  <meta property="og:url" content="https://meetcal.co.kr/">
   <meta property="og:site_name" content="meetcal">
   <meta property="og:locale" content="ko_KR">
-  <meta name="twitter:card" content="summary">
+  <meta property="og:image" content="https://meetcal.co.kr/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="내게 맞는 이성 찾기 | 이성 조건 매칭기">
   <meta name="twitter:description" content="나이, 연봉, 자산, 외모, 학력을 입력하면 만날 수 있는 이성의 조건을 알려드립니다.">
+  <meta name="twitter:image" content="https://meetcal.co.kr/og-image.png">
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMSZVTTJMB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-HMSZVTTJMB');
+  </script>
+  <!-- Google AdSense (로더만. 광고는 결과 화면에서 1회 요청) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6266949069255809" crossorigin="anonymous"></script>
+  <!-- Kakao JavaScript SDK -->
+  <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.8.3/kakao.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
   <style>
+    /* --- 2026-09 추가분 --- */
+    .mc-share{width:100%;margin-top:14px;padding:13px;border:0;border-radius:10px;
+      background:#FEE500;color:#191600;font:inherit;font-size:15px;font-weight:700;cursor:pointer}
+    .mc-ad{margin:2.5rem 1rem;padding-top:18px;border-top:1px dashed #d8dee7}
+    .mc-ad-l{font-size:11px;letter-spacing:.06em;color:#9aa3ae;margin-bottom:8px}
+    .mc-ohaeng{display:block;margin:2.5rem 1rem 1rem;padding:16px 18px;border:1px solid #e6e9ee;
+      border-radius:12px;text-decoration:none;color:#1a1e24}
+    .mc-ohaeng .k{display:block;font-size:12px;color:#8d96a3;letter-spacing:.04em}
+    .mc-ohaeng .t{display:block;font-weight:700;margin-top:4px}
+    .mc-ohaeng .d{display:block;font-size:13.5px;color:#5c6673;margin-top:4px}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
       --bg:#ffffff;--bg2:#f5f5f3;--bg3:#efefed;
@@ -230,6 +256,15 @@
       <h3>만날 수 있는 이성 조건</h3>
       <div id="partner"></div>
       <div class="score-note" id="score-note"></div>
+      <button type="button" id="share-kakao" class="mc-share">결과 카카오톡으로 공유하기</button>
+    </div>
+
+    <!-- 광고: 결과가 모두 나온 뒤 1회만. 위아래로 여백을 둬 오클릭을 막는다. -->
+    <div id="res-ad" class="mc-ad" hidden>
+      <div class="mc-ad-l">광고</div>
+      <ins class="adsbygoogle" style="display:block"
+           data-ad-client="ca-pub-6266949069255809" data-ad-slot="6974474591"
+           data-ad-format="auto" data-full-width-responsive="true"></ins>
     </div>
     <div class="edit-section">
       <h4>이성 조건이 마음에 들지 않으신가요?</h4>
@@ -239,6 +274,12 @@
       <button class="recalc-btn" onclick="startReCalc()">수정된 조건으로 재계산하기</button>
     </div>
     <button class="reset-btn" onclick="resetAll()">처음부터 다시 계산하기</button>
+
+    <a class="mc-ohaeng" href="/ohaeng/" id="go-ohaeng">
+      <span class="k">오행 이야기</span>
+      <span class="t">사주 여덟 글자를 26만 건 계산해 봤습니다</span>
+      <span class="d">태어난 달·시각이 오행을 얼마나 바꾸는지, 내 방향은 어디인지 &rarr;</span>
+    </a>
   </div>
 
 </div>
@@ -619,5 +660,67 @@ function startReCalc(){
 function resetAll(){if(interTimer)clearInterval(interTimer);showPage('page-input');}
 updateSal();
 </script>
+
+<script>
+/* --- 2026-09 추가분: 광고 노출 시점, 카카오 공유, GA4 이벤트 --- */
+(function(){
+  var adDone = false;
+  function showAd(){
+    if (adDone) return; adDone = true;
+    var el = document.getElementById('res-ad');
+    if (!el) return;
+    el.hidden = false;
+    try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
+  }
+  /* 결과 화면이 실제로 뜰 때만 광고를 요청한다.
+     계산 대기(page-inter) 화면에는 절대 넣지 않는다 — 애드센스 프리롤 금지 조항. */
+  var _showPage = window.showPage;
+  window.showPage = function(id){
+    _showPage(id);
+    if (id === 'page-result') showAd();
+  };
+
+  var _startCalc = window.startCalc;
+  window.startCalc = function(){
+    if (window.gtag) gtag('event', 'calc_run', {gender: (typeof G !== 'undefined' ? G : '')});
+    return _startCalc.apply(this, arguments);
+  };
+  var _startReCalc = window.startReCalc;
+  window.startReCalc = function(){
+    if (window.gtag) gtag('event', 'recalc_run', {});
+    return _startReCalc.apply(this, arguments);
+  };
+
+  var go = document.getElementById('go-ohaeng');
+  if (go) go.addEventListener('click', function(){
+    if (window.gtag) gtag('event', 'ohaeng_click', {from: 'result'});
+  });
+
+  if (window.Kakao && !window.Kakao.isInitialized()) {
+    try { window.Kakao.init('60b71fcf9ec72aad11e6f5d62358c8db'); } catch(e) {}
+  }
+  var sk = document.getElementById('share-kakao');
+  if (sk) sk.addEventListener('click', function(){
+    if (window.gtag) gtag('event', 'share_kakao', {});
+    if (!window.Kakao || !window.Kakao.isInitialized() || !window.Kakao.Share) {
+      sk.textContent = '카카오톡 공유를 쓸 수 없습니다'; return;
+    }
+    try {
+      window.Kakao.Share.sendDefault({
+        objectType: 'feed',
+        content: {
+          title: '내 분수 계산기 — 나는 어떤 이성을 만날 수 있을까',
+          description: '나이·연봉·자산·학력·외모를 넣으면 만날 수 있는 이성의 조건이 나옵니다.',
+          imageUrl: 'https://meetcal.co.kr/og-image.png',
+          link: { mobileWebUrl: 'https://meetcal.co.kr/', webUrl: 'https://meetcal.co.kr/' }
+        },
+        buttons: [{ title: '나도 계산해보기',
+                    link: { mobileWebUrl: 'https://meetcal.co.kr/', webUrl: 'https://meetcal.co.kr/' } }]
+      });
+    } catch(e) { sk.textContent = '공유에 실패했습니다'; }
+  });
+})();
+</script>
 </body>
+
 </html>
