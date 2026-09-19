@@ -1,0 +1,384 @@
+# -*- coding: utf-8 -*-
+"""사이트 루트(/) 허브 페이지 — 사주·오행이 중심이 되는 첫 화면.
+
+이성 조건 계산기는 /love/ 로 내리고, 루트는 생년월일 → 사주 여덟 글자 →
+오행 분포 → 내 속성 캐릭터를 보여 주는 도구가 맡습니다.
+글 카드는 deploy.py 가 넘겨주는 실제 글 목록으로 채워지므로,
+초고를 하나 올리면 루트 첫 화면도 같이 갱신됩니다.
+"""
+import html
+
+SITE_ROOT = 'https://meetcal.co.kr'
+TITLE = '사주 오행 계산기 — 생년월일로 만드는 내 오행 캐릭터'
+DESC  = ('생년월일시를 넣으면 사주 여덟 글자와 오행 비율, 내 대표 속성과 '
+         '부족한 오행을 계산해 보여 줍니다. 만세력을 직접 계산합니다.')
+
+PAGE = r"""<!DOCTYPE html>
+<html lang="ko"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>__TITLE__</title>
+<meta name="description" content="__DESC__">
+<link rel="canonical" href="__ROOT__/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="생년월일로 만드는 내 오행 캐릭터">
+<meta property="og:description" content="__DESC__">
+<meta property="og:url" content="__ROOT__/">
+<meta property="og:site_name" content="오행 이야기">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="__ROOT__/ohaeng/img/og-ohaeng.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="__ROOT__/ohaeng/img/og-ohaeng.png">
+__GA__
+<script async crossorigin="anonymous" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=__ADCLIENT__"></script>
+<style>
+:root{--ink:#1a1e24;--mut:#5c6673;--dim:#8d96a3;--line:#e6e9ee;--bg:#fff;--soft:#f6f8fa;
+      --acc:#2f6fd0;--mok:#4fb95f;--hwa:#e8483c;--to:#c9a227;--geum:#8e9bb0;--su:#3f8fe0}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);line-height:1.75;
+ font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+ font-size:17px;word-break:keep-all;overflow-wrap:break-word}
+a{color:var(--acc)}
+.wrap{max-width:720px;margin:0 auto;padding:0 20px}
+header.site{border-bottom:1px solid var(--line);padding:16px 0}
+header.site .wrap{display:flex;align-items:center;gap:14px}
+header.site .nm{font-weight:800;font-size:19px;color:var(--ink);text-decoration:none;letter-spacing:-.01em}
+header.site nav{margin-left:auto;display:flex;gap:16px}
+header.site nav a{font-size:14.5px;color:var(--mut);text-decoration:none}
+header.site nav a:hover{color:var(--acc)}
+
+.hero{padding:44px 0 26px;text-align:center}
+.hero h1{font-size:31px;line-height:1.35;margin:0 0 14px;letter-spacing:-.02em}
+.hero p{margin:0;color:var(--mut);font-size:16px}
+
+/* ── 계산기 ── */
+.tool{border:1px solid var(--line);border-radius:16px;padding:22px 20px 24px;background:var(--soft)}
+.tool .lab{font-size:13px;letter-spacing:.04em;color:var(--dim);font-weight:700;margin-bottom:12px}
+.frow{display:flex;gap:8px;flex-wrap:wrap}
+.frow .f{flex:1 1 92px;min-width:0}
+.frow .f span{display:block;font-size:12.5px;color:var(--dim);margin-bottom:5px}
+.tool input,.tool select{width:100%;padding:11px 10px;border:1px solid #d8dee7;border-radius:9px;
+  background:#fff;color:var(--ink);font:inherit;font-size:16px}
+.hint{margin:11px 0 0;font-size:13px;color:var(--dim);line-height:1.6}
+.go{width:100%;margin-top:16px;padding:15px;border:0;border-radius:11px;background:var(--acc);
+  color:#fff;font:inherit;font-size:16.5px;font-weight:700;cursor:pointer}
+.go:hover{background:#255ab0}
+
+/* ── 결과 ── */
+.out{margin-top:26px}
+.out h2{font-size:20px;margin:0 0 4px;letter-spacing:-.01em}
+.out .sub{color:var(--mut);font-size:14px;margin:0 0 16px}
+.board{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.board .hd{text-align:center;font-size:12.5px;color:var(--dim);line-height:1.4;padding-bottom:2px}
+.board .hd b{display:block;font-size:13.5px;color:var(--mut)}
+.cell{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 4px;text-align:center}
+.cell .k{font-size:10.5px;color:var(--dim);letter-spacing:.04em}
+.cell .hj{font-size:27px;font-weight:700;line-height:1.15;margin:1px 0}
+.cell .kr{font-size:12px;color:var(--mut)}
+.cell .el{display:inline-block;min-width:19px;margin-top:4px;padding:1px 5px;border-radius:9px;
+  font-size:11px;font-weight:700;color:#fff}
+.cell.na{background:repeating-linear-gradient(135deg,#fff,#fff 6px,#f2f4f7 6px,#f2f4f7 12px)}
+.cell.na .hj{color:var(--dim);font-size:20px;padding:6px 0}
+
+.bars{margin-top:20px}
+.bar{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.bar .n{width:22px;font-weight:700;font-size:14.5px;text-align:center;flex:none}
+.bar .t{flex:1;height:13px;background:#eef1f5;border-radius:7px;overflow:hidden}
+.bar .t i{display:block;height:100%;border-radius:7px}
+.bar .v{width:42px;text-align:right;font-size:13.5px;color:var(--mut);flex:none;
+  font-variant-numeric:tabular-nums}
+
+.me{display:flex;align-items:center;gap:16px;margin-top:22px;padding:16px;
+  border:1px solid var(--line);border-radius:14px;background:#fff}
+.me .pics{display:flex;gap:4px;flex:none}
+.me .pics img{object-fit:contain}
+.me .k{font-size:12.5px;color:var(--dim);letter-spacing:.04em}
+.me .t{font-size:19px;font-weight:800;margin:2px 0 4px}
+.me .d{font-size:14px;color:var(--mut);line-height:1.65}
+
+.note{margin-top:14px;padding:13px 15px;border-left:3px solid var(--acc);
+  background:#f4f8fd;border-radius:0 9px 9px 0;font-size:14.5px;line-height:1.7}
+.note b{font-weight:700}
+.note a{font-weight:700}
+
+/* 광고 — 결과를 모두 보여 준 다음 한 번. 프리롤 아님 */
+.cad{margin:34px 0 8px;padding-top:16px;border-top:1px dashed #d8dee7}
+.cad-l{font-size:11px;letter-spacing:.06em;color:var(--dim);margin-bottom:8px}
+.cad:has(ins[data-ad-status="unfilled"]){display:none}
+.cad ins.adsbygoogle[data-ad-status="unfilled"]{display:none}
+
+/* ── 글 목록 ── */
+.sec{margin-top:52px}
+.sec > .h{display:flex;align-items:baseline;gap:10px;margin-bottom:16px}
+.sec > .h h2{font-size:20px;margin:0;letter-spacing:-.01em}
+.sec > .h a{margin-left:auto;font-size:14px;text-decoration:none}
+.card{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-top:1px solid var(--line);
+  text-decoration:none;color:inherit}
+.card img{width:112px;height:72px;object-fit:cover;border-radius:9px;flex:none;background:var(--soft)}
+.card .t{font-weight:700;font-size:16px;line-height:1.45}
+.card .d{font-size:13.5px;color:var(--mut);margin-top:4px;line-height:1.6;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card .m{font-size:12px;color:var(--dim);margin-top:5px}
+
+.tile{display:block;margin-top:14px;padding:17px 19px;border:1px solid var(--line);
+  border-radius:13px;text-decoration:none;color:inherit;background:var(--soft)}
+.tile .k{display:block;font-size:12px;color:var(--dim);letter-spacing:.04em}
+.tile .t{display:block;font-weight:700;margin-top:4px;font-size:16.5px}
+.tile .d{display:block;font-size:13.5px;color:var(--mut);margin-top:4px;line-height:1.6}
+.tile.map{background:linear-gradient(135deg,#131a28,#1b2740);border-color:#26334c;color:#e9eef6}
+.tile.map .k{color:#7f8ca0}
+.tile.map .d{color:#9fabbd}
+
+footer.site{margin-top:60px;border-top:1px solid var(--line);padding:24px 0 40px;
+  font-size:13px;color:var(--dim)}
+footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
+@media(max-width:430px){
+  .hero h1{font-size:26px}
+  .cell .hj{font-size:23px}
+  .me img{width:84px;height:84px}
+  .card img{width:88px;height:60px}
+}
+</style>
+</head><body>
+
+<header class="site"><div class="wrap">
+  <a class="nm" href="/">오행 이야기</a>
+  <nav><a href="/iljin/">일진</a><a href="/map/">지도</a><a href="/ohaeng/">글</a>
+       <a href="/love/">이성 조건 계산기</a></nav>
+</div></header>
+
+<main class="wrap">
+
+<section class="hero">
+  <h1>생년월일로 만드는<br>내 오행 캐릭터</h1>
+  <p>사주 여덟 글자를 직접 계산해서, 내 오행이 어디에 몰려 있고 무엇이 비어 있는지 보여 드립니다.</p>
+</section>
+
+<section class="tool">
+  <div class="lab">태어난 날</div>
+  <div class="frow">
+    <label class="f"><span>연도</span><input type="number" id="y" min="1900" max="2100" value="1995" inputmode="numeric"></label>
+    <label class="f"><span>월</span><select id="m"></select></label>
+    <label class="f"><span>일</span><select id="d"></select></label>
+    <label class="f"><span>태어난 시각</span><select id="h"></select></label>
+  </div>
+  <p class="hint">시각을 모르면 <b>모름</b>으로 두세요. 여덟 글자 중 여섯 글자로만 계산하고,
+     결과에 그 사실을 표시합니다. 아무 시각이나 찍어 넣는 것보다 정확합니다.</p>
+  <button class="go" id="go">내 오행 보기</button>
+
+  <div class="out" id="out" hidden>
+    <h2>사주 여덟 글자</h2>
+    <p class="sub" id="dsub"></p>
+    <div class="board" id="board"></div>
+
+    <h2 style="margin-top:26px">오행 비율</h2>
+    <p class="sub" id="rsub"></p>
+    <div class="bars" id="bars"></div>
+
+    <div class="me" id="me">
+      <div class="pics" id="me-pics"></div>
+      <div>
+        <div class="k">내 대표 속성</div>
+        <div class="t" id="me-t"></div>
+        <div class="d" id="me-d"></div>
+      </div>
+    </div>
+
+    <div id="notes"></div>
+
+    <div class="cad">
+      <div class="cad-l">광고</div>
+      <ins class="adsbygoogle" style="display:block"
+           data-ad-client="__ADCLIENT__" data-ad-slot="__ADSLOT__"
+           data-ad-format="auto" data-full-width-responsive="true"></ins>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="h"><h2>계산해서 쓴 글</h2><a href="/ohaeng/">전체 보기 &rarr;</a></div>
+  __POSTS__
+</section>
+
+<section class="sec">
+  <div class="h"><h2>그 밖에</h2></div>
+  <a class="tile" href="/iljin/" data-cta="iljin">
+    <span class="k">매일 바뀝니다</span>
+    <span class="t">오늘의 일진</span>
+    <span class="d">오늘이 60갑자 중 어느 날인지, 그 기운이 내 오행과 맞는지 &rarr;</span>
+  </a>
+  <a class="tile map" href="/map/" data-cta="map">
+    <span class="k">지도</span>
+    <span class="t">오행 세계 둘러보기</span>
+    <span class="d">사주각 &middot; 십간의 기록 &middot; 명식의 탑 &middot; 십이지 궁 &middot; 연의 저울 &mdash;
+      다섯 건물을 눌러 보세요 &rarr;</span>
+  </a>
+  <a class="tile" href="/love/" data-cta="love">
+    <span class="k">계산기</span>
+    <span class="t">이성 조건 계산기</span>
+    <span class="d">나이·연봉·자산·학력·외모·신체 여섯 항목으로 만날 수 있는 이성 조건을 계산합니다 &rarr;</span>
+  </a>
+</section>
+
+</main>
+
+<footer class="site"><div class="wrap">
+  <a href="/iljin/">일진</a><a href="/map/">지도</a><a href="/ohaeng/">오행 이야기</a>
+  <a href="/love/">이성 조건 계산기</a>
+  <p style="margin:10px 0 0">사주 해석은 통계적 사실이 아니라 전통 해석입니다. 재미로 봐 주세요.</p>
+</div></footer>
+
+<script src="/ohaeng/data/saju-calculator.js"></script>
+<script>
+(function(){
+var GAN=['갑','을','병','정','무','기','경','신','임','계'];
+var ZHI=['자','축','인','묘','진','사','오','미','신','유','술','해'];
+var GANH='甲乙丙丁戊己庚辛壬癸', ZHIH='子丑寅卯辰巳午未申酉戌亥';
+var GANE=['목','목','화','화','토','토','금','금','수','수'];
+var ZHIE=['수','토','목','목','토','화','화','토','금','금','토','수'];
+var COL={'목':'#4fb95f','화':'#e8483c','토':'#c9a227','금':'#8e9bb0','수':'#3f8fe0'};
+var IMG={'목':'mok','화':'hwa','토':'to','금':'geum','수':'su'};
+var SAY={
+ '목':'뻗어 나가는 성질입니다. 시작하고 벌이는 쪽에 가깝습니다.',
+ '화':'퍼지는 성질입니다. 드러내고 표현하는 쪽에 가깝습니다.',
+ '토':'머무는 성질입니다. 받치고 버티는 쪽에 가깝습니다.',
+ '금':'거두는 성질입니다. 끊고 정리하는 쪽에 가깝습니다.',
+ '수':'흐르는 성질입니다. 모으고 궁리하는 쪽에 가깝습니다.'};
+var DIR={'목':'동쪽','화':'남쪽','토':'중앙(살던 곳)','금':'서쪽','수':'북쪽'};
+// 받침에 맞는 조사 — '수은', '이(가)' 같은 어색한 표기를 안 쓰기 위해
+var JGA={'목':'이','화':'가','토':'가','금':'이','수':'가'};
+var JEUN={'목':'은','화':'는','토':'는','금':'은','수':'는'};
+
+var $=function(id){return document.getElementById(id)};
+var m=$('m'), d=$('d'), h=$('h'), y=$('y');
+for(var i=1;i<=12;i++) m.add(new Option(i+'월', i));
+h.add(new Option('모름',''));
+for(var i=0;i<24;i++) h.add(new Option((i<10?'0':'')+i+':00~'+(i<10?'0':'')+i+':59', i));
+function fillDays(){
+  var keep=+d.value||1, n=new Date(+y.value||2000, +m.value, 0).getDate();
+  d.innerHTML='';
+  for(var i=1;i<=n;i++) d.add(new Option(i+'일', i));
+  d.value = Math.min(keep, n);
+}
+m.addEventListener('change',fillDays); y.addEventListener('change',fillDays);
+m.value=9; fillDays(); d.value=15;
+
+function cell(kind, idx, isGan){
+  var hj=(isGan?GANH:ZHIH)[idx], kr=(isGan?GAN:ZHI)[idx], el=(isGan?GANE:ZHIE)[idx];
+  return '<div class="cell"><div class="k">'+kind+'</div><div class="hj">'+hj+'</div>'+
+         '<div class="kr">'+kr+'</div><span class="el" style="background:'+COL[el]+'">'+el+'</span></div>';
+}
+function naCell(kind){
+  return '<div class="cell na"><div class="k">'+kind+'</div><div class="hj">?</div>'+
+         '<div class="kr">모름</div></div>';
+}
+
+$('go').addEventListener('click', function(){
+  var yy=+y.value, mm=+m.value, dd=+d.value, hh=(h.value===''?null:+h.value);
+  if(!(yy>=1900&&yy<=2100)){ alert('연도를 1900~2100 사이로 넣어 주세요.'); y.focus(); return; }
+  var r;
+  try{ r=calculateSaju({year:yy, month:mm, day:dd, hour:hh}); }
+  catch(e){ alert('계산 중 문제가 생겼습니다. 날짜를 확인해 주세요.'); return; }
+
+  var P=r.pillars, order=[['연주',P.year],['월주',P.month],['일주',P.day],['시주',P.hour]];
+  var head='', gan='', zhi='';
+  var subs={'연주':'태어난 해','월주':'태어난 달','일주':'태어난 날','시주':'태어난 시각'};
+  order.forEach(function(o){
+    head+='<div class="hd"><b>'+o[0]+'</b>'+subs[o[0]]+'</div>';
+    if(!o[1]){ gan+=naCell('천간'); zhi+=naCell('지지'); return; }
+    var gi=GAN.indexOf(o[1][0]), zi=ZHI.indexOf(o[1][1]);
+    gan+=cell('천간', gi, true); zhi+=cell('지지', zi, false);
+  });
+  $('board').innerHTML=head+gan+zhi;
+  $('dsub').textContent=yy+'년 '+mm+'월 '+dd+'일'+(hh===null?' · 시각 모름':' · '+hh+'시')+
+    ' · 네 기둥 × 천간·지지';
+
+  var er=r.elementRatio, cnt=r.timeKnown?8:6;
+  $('rsub').textContent=r.timeKnown?'여덟 글자를 오행으로 세었습니다':
+    '시각을 몰라 여섯 글자만 세었습니다';
+  var bars='';
+  ['목','화','토','금','수'].forEach(function(e){
+    var v=er[e]||0;
+    bars+='<div class="bar"><span class="n" style="color:'+COL[e]+'">'+e+'</span>'+
+      '<span class="t"><i style="width:'+v+'%;background:'+COL[e]+'"></i></span>'+
+      '<span class="v">'+v+'%</span></div>';
+  });
+  $('bars').innerHTML=bars;
+
+  // 최고 비율이 둘 이상이면 하나로 정하지 않는다 — 있는 그대로 보여 준다
+  var all=['목','화','토','금','수'];
+  var top=Math.max.apply(null, all.map(function(e){return er[e]||0}));
+  var tied=all.filter(function(e){return (er[e]||0)===top});
+  var dom=tied[0];
+  var px=[104,74,58,48,42][Math.min(tied.length,5)-1];
+  $('me-pics').innerHTML=tied.map(function(e){
+    return '<img src="/ohaeng/img/char-'+IMG[e]+'.png" alt="'+e+' 속성 캐릭터" loading="lazy"'+
+           ' style="width:'+px+'px;height:'+px+'px">';
+  }).join('');
+  if(tied.length>1){
+    var last=tied[tied.length-1];
+    $('me-t').textContent=tied.join('·')+' 속성 (각 '+top+'%)';
+    $('me-d').textContent=tied.join('·')+JGA[last]+' 같은 비율이라 대표 속성이 '+
+      '하나로 정해지지 않습니다.'+(r.timeKnown?'':' 태어난 시각을 넣으면 갈릴 수 있습니다.');
+  }else{
+    $('me-t').textContent=dom+' 속성 ('+top+'%)';
+    $('me-d').textContent=SAY[dom];
+  }
+
+  var notes='';
+  var empty=['목','화','토','금','수'].filter(function(e){return !er[e]});
+  if(empty.length){
+    notes+='<div class="note"><b>'+empty.join('·')+'</b>'+JGA[empty[empty.length-1]]+
+      ' '+(r.timeKnown?'여덟':'여섯')+' 칸 중 한 칸도 없습니다. '+
+      '전통 해석에서는 비어 있는 오행의 방위를 보완 방향으로 봅니다 &mdash; '+
+      empty.map(function(e){return e+JEUN[e]+' '+DIR[e]}).join(', ')+'. '+
+      '<a href="/ohaeng/buljokhan-ohaeng.html" data-cta="note_direction">부족한 오행과 방향 글 보기 &rarr;</a></div>';
+  }
+  if(!r.timeKnown){
+    notes+='<div class="note">시각을 넣으면 두 글자가 더 붙어 비율이 달라집니다. '+
+      '실제로 <b>72.6%</b>의 경우 결과가 바뀝니다. '+
+      '<a href="/ohaeng/taeeonan-sigak.html" data-cta="note_time">태어난 시간 확인하는 3가지 방법 &rarr;</a></div>';
+  }
+  $('notes').innerHTML=notes;
+
+  $('out').hidden=false;
+  try{
+    (adsbygoogle=window.adsbygoogle||[]).push({});
+  }catch(e){}
+  if(window.gtag) gtag('event','saju_run',
+    {dominant:tied.join(''), time_known:r.timeKnown, empty:empty.join('')||'none'});
+  $('out').scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+document.addEventListener('click', function(e){
+  var a=e.target.closest ? e.target.closest('[data-cta]') : null;
+  if(a && window.gtag) gtag('event','cta_click', {where:a.getAttribute('data-cta')});
+});
+})();
+</script>
+</body></html>
+"""
+
+
+def card(m):
+    return ('<a class="card" href="/ohaeng/{s}.html" data-cta="post">'
+            '<img src="/ohaeng/{i}" alt="" loading="lazy" width="112" height="72">'
+            '<div><div class="t">{t}</div><div class="d">{d}</div>'
+            '<div class="m">{dt}</div></div></a>').format(
+        s=m['slug'], i=m.get('image', 'img/og-ohaeng.png'),
+        t=html.escape(m['title']), d=html.escape(m['desc']), dt=m['date'])
+
+
+def render(posts, ga_snippet, ad_client, ad_slot, limit=4):
+    """posts: build.build() 가 돌려주는 [(meta, body), ...] — 최신순"""
+    cards = ''.join(card(m) for m, _ in posts[:limit]) or \
+        '<p style="color:var(--dim)">아직 올린 글이 없습니다.</p>'
+    s = PAGE
+    for k, v in (('__TITLE__', TITLE), ('__DESC__', DESC), ('__ROOT__', SITE_ROOT),
+                 ('__GA__', ga_snippet), ('__ADCLIENT__', ad_client),
+                 ('__ADSLOT__', ad_slot), ('__POSTS__', cards)):
+        s = s.replace(k, v)
+    return s
