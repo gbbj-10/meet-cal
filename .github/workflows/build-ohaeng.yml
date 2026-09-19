@@ -1,1 +1,93 @@
+name: 오행 블로그 빌드
 
+# _content/ 안의 것이 바뀔 때만 돈다.
+# 이 워크플로가 만드는 index.html · map/ · ohaeng/ · sitemap.xml 은
+# 경로에서 빠져 있어 무한 루프가 나지 않는다.
+# love/ 는 빌드가 만들지 않는 정적 페이지라 건드리지 않는다.
+on:
+  push:
+    branches: [main]
+    paths:
+      - '_content/**'
+      - '.github/workflows/build-ohaeng.yml'
+  workflow_dispatch:      # 수동 실행 버튼
+  schedule:
+    # /iljin/ 은 오늘 날짜가 박혀 나가므로 날이 바뀌면 다시 빌드해야 한다.
+    # 깃허브 크론은 UTC 다. 15:10 UTC = 한국 00:10 (다음 날).
+    - cron: '10 15 * * *'
+
+permissions:
+  contents: write         # 빌드 결과를 다시 커밋해야 한다
+
+concurrency:              # 연달아 올리면 마지막 것만 배포
+  group: build-ohaeng
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 의존성 설치
+        run: pip install --quiet markdown pyyaml
+
+      - name: 빌드
+        run: python _content/build/deploy.py
+
+      - name: 결과 반영
+        run: |
+          rm -rf ohaeng
+          cp -r _content/deploy/ohaeng ohaeng
+          cp _content/deploy/index.html  index.html     # 사이트 첫 화면(허브)
+          rm -rf map
+          cp -r _content/deploy/map map                  # 환영 화면과 지도
+          rm -rf iljin
+          cp -r _content/deploy/iljin iljin              # 오늘의 일진 (매일 갱신)
+          cp _content/deploy/sitemap.xml sitemap.xml
+
+      - name: 확인 — 글이 실제로 생겼나
+        run: |
+          test -f ohaeng/index.html || { echo "::error::ohaeng/index.html 이 없습니다"; exit 1; }
+          test -f index.html        || { echo "::error::루트 index.html 이 없습니다"; exit 1; }
+          test -f map/index.html    || { echo "::error::map/index.html 이 없습니다"; exit 1; }
+          test -f iljin/index.html  || { echo "::error::iljin/index.html 이 없습니다"; exit 1; }
+          # 일진 페이지에 오늘 날짜가 실제로 박혀 있는지 (한국 시간 기준)
+          kd=$(TZ=Asia/Seoul date '+%Y년 %-m월 %-d일')
+          grep -q "$kd" iljin/index.html \
+            || { echo "::error::일진 페이지의 날짜가 오늘($kd)이 아닙니다"; exit 1; }
+          echo "일진 날짜: $kd"
+          # 지도에 건물이 다섯 채 다 있어야 한다
+          # 지도는 화면을 재서 그리므로 건물은 데이터로 들어 있다.
+          # 자바스크립트가 못 돌 때 쓰는 목록(li)도 같은 수여야 한다.
+          b=$(grep -o '"id":"' map/index.html | wc -l)
+          l=$(grep -o '<li><i style' map/index.html | wc -l)
+          echo "지도 건물: 데이터 $b · 대체목록 $l"
+          test "$b" -ge 5 || { echo "::error::지도 건물 데이터가 모자랍니다 ($b)"; exit 1; }
+          test "$l" -ge 5 || { echo "::error::대체 목록이 모자랍니다 ($l)"; exit 1; }
+          n=$(ls ohaeng/*.html | wc -l)
+          echo "생성된 HTML: $n 개"
+          test "$n" -ge 2 || { echo "::error::글이 너무 적습니다"; exit 1; }
+          # 허브에서 계산기가 빠지면 첫 화면이 빈 껍데기가 된다
+          grep -q 'saju-calculator.js' index.html \
+            || { echo "::error::허브에 사주 계산기가 없습니다"; exit 1; }
+          grep -q 'class="card"' index.html \
+            || echo "::warning::허브에 글 카드가 하나도 없습니다"
+          test -f love/index.html || echo "::warning::love/index.html 이 없습니다 — 허브의 링크가 404 가 됩니다"
+          grep -q 'G-' ohaeng/index.html || echo "::warning::GA4 태그가 안 보입니다"
+
+      - name: 커밋
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ohaeng map iljin index.html sitemap.xml
+          if git diff --staged --quiet; then
+            echo "바뀐 것 없음 — 커밋 생략"
+          else
+            git commit -m "자동 빌드 — 일진 갱신 포함 [skip ci]"
+            git push
+          fi
