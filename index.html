@@ -38,9 +38,17 @@ a{color:var(--acc)}
 header.site{border-bottom:1px solid var(--line);padding:16px 0}
 header.site .wrap{display:flex;align-items:center;gap:14px}
 header.site .nm{font-weight:800;font-size:19px;color:var(--ink);text-decoration:none;letter-spacing:-.01em}
-header.site nav{margin-left:auto;display:flex;gap:16px}
+header.site nav{margin-left:auto;display:flex;gap:16px;flex-wrap:wrap}
 header.site nav a{font-size:14.5px;color:var(--mut);text-decoration:none}
 header.site nav a:hover{color:var(--acc)}
+header.site nav a.hl{color:var(--to);font-weight:700}
+.hcta{display:block;margin:26px 0 0;padding:20px 22px;border-radius:14px;
+  text-decoration:none;border:1px solid rgba(201,162,39,.42);
+  background:linear-gradient(135deg,rgba(201,162,39,.13),rgba(201,162,39,.04))}
+.hcta .k{display:block;font-size:12.5px;color:var(--to);font-weight:700;letter-spacing:.2px}
+.hcta .t{display:block;font-size:20px;font-weight:800;color:var(--ink);margin:5px 0 7px;
+  letter-spacing:-.015em}
+.hcta .d{display:block;font-size:14px;color:var(--mut);line-height:1.6}
 
 .hero{padding:44px 0 26px;text-align:center}
 .hero h1{font-size:31px;line-height:1.35;margin:0 0 14px;letter-spacing:-.02em}
@@ -138,8 +146,8 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 
 <header class="site"><div class="wrap">
   <a class="nm" href="/">오행 이야기</a>
-  <nav><a href="/iljin/">일진</a><a href="/map/">지도</a><a href="/ohaeng/">글</a>
-       <a href="/love/">이성 조건 계산기</a></nav>
+  <nav><a href="/iljin/">일진</a><a href="/map/">지도</a>
+       <a class="hl" href="/hunt/">사냥터</a><a href="/ohaeng/">글</a></nav>
 </div></header>
 
 <main class="wrap">
@@ -181,6 +189,12 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 
     <div id="notes"></div>
 
+    <a class="hcta" href="/hunt/" data-cta="result_hunt">
+      <span class="k">이 캐릭터로 이어서</span>
+      <span class="t">오행 사냥터 들어가기</span>
+      <span class="d">사냥터 다섯 곳 중 한 곳을 고르고, 친구를 불러 최대 다섯이 함께 들어갑니다. 혼자서도 됩니다.</span>
+    </a>
+
     <div class="cad">
       <div class="cad-l">광고</div>
       <ins class="adsbygoogle" style="display:block"
@@ -201,6 +215,11 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
     <span class="k">매일 바뀝니다</span>
     <span class="t">오늘의 일진</span>
     <span class="d">오늘이 60갑자 중 어느 날인지, 그 기운이 내 오행과 맞는지 &rarr;</span>
+  </a>
+  <a class="tile" href="/hunt/" data-cta="hunt">
+    <span class="k">카카오 로그인</span>
+    <span class="t">오행 사냥터</span>
+    <span class="d">오늘의 기운과 내 사주로 유리한 사냥터를 고르고, 친구를 불러 파티를 짭니다 &rarr;</span>
   </a>
   <a class="tile map" href="/map/" data-cta="map">
     <span class="k">지도</span>

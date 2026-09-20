@@ -34,9 +34,10 @@ a{color:var(--acc)}
 header.site{border-bottom:1px solid var(--line);padding:16px 0}
 header.site .wrap{display:flex;align-items:center;gap:14px}
 header.site .nm{font-weight:800;font-size:19px;color:var(--ink);text-decoration:none}
-header.site nav{margin-left:auto;display:flex;gap:15px}
+header.site nav{margin-left:auto;display:flex;gap:15px;flex-wrap:wrap}
 header.site nav a{font-size:14.5px;color:var(--mut);text-decoration:none}
 header.site nav a[aria-current]{color:var(--ink);font-weight:700}
+header.site nav a.hl{color:var(--to);font-weight:700}
 
 .dt{margin:34px 0 4px;text-align:center;color:var(--mut);font-size:15px}
 h1{font-size:28px;margin:0 0 20px;text-align:center;letter-spacing:-.02em}
@@ -117,8 +118,9 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 
 <header class="site"><div class="wrap">
   <a class="nm" href="/">오행 이야기</a>
-  <nav><a href="/iljin/" aria-current="page">일진</a><a href="/">계산기</a>
-       <a href="/ohaeng/">글</a><a href="/map/">지도</a></nav>
+  <nav><a href="/">계산기</a><a href="/iljin/" aria-current="page">일진</a>
+       <a href="/map/">지도</a><a class="hl" href="/hunt/">사냥터</a>
+       <a href="/ohaeng/">글</a></nav>
 </div></header>
 
 <main class="wrap">
@@ -191,7 +193,8 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 </main>
 
 <footer class="site"><div class="wrap">
-  <a href="/">계산기</a><a href="/ohaeng/">글</a><a href="/map/">지도</a><a href="/love/">이성 계산기</a>
+  <a href="/">계산기</a><a href="/map/">지도</a><a href="/hunt/">사냥터</a>
+  <a href="/ohaeng/">글</a><a href="/love/">이성 조건 계산기</a>
 </div></footer>
 
 <script src="/ohaeng/data/saju-calculator.js"></script>
