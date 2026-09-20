@@ -61,6 +61,7 @@ function mkTween() {
 
 export async function runBattle(o) {
   const { mount, base, dracoPath, ground, team, foe, acts, onCaption, onDone, onProgress } = o;
+  /* o.onLoot(주운 수, 전체) — 화면 위 숫자를 세는 쪽에서 쓴다 */
 
   /* ── 모델 받기 ── */
   const want = [...new Set(team.map(t => MDL[t.el]))].concat('m_enemy');
@@ -232,6 +233,111 @@ export async function runBattle(o) {
     });
   }
 
+  /* ── 용신석 ──
+     사냥감이 쓰러진 자리에서 돌이 튀어나와 바닥에 흩어지고, 내 개가 앞으로
+     걸어 나가 하나씩 빨아들인다. 돌을 개에게 걸어가서 밟게 하면 열 개를
+     줍는 데 십몇 초가 걸린다 — 개는 한 번만 걸어 나가고, 돌이 개에게 온다. */
+  const stones = [];
+  const stoneGeo = new THREE.OctahedronGeometry(0.115, 0);
+
+  function dropStones(el, howMany, mid) {
+    const c = new THREE.Color(COL[el] || 0xffd93d);
+    const shown = Math.min(12, howMany);
+    for (let i = 0; i < shown; i++) {
+      const m = new THREE.Mesh(stoneGeo, new THREE.MeshStandardMaterial({
+        color: c, emissive: c, emissiveIntensity: 0.85, roughness: 0.25, metalness: 0.6
+      }));
+      /* 바닥에 깔린 빛무리 — 돌이 어디 떨어졌는지 멀리서도 보인다 */
+      const halo = new THREE.Mesh(new THREE.CircleGeometry(0.2, 18),
+        new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: 0.28 }));
+      halo.rotation.x = -Math.PI / 2; halo.position.y = 0.014;
+      const holder = new THREE.Object3D();
+      holder.add(m); holder.add(halo);
+      holder.position.copy(mid);
+      sc.add(holder);
+
+      const a = (i / shown) * Math.PI * 2 + Math.random();
+      const r = 0.55 + Math.random() * 1.15;
+      const tx = mid.x - 0.7 - Math.cos(a) * r * 0.55;
+      const tz = mid.z + Math.sin(a) * r;
+      const top = 1.15 + Math.random() * 0.5;
+      const st = { holder, mesh: m, halo, taken: false };
+      stones.push(st);
+      /* 포물선 한 번 — 0→1 을 높이와 수평 이동에 같이 쓴다 */
+      TW.add(0, 1, 0.55 + Math.random() * 0.18, '', v => {
+        holder.position.x = mid.x + (tx - mid.x) * v;
+        holder.position.z = mid.z + (tz - mid.z) * v;
+        m.position.y = 0.16 + Math.sin(v * Math.PI) * top - v * 0.02;
+        halo.material.opacity = 0.28 * v;
+      });
+    }
+    return shown;
+  }
+
+  /* 돌 하나를 개에게 빨아들인다 */
+  function suck(st, to, delay, onIn) {
+    setTimeout(() => {
+      if (dead || st.taken) return;
+      st.taken = true;
+      const from = st.holder.position.clone();
+      const y0 = st.mesh.position.y;
+      st.halo.visible = false;
+      TW.add(0, 1, 0.34, 'in', v => {
+        st.holder.position.lerpVectors(from, to, v);
+        st.mesh.position.y = y0 + Math.sin(v * Math.PI) * 0.45;
+        st.mesh.scale.setScalar(1 - v * 0.55);
+        eachMat(st.mesh, x => { x.emissiveIntensity = 0.85 + v * 2.2; });
+      }, () => {
+        sc.remove(st.holder);
+        st.mesh.geometry === stoneGeo || st.mesh.geometry.dispose();
+        eachMat(st.mesh, x => x.dispose());
+        st.halo.geometry.dispose(); st.halo.material.dispose();
+        if (onIn) onIn();
+      });
+    }, delay);
+  }
+
+  function playLoot(a, done) {
+    const me = mates[0];
+    if (!me) { done(); return; }
+    const mid = boss.holder.position.clone(); mid.y = 0;
+    const shown = dropStones(a.el, a.n, mid);
+    if (onCaption) onCaption(a.text);
+
+    /* 개가 돌밭 앞까지 한 번 걸어 나간다 */
+    const home = me.holder.position.clone();
+    const walkTo = new THREE.Vector3(mid.x - 1.85, 0, mid.z * 0.4 + home.z * 0.3);
+    const face = Math.atan2(walkTo.x - home.x, walkTo.z - home.z);
+    const r0 = me.holder.rotation.y;
+    if (me.alive) pose(me, 'walk', true);
+
+    TW.add(0, 1, 0.24, '', v => { me.holder.rotation.y = r0 + (face - r0) * v; });
+    TW.add(0, 1, 0.95, '', v => {
+      me.holder.position.lerpVectors(home, walkTo, v);
+    }, () => {
+      const at = walkTo.clone(); at.y = 0.55;
+      let got = 0;
+      stones.forEach((st, i) => suck(st, at, 90 + i * 115, () => {
+        got++;
+        pop(me, '+1', 'big');
+        if (o.onLoot) o.onLoot(got, a.n);
+        if (got >= shown) {
+          /* 다 주우면 남은 몫을 한 번에 알리고, 제자리로 돌아가 앉는다 */
+          if (a.n > shown && o.onLoot) o.onLoot(a.n, a.n);
+          setTimeout(() => {
+            if (dead) return;
+            if (me.alive) once(me, 'attack', 0.7);      /* 폴짝 — 기뻐하는 몸짓 */
+            TW.add(0, 1, 0.8, '', v => {
+              me.holder.position.lerpVectors(walkTo, home, v);
+              me.holder.rotation.y = face + (r0 - face) * v;
+            }, () => { if (me.alive) pose(me, 'idle', true); done(); });
+          }, 420);
+        }
+      }));
+      if (!shown) done();
+    });
+  }
+
   let ai = 0;
   function next() {
     if (dead) return;
@@ -271,6 +377,11 @@ export async function runBattle(o) {
         x.transparent = true; x.opacity = 1 - p * 0.92;
       })));
       wait = 900;
+    }
+    else if (a.t === 'loot') {
+      shake = Math.max(shake, 0.1);
+      playLoot(a, () => { if (!dead) next(); });
+      return;                                  /* 끝나는 시점을 playLoot 가 안다 */
     }
     else if (a.t === 'end') {
       if (onCaption) onCaption(a.text);
@@ -324,6 +435,8 @@ export async function runBattle(o) {
   return {
     destroy() {
       dead = true; TW.clear();
+      stones.forEach(st => { if (st.holder.parent) sc.remove(st.holder); });
+      stoneGeo.dispose();
       removeEventListener('resize', onResize);
       ren.dispose(); mount.innerHTML = '';
     }
