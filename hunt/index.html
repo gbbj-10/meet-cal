@@ -5,7 +5,7 @@
 <meta name="theme-color" content="#0d1119">
 <meta name="color-scheme" content="dark">
 <meta name="robots" content="noindex,nofollow">
-<title>사냥터 — 오행 이야기</title>
+<title>사냥터 — Four Paws</title>
 <meta name="description" content="오행 사냥터 다섯 곳. 오늘의 기운과 내 사주로 유리한 곳을 골라 다섯 명이 함께 들어갑니다.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="같이 사냥 가실래요">
@@ -21,7 +21,9 @@ html,body{margin:0;background:#080c13;color:var(--ink);
  word-break:keep-all;-webkit-text-size-adjust:100%;line-height:1.65}
 a{color:var(--acc)}
 .bar{display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--line)}
-.bar .nm{font-weight:800;font-size:17px;color:var(--ink);text-decoration:none}
+.bar .nm{font-weight:800;font-size:17px;color:var(--ink);text-decoration:none;letter-spacing:-.02em}
+.bar .tl{font-size:12px;color:var(--dim);margin-left:-3px}
+@media(max-width:560px){.bar .tl{display:none}}
 .bar nav{margin-left:auto;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
 .bar nav a{font-size:14px;color:var(--mut);text-decoration:none}
 .bar .me{display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--mut)}
@@ -149,7 +151,7 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 </head><body>
 
 <header class="bar">
-  <a class="nm" href="/">오행 이야기</a>
+  <a class="nm" href="/">Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
   <nav>
     <a href="/">계산기</a><a href="/iljin/">일진</a><a href="/map/">지도</a>
     <a href="/ohaeng/">글</a>
@@ -553,8 +555,8 @@ function invite(){
       Kakao.Share.sendDefault({
         objectType:'feed',
         content:{
-          title: CUR.nm+'에 자리가 비어 있습니다',
-          description: ME.nick+'님이 사냥터로 부릅니다. 한 자리 채워 주세요.',
+          title: CUR.nm+'('+CUR.el+')에 자리가 비어 있습니다',
+          description: ME.nick+'님이 Four Paws 사냥터로 부릅니다. 한 자리 채워 주세요.',
           imageUrl: location.origin+'/ohaeng/img/og-ohaeng.png',
           link:{mobileWebUrl:url, webUrl:url}
         },
@@ -564,7 +566,8 @@ function invite(){
     }catch(e){}
   }
   /* 카카오가 안 되면 링크라도 손에 쥐어 준다 */
-  if(navigator.share){ navigator.share({title:CUR.nm, url:url}).catch(function(){}); return; }
+  if(navigator.share){ navigator.share({title:CUR.nm+'('+CUR.el+') · Four Paws', url:url})
+      .catch(function(){}); return; }
   if(navigator.clipboard){ navigator.clipboard.writeText(url).then(function(){
     alert('초대 링크를 복사했습니다.\n\n'+url); }); return; }
   prompt('이 링크를 보내 주세요', url);

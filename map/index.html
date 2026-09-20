@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0d1119">
 <meta name="color-scheme" content="dark">
-<title>지도 — 오행 이야기</title>
+<title>지도 — Four Paws</title>
 <meta name="description" content="사주각·십간의 기록·명식의 탑·십이지 궁·연의 저울. 사주 여덟 글자로 만든 캐릭터로 돌아다니는 오행 세계의 지도입니다.">
 <link rel="canonical" href="https://meetcal.co.kr/map/">
 <meta property="og:type" content="website">
@@ -24,7 +24,9 @@ html,body{margin:0;background:#080c13;color:var(--ink);
  word-break:keep-all;-webkit-text-size-adjust:100%}
 a{color:var(--acc)}
 .bar{display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--line)}
-.bar .nm{font-weight:800;font-size:17px;color:var(--ink);text-decoration:none}
+.bar .nm{font-weight:800;font-size:17px;color:var(--ink);text-decoration:none;letter-spacing:-.02em}
+.bar .tl{font-size:12px;color:var(--dim);margin-left:-3px}
+@media(max-width:560px){.bar .tl{display:none}}
 .bar nav{margin-left:auto;display:flex;gap:14px;flex-wrap:wrap}
 .bar nav a.hl{color:var(--to);font-weight:700}
 .bar nav a{font-size:14px;color:var(--mut);text-decoration:none}
@@ -105,7 +107,7 @@ svg.map{display:block;width:100%}
 </div>
 
 <div class="bar">
-  <a class="nm" href="/">오행 이야기</a>
+  <a class="nm" href="/">Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
   <nav><a href="/">계산기</a><a href="/iljin/">일진</a>
        <a class="hl" href="/hunt/">사냥터</a><a href="/ohaeng/">글</a></nav>
 </div>
