@@ -119,6 +119,45 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 .go[disabled]{background:#22304a;color:#5f7291;cursor:default}
 .note{font-size:12.5px;color:var(--dim);margin-top:12px;line-height:1.7}
 
+/* 3. 전투 — 보는 화면이다. 누를 것은 끝나고 나서만 생긴다. */
+.foe{display:flex;align-items:center;gap:13px;margin:20px 0 4px}
+.foe .orb{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;
+  font-size:22px;font-weight:800;color:#0a0f18;font-family:"Noto Serif KR",serif;flex:none}
+.foe h1{margin:0;font-size:22px}
+.foe .wh{font-size:12.5px;color:var(--dim)}
+.hp{height:10px;border-radius:6px;background:#1b2436;overflow:hidden;margin-top:7px}
+.hp i{display:block;height:100%;transition:width .32s ease}
+.team{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:16px 0 4px}
+@media(max-width:560px){.team{grid-template-columns:repeat(3,1fr)}}
+.mate{background:var(--pan);border:1px solid var(--line);border-radius:11px;padding:9px 7px;
+  text-align:center}
+.mate .av2{width:30px;height:30px;border-radius:50%;margin:0 auto 5px;display:grid;
+  place-items:center;font-size:14px;font-weight:800;color:#0a0f18;font-family:"Noto Serif KR",serif}
+.mate .n2{font-size:11.5px;font-weight:700;line-height:1.3;word-break:break-all;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mate.down{opacity:.38}
+.mate.down .n2:after{content:" 쓰러짐";color:#e8483c;font-weight:600}
+.log{background:#0c111b;border:1px solid var(--line);border-radius:12px;padding:13px 15px;
+  margin-top:16px;min-height:190px;max-height:290px;overflow-y:auto;font-size:13.5px;line-height:1.85}
+.log p{margin:0 0 3px;color:var(--mut)}
+.log p.hit{color:var(--ink)}
+.log p.big{color:#ffd93d;font-weight:700}
+.log p.bad{color:#f0a0a0}
+.log p.turn{color:var(--dim);font-size:12px;margin-top:9px;
+  border-top:1px solid #1b2436;padding-top:7px}
+.res{margin-top:16px;padding:17px 18px;border-radius:14px;border:1px solid var(--line);
+  background:var(--pan)}
+.res.win{border-color:rgba(255,217,61,.5);background:rgba(255,217,61,.08)}
+.res .rt{font-size:20px;font-weight:800;letter-spacing:-.02em}
+.res.win .rt{color:#ffd93d}
+.res .rw{font-size:13.5px;color:var(--mut);line-height:1.7;margin-top:6px}
+.res .rn{display:flex;gap:18px;margin-top:12px;font-size:12.5px;color:var(--dim)}
+.res .rn b{color:var(--mut);font-weight:700}
+.again{display:flex;gap:9px;margin-top:14px;flex-wrap:wrap}
+.again button{flex:1;min-width:130px;padding:13px;border:1px solid var(--line);border-radius:11px;
+  background:var(--pan);color:var(--ink);font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.again button.pri{background:#ffd93d;color:#191600;border-color:#ffd93d}
+
 /* 친구 고르기 */
 .mask{position:fixed;inset:0;background:rgba(4,7,12,.72);display:none;z-index:40;
   align-items:flex-end;justify-content:center;padding:0 12px max(12px,env(safe-area-inset-bottom))}
@@ -200,6 +239,15 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
     <div class="syn" id="syn"></div>
     <button class="go" id="btn-go" disabled>사냥 시작</button>
     <p class="note" id="note"></p>
+  </section>
+
+  <!-- 3. 전투 -->
+  <section class="view" id="v-battle">
+    <div class="foe" id="foe"></div>
+    <div class="hp"><i id="foe-hp" style="width:100%"></i></div>
+    <div class="team" id="team"></div>
+    <div class="log" id="log"></div>
+    <div id="res"></div>
   </section>
 
 </div>
@@ -380,11 +428,168 @@ function synergy(els){
   return {pairs:pairs, kinds:n, bonus: pairs*4 + (n===5?20:0)};
 }
 
+
+/* ===================== 전투 ===================== */
+/* 보는 전투다. 한 번 누르면 끝까지 굴러가고, 사람은 로그를 읽는다.
+   규칙은 화면에 이미 써 놓은 추천 문구(mineRel)와 같은 오행 관계를 쓴다.
+   추천에서 "내가 우세" 라고 해 놓고 전투에서 지면 그 화면이 거짓말이 된다. */
+var HJEL={목:'木',화:'火',토:'土',금:'金',수:'水'};
+
+/* 사람 이름 뒤 조사. 카카오 닉네임은 무엇이든 올 수 있어서 받침을 직접 센다.
+   '민수을 덮칩니다' 같은 문장이 한 줄만 나와도 화면 전체가 엉성해 보인다. */
+function jn(w, pair){
+  var c=String(w||'').trim().slice(-1).charCodeAt(0);
+  var hasJong = (c>=0xAC00 && c<=0xD7A3) ? ((c-0xAC00)%28)!==0 : true;
+  return w + (hasJong ? pair[0] : pair[1]);
+}
+
+/* 공격 한 대의 배수와, 로그에 쓸 한 줄. */
+function strike(att, def){
+  if(DGEUK[att]===def)  return {m:1.55, s:'누른다',   k:'big'};
+  if(DGEUK[def]===att)  return {m:0.65, s:'눌린다',   k:'bad'};
+  if(DSAENG[att]===def) return {m:0.80, s:'살려 준다', k:''};
+  if(DSAENG[def]===att) return {m:1.15, s:'기운을 받는다', k:'hit'};
+  if(att===def)         return {m:1.10, s:'같은 기운', k:'hit'};
+  return {m:1.0, s:'', k:'hit'};
+}
+
+function buildFight(){
+  var g=CUR, gEl=g.el;
+  var team=[{nick:(ME.nick||'나'), el:MYEL, me:true}];
+  PARTY.forEach(function(f){ if(f) team.push({nick:f.nick, el:f.el, me:false}); });
+
+  var syn=synergy(team.map(function(t){return t.el}));
+  team.forEach(function(t){
+    t.hp=t.max=100;
+    t.atk=18 + (DAY.els.indexOf(t.el)>=0 ? 3 : 0);   /* 오늘의 기운을 탄 사람은 조금 세다 */
+    t.down=false;
+  });
+
+  /* 사냥감은 사람 수에 맞춰 커진다. 혼자 와도 이길 수 있고, 다섯이면 빨리 끝난다. */
+  var n=team.length;
+  var foe={nm:g.prey, el:gEl, hp:0, max:0, atk:13+n*2};
+  foe.max=foe.hp=110+n*95;
+
+  var L=[], turn=0, bonus=1+syn.bonus/200;
+  function push(t,k){ L.push({t:t,k:k||''}) }
+
+  push(g.nm+'에 들어섰습니다. '+jn(foe.nm,['이','가'])+' 기다리고 있습니다.','big');
+  if(syn.pairs) push('파티의 기운이 서로를 살립니다. 상생 '+syn.pairs+'쌍.','hit');
+  if(DAY.els.indexOf(gEl)>=0) push('오늘의 기운이 이 사냥터에 실려 있습니다. 상대가 셉니다.','bad');
+
+  while(foe.hp>0 && team.some(function(t){return !t.down}) && turn<24){
+    turn++;
+    push('— '+turn+'번째 겨룸','turn');
+    for(var i=0;i<team.length && foe.hp>0;i++){
+      var t=team[i]; if(t.down) continue;
+      var r=strike(t.el, foe.el);
+      var dmg=Math.max(3, Math.round(t.atk*r.m*bonus*(0.88+Math.random()*0.24)));
+      foe.hp=Math.max(0, foe.hp-dmg);
+      push(t.nick+'의 '+J(t.el,'i')+' '+jn(foe.nm,['을','를'])+' 칩니다'+(r.s?' — '+r.s:'')+
+           ' (−'+dmg+')', r.k);
+      L[L.length-1].foe=foe.hp/foe.max;
+    }
+    if(foe.hp<=0) break;
+    var alive=team.filter(function(t){return !t.down});
+    var v=alive[Math.floor(Math.random()*alive.length)];
+    var r2=strike(foe.el, v.el);
+    var d2=Math.max(2, Math.round(foe.atk*r2.m*(0.85+Math.random()*0.3)));
+    v.hp=Math.max(0, v.hp-d2);
+    push(jn(foe.nm,['이','가'])+' '+jn(v.nick,['을','를'])+' 덮칩니다'+
+         (r2.m>1.3?' — 눌립니다':'')+' (−'+d2+')', r2.m>1.3?'bad':'');
+    L[L.length-1].team=team.map(function(t){return {hp:t.hp/t.max, down:t.down}});
+    if(v.hp<=0){ v.down=true; push(jn(v.nick,['이','가'])+' 쓰러졌습니다.','bad');
+      L[L.length-1].team=team.map(function(t){return {hp:t.hp/t.max, down:t.down}}); }
+  }
+
+  var win=foe.hp<=0;
+  var standing=team.filter(function(t){return !t.down}).length;
+  push(win ? jn(foe.nm,['이','가'])+' 물러갑니다.' : '더는 버틸 수 없습니다. 물러납니다.',
+       win?'big':'bad');
+
+  /* 왜 이렇게 됐는지 한 줄 — 관계가 결과를 갈랐다는 걸 읽히게 */
+  var rel=mineRel(MYEL,gEl), why;
+  if(win && rel && rel.k==='easy') why='내 '+J(MYEL,'i')+' '+J(gEl,'eul')+' 누르는 곳이라 수월했습니다.';
+  else if(win && n>=3)            why='머릿수가 갈랐습니다. '+n+'명이 번갈아 치니 버티지 못했습니다.';
+  else if(win)                    why='아슬아슬했습니다. 한 명만 더 있었으면 편했을 겁니다.';
+  else if(rel && rel.k==='risk')  why=J(gEl,'i')+' 내 '+J(MYEL,'eul')+' 누르는 곳입니다. 나를 살려 줄 기운을 데려오세요.';
+  else if(n===1)                  why='혼자서는 무리였습니다. 친구를 부르면 달라집니다.';
+  else                            why='기운이 맞지 않았습니다. 다른 사냥터가 나을 수 있습니다.';
+
+  return {log:L, win:win, turns:turn, standing:standing, total:n, why:why,
+          foe:foe, team:team, syn:syn};
+}
+
+function renderBattleHead(F){
+  var g=CUR;
+  $('foe').innerHTML='<span class="orb" style="background:'+g.col+'">'+HJEL[g.el]+'</span>'+
+    '<span><h1>'+esc(F.foe.nm)+'</h1><span class="wh">'+esc(g.nm)+' · '+g.el+'</span></span>';
+  $('foe-hp').style.background=g.col;
+  $('foe-hp').style.width='100%';
+  paintTeam(F.team.map(function(t){return {hp:1,down:false}}), F.team);
+}
+function paintTeam(st, team){
+  $('team').innerHTML=team.map(function(t,i){
+    var s=st[i]||{hp:1,down:false};
+    return '<div class="mate'+(s.down?' down':'')+'">'+
+      '<div class="av2" style="background:'+colOf(t.el)+'">'+HJEL[t.el]+'</div>'+
+      '<div class="n2">'+esc(t.nick)+'</div>'+
+      '<div class="hp"><i style="width:'+Math.round(s.hp*100)+'%;background:'+colOf(t.el)+'"></i></div>'+
+    '</div>';
+  }).join('');
+}
+
+var BT=null;                       /* 돌고 있는 재생 타이머 */
+function playBattle(){
+  if(BT){ clearTimeout(BT); BT=null; }
+  var F=buildFight();
+  show('v-battle');
+  renderBattleHead(F);
+  $('log').innerHTML=''; $('res').innerHTML='';
+  ev('hunt_battle',{ground:CUR.nm, size:F.total});
+
+  var i=0;
+  (function step(){
+    if(i>=F.log.length){ BT=null; return endBattle(F); }
+    var l=F.log[i++];
+    var p=document.createElement('p');
+    p.className=l.k; p.textContent=l.t;
+    $('log').appendChild(p);
+    $('log').scrollTop=$('log').scrollHeight;
+    if(l.foe!=null) $('foe-hp').style.width=Math.round(l.foe*100)+'%';
+    if(l.team) paintTeam(l.team, F.team);
+    BT=setTimeout(step, l.k==='turn' ? 260 : 430);
+  })();
+}
+
+function endBattle(F){
+  paintTeam(F.team.map(function(t){return {hp:t.hp/t.max, down:t.down}}), F.team);
+  $('res').innerHTML=
+    '<div class="res'+(F.win?' win':'')+'">'+
+      '<div class="rt">'+(F.win?'사냥 성공':'물러났습니다')+'</div>'+
+      '<div class="rw">'+esc(F.why)+'</div>'+
+      '<div class="rn"><span><b>'+F.turns+'</b>번 겨룸</span>'+
+        '<span>남은 사람 <b>'+F.standing+'</b> / '+F.total+'</span>'+
+        '<span>파티 상생 <b>'+F.syn.pairs+'</b>쌍</span></div>'+
+    '</div>'+
+    '<div class="again">'+
+      '<button class="pri" id="b-again">다시 사냥</button>'+
+      '<button id="b-party">파티 고치기</button>'+
+      '<button id="b-ground">사냥터 바꾸기</button>'+
+    '</div>';
+  LS.set('hunt.last.'+CUR.id, {win:F.win, turns:F.turns, standing:F.standing,
+                               total:F.total, at:Date.now()});
+  ev('hunt_result',{ground:CUR.nm, win:F.win?1:0, turns:F.turns, size:F.total});
+  $('b-again').onclick=playBattle;
+  $('b-party').onclick=function(){ if(BT){clearTimeout(BT);BT=null;} show('v-party'); };
+  $('b-ground').onclick=function(){ if(BT){clearTimeout(BT);BT=null;} renderPick(); };
+}
+
 /* ===================== 화면 ===================== */
 var ME=null, MYEL=null, DAY=dayPillar(kstToday()), CUR=null, PARTY=[null,null,null,null];
 
 function show(id){
-  ['v-lock','v-pick','v-party'].forEach(function(v){ $(v).classList.toggle('on', v===id); });
+  ['v-lock','v-pick','v-party','v-battle'].forEach(function(v){ $(v).classList.toggle('on', v===id); });
   window.scrollTo({top:0,behavior:'instant'});
 }
 
@@ -638,7 +843,7 @@ function afterLogin(me){
   $('btn-go').onclick=function(){
     var n=1+PARTY.filter(Boolean).length;
     ev('hunt_start',{size:n, ground:CUR?CUR.nm:''});
-    alert(n+'명으로 '+(CUR?CUR.nm:'사냥터')+'에 들어갑니다.\n전투는 아직 준비 중입니다. 파티는 저장해 뒀습니다.');
+    playBattle();
   };
 
   Promise.resolve(Store.me()).then(function(me){
