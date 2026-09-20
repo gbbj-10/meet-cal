@@ -47,7 +47,7 @@ def read_md(path):
 
 CSS = """
 :root{--ink:#e9eef6;--mut:#96a3b6;--dim:#6b7789;--line:#242d3d;--bg:#0d1119;--soft:#151b26;
-      --pan:#151b26;--acc:#5b9bf0;--mok:#4fb95f;--hwa:#e8483c;--to:#c9a227;--geum:#8e9bb0;--su:#3f8fe0}
+      --pan:#151b26;--acc:#5b9bf0;--mok:#4fb95f;--hwa:#e8483c;--to:#ffd93d;--geum:#8e9bb0;--su:#3f8fe0}
 ::selection{background:#1e3a5f;color:#e9eef6}
 ::-webkit-scrollbar{width:11px;height:11px}
 ::-webkit-scrollbar-track{background:#0d1119}
@@ -211,7 +211,7 @@ CALC = """
            토:{d:'중앙',  c:'황토색',src:'화(火)',act:'정리하기 · 요리 · 흙 만지기 · 루틴 만들기'},
            금:{d:'서(西)',c:'흰색·금속',src:'토(土)',act:'마무리하기 · 규칙 정하기 · 버리기 · 악기'},
            수:{d:'북(北)',c:'검정·남색',src:'금(金)',act:'쉬기 · 읽기 · 물가 가기 · 혼자 생각하기'}};
-  var COL={목:'#4fb95f',화:'#e8483c',토:'#c9a227',금:'#8e9bb0',수:'#3f8fe0'};
+  var COL={목:'#4fb95f',화:'#e8483c',토:'#ffd93d',금:'#8e9bb0',수:'#3f8fe0'};
   var EL=['목','화','토','금','수'];
   var $=function(id){return document.getElementById(id)};
   $('cnk').addEventListener('change',function(){ $('ch').disabled=this.checked; });

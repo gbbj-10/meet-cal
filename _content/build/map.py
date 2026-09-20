@@ -21,7 +21,7 @@ TITLE = '지도 — Four Paws'
 DESC  = ('사주각·십간의 기록·명식의 탑·십이지 궁·연의 저울. '
          '사주 여덟 글자로 만든 캐릭터로 돌아다니는 오행 세계의 지도입니다.')
 
-COL = {'목': '#6fd07d', '화': '#f2634f', '토': '#e0b636',
+COL = {'목': '#6fd07d', '화': '#f2634f', '토': '#ffd93d',
        '금': '#b3c0d2', '수': '#5aa6ee'}
 HJ  = {'목': '木', '화': '火', '토': '土', '금': '金', '수': '水'}
 
@@ -125,7 +125,7 @@ __HEAD__
 <link rel="preload" as="image" href="img/map-bg.jpg">
 __GA__
 <style>
-:root{--ink:#eaeef5;--mut:#9aa6b8;--dim:#6f7d92;--line:#232c3c;--acc:#5b9bf0}
+:root{--ink:#eaeef5;--mut:#9aa6b8;--dim:#6f7d92;--line:#232c3c;--acc:#5b9bf0;--to:#ffd93d}
 *{box-sizing:border-box}
 html,body{margin:0;background:#080c13;color:var(--ink);
  font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;

@@ -39,7 +39,7 @@ __GA__
 <script async crossorigin="anonymous" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=__ADCLIENT__"></script>
 <style>
 :root{--ink:#e9eef6;--mut:#96a3b6;--dim:#6b7789;--line:#242d3d;--bg:#0d1119;--soft:#151b26;
-      --pan:#151b26;--acc:#5b9bf0;--mok:#4fb95f;--hwa:#e8483c;--to:#c9a227;--geum:#8e9bb0;--su:#3f8fe0}
+      --pan:#151b26;--acc:#5b9bf0;--mok:#4fb95f;--hwa:#e8483c;--to:#ffd93d;--geum:#8e9bb0;--su:#3f8fe0}
 ::selection{background:#1e3a5f;color:#e9eef6}
 ::-webkit-scrollbar{width:11px;height:11px}
 ::-webkit-scrollbar-track{background:#0d1119}
@@ -272,7 +272,7 @@ var ZHI=['자','축','인','묘','진','사','오','미','신','유','술','해'
 var GANH='甲乙丙丁戊己庚辛壬癸', ZHIH='子丑寅卯辰巳午未申酉戌亥';
 var GANE=['목','목','화','화','토','토','금','금','수','수'];
 var ZHIE=['수','토','목','목','토','화','화','토','금','금','토','수'];
-var COL={'목':'#4fb95f','화':'#e8483c','토':'#c9a227','금':'#8e9bb0','수':'#3f8fe0'};
+var COL={'목':'#4fb95f','화':'#e8483c','토':'#ffd93d','금':'#8e9bb0','수':'#3f8fe0'};
 var IMG={'목':'mok','화':'hwa','토':'to','금':'geum','수':'su'};
 var SAY={
  '목':'뻗어 나가는 성질입니다. 시작하고 벌이는 쪽에 가깝습니다.',
