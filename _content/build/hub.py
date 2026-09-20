@@ -17,6 +17,8 @@ PAGE = r"""<!DOCTYPE html>
 <html lang="ko"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0d1119">
+<meta name="color-scheme" content="dark">
 <title>__TITLE__</title>
 <meta name="description" content="__DESC__">
 <link rel="canonical" href="__ROOT__/">
@@ -34,8 +36,13 @@ PAGE = r"""<!DOCTYPE html>
 __GA__
 <script async crossorigin="anonymous" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=__ADCLIENT__"></script>
 <style>
-:root{--ink:#1a1e24;--mut:#5c6673;--dim:#8d96a3;--line:#e6e9ee;--bg:#fff;--soft:#f6f8fa;
-      --acc:#2f6fd0;--mok:#4fb95f;--hwa:#e8483c;--to:#c9a227;--geum:#8e9bb0;--su:#3f8fe0}
+:root{--ink:#e9eef6;--mut:#96a3b6;--dim:#6b7789;--line:#242d3d;--bg:#0d1119;--soft:#151b26;
+      --pan:#151b26;--acc:#5b9bf0;--mok:#4fb95f;--hwa:#e8483c;--to:#c9a227;--geum:#8e9bb0;--su:#3f8fe0}
+::selection{background:#1e3a5f;color:#e9eef6}
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-track{background:#0d1119}
+::-webkit-scrollbar-thumb{background:#2b3546;border-radius:6px}
+input,select,textarea,button{color-scheme:dark}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);line-height:1.75;
@@ -60,12 +67,12 @@ header.site nav a:hover{color:var(--acc)}
 .frow{display:flex;gap:8px;flex-wrap:wrap}
 .frow .f{flex:1 1 92px;min-width:0}
 .frow .f span{display:block;font-size:12.5px;color:var(--dim);margin-bottom:5px}
-.tool input,.tool select{width:100%;padding:11px 10px;border:1px solid #d8dee7;border-radius:9px;
-  background:#fff;color:var(--ink);font:inherit;font-size:16px}
+.tool input,.tool select{width:100%;padding:11px 10px;border:1px solid #2b3546;border-radius:9px;
+  background:var(--pan);color:var(--ink);font:inherit;font-size:16px}
 .hint{margin:11px 0 0;font-size:13px;color:var(--dim);line-height:1.6}
 .go{width:100%;margin-top:16px;padding:15px;border:0;border-radius:11px;background:var(--acc);
-  color:#fff;font:inherit;font-size:16.5px;font-weight:700;cursor:pointer}
-.go:hover{background:#255ab0}
+  color:#08101c;font:inherit;font-size:16.5px;font-weight:700;cursor:pointer}
+.go:hover{background:#7db1f6}
 
 /* ── 결과 ── */
 .out{margin-top:26px}
@@ -74,25 +81,25 @@ header.site nav a:hover{color:var(--acc)}
 .board{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
 .board .hd{text-align:center;font-size:12.5px;color:var(--dim);line-height:1.4;padding-bottom:2px}
 .board .hd b{display:block;font-size:13.5px;color:var(--mut)}
-.cell{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 4px;text-align:center}
+.cell{background:var(--pan);border:1px solid var(--line);border-radius:10px;padding:9px 4px;text-align:center}
 .cell .k{font-size:10.5px;color:var(--dim);letter-spacing:.04em}
 .cell .hj{font-size:27px;font-weight:700;line-height:1.15;margin:1px 0}
 .cell .kr{font-size:12px;color:var(--mut)}
 .cell .el{display:inline-block;min-width:19px;margin-top:4px;padding:1px 5px;border-radius:9px;
   font-size:11px;font-weight:700;color:#fff}
-.cell.na{background:repeating-linear-gradient(135deg,#fff,#fff 6px,#f2f4f7 6px,#f2f4f7 12px)}
+.cell.na{background:repeating-linear-gradient(135deg,#141a25,#141a25 6px,#1b2230 6px,#1b2230 12px)}
 .cell.na .hj{color:var(--dim);font-size:20px;padding:6px 0}
 
 .bars{margin-top:20px}
 .bar{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 .bar .n{width:22px;font-weight:700;font-size:14.5px;text-align:center;flex:none}
-.bar .t{flex:1;height:13px;background:#eef1f5;border-radius:7px;overflow:hidden}
+.bar .t{flex:1;height:13px;background:#1e2635;border-radius:7px;overflow:hidden}
 .bar .t i{display:block;height:100%;border-radius:7px}
 .bar .v{width:42px;text-align:right;font-size:13.5px;color:var(--mut);flex:none;
   font-variant-numeric:tabular-nums}
 
 .me{display:flex;align-items:center;gap:16px;margin-top:22px;padding:16px;
-  border:1px solid var(--line);border-radius:14px;background:#fff}
+  border:1px solid var(--line);border-radius:14px;background:var(--pan)}
 .me .pics{display:flex;gap:4px;flex:none}
 .me .pics img{object-fit:contain}
 .me .k{font-size:12.5px;color:var(--dim);letter-spacing:.04em}
@@ -100,12 +107,12 @@ header.site nav a:hover{color:var(--acc)}
 .me .d{font-size:14px;color:var(--mut);line-height:1.65}
 
 .note{margin-top:14px;padding:13px 15px;border-left:3px solid var(--acc);
-  background:#f4f8fd;border-radius:0 9px 9px 0;font-size:14.5px;line-height:1.7}
+  background:#151f2e;border-radius:0 9px 9px 0;font-size:14.5px;line-height:1.7}
 .note b{font-weight:700}
 .note a{font-weight:700}
 
 /* 광고 — 결과를 모두 보여 준 다음 한 번. 프리롤 아님 */
-.cad{margin:34px 0 8px;padding-top:16px;border-top:1px dashed #d8dee7}
+.cad{margin:34px 0 8px;padding-top:16px;border-top:1px dashed #2b3546}
 .cad-l{font-size:11px;letter-spacing:.06em;color:var(--dim);margin-bottom:8px}
 .cad:has(ins[data-ad-status="unfilled"]){display:none}
 .cad ins.adsbygoogle[data-ad-status="unfilled"]{display:none}

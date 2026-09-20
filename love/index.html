@@ -2,6 +2,8 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
+  <meta name="theme-color" content="#0d1119">
+  <meta name="color-scheme" content="dark">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>내게 맞는 이성 찾기 | 이성 조건 매칭기 meetcal</title>
   <meta name="description" content="나이, 연봉, 자산, 외모, 학력을 입력하면 만날 수 있는 이성의 조건을 대한민국 통계 기반으로 알려드립니다.">
@@ -40,30 +42,30 @@
 
     .mc-share{width:100%;margin-top:14px;padding:13px;border:0;border-radius:10px;
       background:#FEE500;color:#191600;font:inherit;font-size:15px;font-weight:700;cursor:pointer}
-    .mc-ad{margin:2.5rem 1rem;padding-top:18px;border-top:1px dashed #d8dee7}
+    .mc-ad{margin:2.5rem 1rem;padding-top:18px;border-top:1px dashed #2b3546}
     /* 광고가 안 채워지면 빈 상자가 남지 않게 통째로 접는다 */
     .mc-ad:has(ins[data-ad-status="unfilled"]){display:none}
     .mc-ad ins.adsbygoogle[data-ad-status="unfilled"]{display:none}
-    .mc-ad-l{font-size:11px;letter-spacing:.06em;color:#9aa3ae;margin-bottom:8px}
-    .mc-ohaeng{display:block;margin:2.5rem 1rem 1rem;padding:16px 18px;border:1px solid #e6e9ee;
-      border-radius:12px;text-decoration:none;color:#1a1e24}
-    .mc-ohaeng .k{display:block;font-size:12px;color:#8d96a3;letter-spacing:.04em}
+    .mc-ad-l{font-size:11px;letter-spacing:.06em;color:#6b7789;margin-bottom:8px}
+    .mc-ohaeng{display:block;margin:2.5rem 1rem 1rem;padding:16px 18px;border:1px solid #242d3d;
+      border-radius:12px;text-decoration:none;color:#e9eef6}
+    .mc-ohaeng .k{display:block;font-size:12px;color:#6b7789;letter-spacing:.04em}
     .mc-ohaeng .t{display:block;font-weight:700;margin-top:4px}
-    .mc-ohaeng .d{display:block;font-size:13.5px;color:#5c6673;margin-top:4px}
+    .mc-ohaeng .d{display:block;font-size:13.5px;color:#96a3b6;margin-top:4px}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
-      --bg:#ffffff;--bg2:#f5f5f3;--bg3:#efefed;
-      --text:#1a1a18;--text2:#5f5e5a;--text3:#888780;
-      --border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.2);
-      --purple:#534AB7;--purple-light:#EEEDFE;--purple-dark:#3C3489;
-      --amber:#BA7517;--amber-light:#FAEEDA;--amber-dark:#633806;--amber-border:#EF9F27;
-      --red:#A32D2D;--red-light:#FCEBEB;--red-border:#F09595;
-      --green:#0F6E56;--green-light:#E1F5EE;--green-border:#5DCAA5;
+      --bg:#151b26;--bg2:#131924;--bg3:#0d1119;
+      --text:#e9eef6;--text2:#96a3b6;--text3:#6b7789;
+      --border:rgba(255,255,255,0.10);--border2:rgba(255,255,255,0.18);
+      --purple:#5b9bf0;--purple-light:#141d2b;--purple-dark:#9cc3f7;
+      --amber:#c9a227;--amber-light:#16130a;--amber-dark:#e0c168;--amber-border:#42360f;
+      --red:#e8483c;--red-light:#1c100e;--red-border:#5c241f;
+      --green:#4fb95f;--green-light:#0d1a11;--green-border:#255c2e;
       --radius-sm:8px;--radius-md:12px;
     }
-    @media(prefers-color-scheme:dark){
-      :root{--bg:#1c1c1a;--bg2:#252523;--bg3:#2e2e2b;--text:#f0efe8;--text2:#b4b2a9;--text3:#888780;--border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.18);--purple-light:#26215C;--purple-dark:#CECBF6;--amber-light:#412402;--amber-dark:#FAC775;--amber-border:#854F0B;--red-light:#501313;--red-border:#E24B4A;--green-light:#04342C;--green-border:#1D9E75;}
-    }
+
+    html{color-scheme:dark}
+    input,select,textarea,button{color-scheme:dark}
     body{font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:var(--bg3);color:var(--text);line-height:1.6;min-height:100vh;}
     .wrap{max-width:640px;margin:0 auto;padding:0 0 3rem;}
     .page{display:none;}.page.active{display:block;}
@@ -75,7 +77,7 @@
     .hero p{font-size:13px;color:var(--text2);}
     .g-row{display:flex;gap:8px;justify-content:center;margin:0 1rem 1rem;}
     .g-btn{flex:1;padding:10px;border:0.5px solid var(--border2);border-radius:var(--radius-md);background:var(--bg);color:var(--text2);font-size:14px;font-weight:500;cursor:pointer;transition:all 0.15s;}
-    .g-btn.on{background:var(--purple);border-color:var(--purple);color:#fff;}
+    .g-btn.on{background:var(--purple);border-color:var(--purple);color:#08101c;}
     .card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-md);padding:1.25rem;margin:0 1rem 1rem;}
     .sec-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:1rem;}
     .field{margin-bottom:1rem;}.field:last-child{margin-bottom:0;}
@@ -88,7 +90,7 @@
     .sl-val{font-size:13px;font-weight:600;color:var(--text);min-width:82px;text-align:right;}
     .field-hint{font-size:11px;color:var(--text3);margin-top:4px;}
     .edu-warn{font-size:11px;color:#D85A30;margin-top:4px;display:none;}
-    .calc-btn{display:block;width:calc(100% - 2rem);margin:0 1rem;padding:14px;background:var(--purple);color:#fff;border:none;border-radius:var(--radius-md);font-size:16px;font-weight:600;cursor:pointer;}
+    .calc-btn{display:block;width:calc(100% - 2rem);margin:0 1rem;padding:14px;background:var(--purple);color:#08101c;border:none;border-radius:var(--radius-md);font-size:16px;font-weight:600;cursor:pointer;}
     .calc-btn:hover{opacity:0.9;}
     .interstitial{min-height:480px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem 1rem;}
     .inter-label{font-size:11px;color:var(--text3);letter-spacing:0.3px;margin-bottom:28px;text-transform:uppercase;}
@@ -103,7 +105,7 @@
     .ad-box span:last-child{font-size:13px;color:var(--text2);font-weight:500;}
     .prog-bg{width:100%;max-width:380px;height:3px;background:var(--border);border-radius:2px;margin:28px auto 0;overflow:hidden;}
     .prog-fill{height:3px;background:var(--purple);border-radius:2px;width:0%;transition:width 0.1s linear;}
-    .r-hero{background:var(--purple-light);border:0.5px solid #AFA9EC;border-radius:var(--radius-md);padding:1.5rem;text-align:center;margin:0 1rem 1rem;}
+    .r-hero{background:var(--purple-light);border:0.5px solid #2c4a7a;border-radius:var(--radius-md);padding:1.5rem;text-align:center;margin:0 1rem 1rem;}
     .r-hero .lbl{font-size:12px;color:var(--purple);font-weight:600;margin-bottom:4px;}
     .r-hero .desc{font-size:13px;color:var(--text2);margin-top:6px;line-height:1.5;}
     .r-card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-md);padding:1.25rem;margin:0 1rem 1rem;}
@@ -120,9 +122,9 @@
     .edit-section h4{font-size:14px;font-weight:600;color:var(--amber-dark);margin-bottom:4px;}
     .edit-section p{font-size:12px;color:var(--amber);margin-bottom:14px;line-height:1.6;}
     .edit-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;border-radius:var(--radius-sm);padding:9px 10px;transition:background 0.15s;}
-    .edit-row.locked{background:rgba(0,0,0,0.05);opacity:0.45;}
+    .edit-row.locked{background:rgba(255,255,255,0.03);opacity:0.5;}
     .edit-row.locked .edit-input{pointer-events:none;}
-    .edit-row.active{background:rgba(255,255,255,0.8);border:0.5px solid var(--amber-border);}
+    .edit-row.active{background:rgba(255,255,255,0.06);border:0.5px solid var(--amber-border);}
     .edit-check{width:16px;height:16px;accent-color:var(--purple);flex-shrink:0;cursor:pointer;}
     .edit-label{font-size:13px;color:var(--amber-dark);min-width:68px;flex-shrink:0;}
     .edit-input{flex:1;padding:7px 10px;border:0.5px solid var(--amber-border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);font-size:13px;outline:none;}
@@ -237,15 +239,11 @@
       <div class="inter-label">잠시만 기다려주세요</div>
       <div class="spinner-wrap">
         <div class="spinner-ring"></div>
-        <div class="spinner-count" id="inter-count">5</div>
+        <div class="spinner-count" id="inter-count">2</div>
       </div>
       <div class="inter-title" id="inter-title">결과를 계산하고 있어요</div>
       <div class="inter-sub" id="inter-sub">나이·연봉·자산·외모·신체·학력을
 대한민국 통계 데이터와 대조 중입니다</div>
-      <div class="ad-box">
-        <span>광고 영역</span>
-        <span>Google AdSense</span>
-      </div>
       <div class="prog-bg"><div class="prog-fill" id="prog-fill"></div></div>
     </div>
   </div>
@@ -600,8 +598,8 @@ function computeReCalc(){
 function runInterstitial(onDone){
   const fillEl=document.getElementById('prog-fill');
   const countEl=document.getElementById('inter-count');
-  fillEl.style.width='0%';countEl.textContent='5';
-  let elapsed=0;const total=5000;const tick=100;
+  fillEl.style.width='0%';countEl.textContent='2';
+  let elapsed=0;const total=1200;const tick=60;
   if(interTimer)clearInterval(interTimer);
   interTimer=setInterval(()=>{
     elapsed+=tick;
@@ -717,10 +715,10 @@ updateSal();
           title: '내 분수 계산기 — 나는 어떤 이성을 만날 수 있을까',
           description: '나이·연봉·자산·학력·외모를 넣으면 만날 수 있는 이성의 조건이 나옵니다.',
           imageUrl: 'https://meetcal.co.kr/og-image.png',
-          link: { mobileWebUrl: 'https://meetcal.co.kr/', webUrl: 'https://meetcal.co.kr/' }
+          link: { mobileWebUrl: 'https://meetcal.co.kr/love/', webUrl: 'https://meetcal.co.kr/love/' }
         },
         buttons: [{ title: '나도 계산해보기',
-                    link: { mobileWebUrl: 'https://meetcal.co.kr/', webUrl: 'https://meetcal.co.kr/' } }]
+                    link: { mobileWebUrl: 'https://meetcal.co.kr/love/', webUrl: 'https://meetcal.co.kr/love/' } }]
       });
     } catch(e) { sk.textContent = '공유에 실패했습니다'; }
   });

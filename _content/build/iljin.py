@@ -88,6 +88,8 @@ PAGE = r"""<!DOCTYPE html>
 <html lang="ko"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0d1119">
+<meta name="color-scheme" content="dark">
 <title>오늘의 일진 — 매일 계산해서 올립니다 | 오행 이야기</title>
 <meta name="description" content="__DESC__">
 <link rel="canonical" href="__ROOT__/iljin/">
@@ -101,8 +103,13 @@ PAGE = r"""<!DOCTYPE html>
 __GA__
 <script async crossorigin="anonymous" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=__ADCLIENT__"></script>
 <style>
-:root{--ink:#1a1e24;--mut:#5c6673;--dim:#8d96a3;--line:#e6e9ee;--bg:#fff;--soft:#f6f8fa;
-      --acc:#2f6fd0}
+:root{--ink:#e9eef6;--mut:#96a3b6;--dim:#6b7789;--line:#242d3d;--bg:#0d1119;--soft:#151b26;
+      --pan:#151b26;--acc:#5b9bf0}
+::selection{background:#1e3a5f;color:#e9eef6}
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-track{background:#0d1119}
+::-webkit-scrollbar-thumb{background:#2b3546;border-radius:6px}
+input,select,textarea,button{color-scheme:dark}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);line-height:1.75;
@@ -122,7 +129,7 @@ h1{font-size:28px;margin:0 0 20px;text-align:center;letter-spacing:-.02em}
 .card{border:1px solid var(--line);border-radius:18px;background:var(--soft);
   padding:24px 20px 22px;text-align:center}
 .gzrow{display:flex;justify-content:center;gap:12px}
-.gzc{background:#fff;border:1px solid var(--line);border-radius:14px;
+.gzc{background:var(--pan);border:1px solid var(--line);border-radius:14px;
   padding:14px 10px 12px;width:132px}
 .gzc .k{font-size:11.5px;letter-spacing:.06em;color:var(--dim)}
 .gzc .hj{font-size:54px;line-height:1.1;font-weight:700;margin:2px 0 0;
@@ -140,18 +147,18 @@ h2 + p.lead{margin:0 0 16px;color:var(--mut);font-size:14.5px}
 .frow{display:flex;gap:8px;flex-wrap:wrap}
 .frow .f{flex:1 1 92px;min-width:0}
 .frow .f span{display:block;font-size:12.5px;color:var(--dim);margin-bottom:5px}
-.tool input,.tool select{width:100%;padding:11px 10px;border:1px solid #d8dee7;border-radius:9px;
-  background:#fff;color:var(--ink);font:inherit;font-size:16px}
+.tool input,.tool select{width:100%;padding:11px 10px;border:1px solid #2b3546;border-radius:9px;
+  background:var(--pan);color:var(--ink);font:inherit;font-size:16px}
 .go{width:100%;margin-top:14px;padding:15px;border:0;border-radius:11px;background:var(--acc);
-  color:#fff;font:inherit;font-size:16.5px;font-weight:700;cursor:pointer}
-.go:hover{background:#255ab0}
+  color:#08101c;font:inherit;font-size:16.5px;font-weight:700;cursor:pointer}
+.go:hover{background:#7db1f6}
 .me{display:flex;align-items:center;gap:15px;margin-top:20px;padding:15px;
-  border:1px solid var(--line);border-radius:14px;background:#fff}
+  border:1px solid var(--line);border-radius:14px;background:var(--pan)}
 .me img{width:82px;height:82px;object-fit:contain;flex:none}
 .me .k{font-size:12.5px;color:var(--dim);letter-spacing:.04em}
 .me .t{font-size:18px;font-weight:800;margin:2px 0 3px}
 .me .d{font-size:14px;color:var(--mut);line-height:1.65}
-.rel{margin-top:12px;border:1px solid var(--line);border-radius:13px;background:#fff;
+.rel{margin-top:12px;border:1px solid var(--line);border-radius:13px;background:var(--pan);
   padding:14px 16px}
 .rel .h{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15.5px}
 .rel .h i{font-style:normal;width:22px;height:22px;border-radius:50%;color:#fff;
@@ -160,7 +167,7 @@ h2 + p.lead{margin:0 0 16px;color:var(--mut);font-size:14.5px}
 .rel .b{margin:7px 0 0;font-size:14.5px;color:var(--mut);line-height:1.72}
 .rel .tag{font-size:12.5px;color:var(--dim);margin-left:auto;font-weight:400}
 
-.cad{margin:30px 0 8px;padding-top:16px;border-top:1px dashed #d8dee7}
+.cad{margin:30px 0 8px;padding-top:16px;border-top:1px dashed #2b3546}
 .cad-l{font-size:11px;letter-spacing:.06em;color:var(--dim);margin-bottom:8px}
 .cad:has(ins[data-ad-status="unfilled"]){display:none}
 .cad ins.adsbygoogle[data-ad-status="unfilled"]{display:none}
@@ -170,12 +177,12 @@ table.wk th,table.wk td{padding:10px 8px;border-bottom:1px solid var(--line);tex
 table.wk th{font-size:12.5px;color:var(--dim);font-weight:600;letter-spacing:.03em}
 table.wk td.gz{font-family:"Noto Serif KR",serif;font-size:19px;font-weight:700}
 table.wk .wd{color:var(--dim);font-size:13px}
-table.wk tr.now td{background:#f4f8fd;font-weight:700}
+table.wk tr.now td{background:#151f2e;font-weight:700}
 table.wk i{font-style:normal;display:inline-grid;place-items:center;width:22px;height:22px;
   border-radius:50%;color:#fff;font-size:12px;font-weight:700;margin-right:4px;
   font-family:"Noto Serif KR",serif}
 
-.note{margin-top:14px;padding:13px 15px;border-left:3px solid var(--acc);background:#f4f8fd;
+.note{margin-top:14px;padding:13px 15px;border-left:3px solid var(--acc);background:#151f2e;
   border-radius:0 9px 9px 0;font-size:14.5px;line-height:1.72}
 .how{font-size:14.5px;color:var(--mut);line-height:1.8}
 .tile{display:block;margin-top:12px;padding:16px 18px;border:1px solid var(--line);
@@ -310,7 +317,13 @@ function rel(today, mine){
 }
 
 // ── 오늘 일진을 방문자의 날짜로 다시 계산해 덮어쓴다 ──
-var now=new Date(), P=pillarOf(now);
+// 일진은 한국 자정에 바뀐다. 보는 사람이 어느 나라에 있든 한국 날짜로 계산한다.
+function kstNow(){
+  var t=new Date();
+  var k=new Date(t.getTime()+t.getTimezoneOffset()*60000+9*3600000);
+  return new Date(k.getFullYear(), k.getMonth(), k.getDate());
+}
+var now=kstNow(), P=pillarOf(now);
 var GE=_GANE[P[0]], ZE=_ZHIE[P[1]];
 try{
   $('dt').textContent=now.getFullYear()+'년 '+(now.getMonth()+1)+'월 '+now.getDate()+'일 '+

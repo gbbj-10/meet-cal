@@ -38,10 +38,10 @@ SPOTS = [
      '부족한 오행과 보완 방향 — 나오는 숫자는 전부 다시 계산해 볼 수 있는 것들입니다.',
      '/ohaeng/', '열림', '사주 이야기'),
     ('gung', '십이지 궁', '十二支宮', '화', 'hwa', 0.70,
-     '친구들의 오행 캐릭터와 함께 용신석을 모읍니다',
-     '열두 수호신이 지키는 방을 돌며 용신석을 모읍니다. 오행이 서로 맞는 캐릭터끼리 '
-     '모이면 더 잘 싸웁니다. 지금 만들고 있습니다.',
-     None, '준비 중', '사냥하기'),
+     '친구 넷과 함께 오행 사냥터로 들어갑니다',
+     '오행 사냥터 다섯 곳 중 한 곳을 고릅니다. 오늘의 기운과 내 사주로 유리한 곳을 '
+     '짚어 드리고, 빈 자리는 카카오톡으로 친구를 불러 채웁니다. 카카오 계정이 필요합니다.',
+     '/hunt/', '열림', '사냥하기'),
     ('jeoul', '연의 저울', '緣—', '목', 'mok', 0.70,
      '내 조건으로 만날 수 있는 이성의 조건을 봅니다',
      '나이·연봉·자산·학력·외모·신체 여섯 항목을 넣으면 통계로 맞춘 상대 조건이 나옵니다. '
@@ -61,8 +61,8 @@ POS = {
     'wide': {'sajugak': [.500, .645], 'jeondang': [.152, .484],
              'gung':    [.322, .200], 'jeoul':    [.678, .200],
              'tap':     [.848, .484]},
-    'tall': {'sajugak': [.500, .815], 'jeondang': [.231, .600],
-             'tap':     [.769, .600], 'gung':     [.278, .315],
+    'tall': {'sajugak': [.500, .815], 'jeondang': [.215, .600],
+             'tap':     [.785, .600], 'gung':     [.278, .315],
              'jeoul':   [.722, .315]},
 }
 
@@ -108,6 +108,8 @@ PAGE = r"""<!DOCTYPE html>
 <html lang="ko"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0d1119">
+<meta name="color-scheme" content="dark">
 <title>__TITLE__</title>
 <meta name="description" content="__DESC__">
 <link rel="canonical" href="__ROOT__/map/">
@@ -258,7 +260,9 @@ function draw(){
   if(!W) return;
   // 폭이 아니라 비율로 고른다 — 휴대폰 가로도, 태블릿 세로도 제대로 걸린다
   var md = (W / H > 1.15) ? 'wide' : 'tall';
-  var base = Math.max(44, Math.min(112, Math.min(W, H) * 0.155));
+  var base = (md === 'wide')
+    ? Math.max(40, Math.min(112, Math.min(W, H) * 0.155))
+    : Math.max(30, Math.min(100, Math.min(W * 0.19, (H - 56) * 0.105)));
   // 글자는 화면과 함께 줄어들면 안 된다 — 픽셀로 잡고 아주 작은 화면에서만 살짝 줄인다
   var fN = Math.max(13, Math.min(16, base*0.20));
   var fS = fN - 3, fE = Math.max(13, Math.min(18, base*0.23));

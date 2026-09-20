@@ -16,11 +16,15 @@ import build as B
 import hub as HUB
 import map as MAP
 import iljin as ILJIN
+import hunt as HUNT
 
 SITE_ROOT = 'https://meetcal.co.kr'         # www 는 여기로 리다이렉트된다 (GitHub Pages CNAME = apex)
 BASE      = SITE_ROOT + '/ohaeng'
 LOVE      = SITE_ROOT + '/love/'            # 이성 조건 계산기 (루트에서 내려온 페이지)
-ILJIN_URL = SITE_ROOT + '/iljin/'           # 오늘의 일진 (매일 갱신)
+ILJIN_URL = SITE_ROOT + '/iljin/'
+# 사냥터 — 카카오/Supabase 키. 비워 두면 /hunt/ 는 데모 모드로 돈다.
+KAKAO_JS_KEY = '60b71fcf9ec72aad11e6f5d62358c8db'
+SUPABASE = ('', '')   # ('https://xxxx.supabase.co', 'anon public 키')           # 오늘의 일진 (매일 갱신)
 
 OUT  = os.path.join(B.ROOT, 'deploy')
 SITE = os.path.join(OUT, 'ohaeng')
@@ -79,10 +83,15 @@ def main():
             print(f'  (이전 배포본을 지우지 못해 덮어씁니다 — {e.__class__.__name__})')
     os.makedirs(SITE, exist_ok=True)
 
-    # 글 3편 — 평탄화해서 /ohaeng/<slug>.html 로
+    # 글 — 평탄화해서 /ohaeng/<slug>.html 로.
+    # 이번 빌드에서 실제로 만든 것만 옮긴다. 삭제가 막힌 폴더(OneDrive)에서는
+    # 발행 대기 중인 글의 옛 html 이 posts/ 에 남아 있을 수 있는데, 그게 따라오면
+    # 예약한 날짜보다 먼저 올라가 버린다.
+    live = set(m['slug'] + '.html' for m, _ in posts) | {'game.html'}
     n = 0
     for fn in sorted(os.listdir(B.POSTS)):
         if not fn.endswith('.html'): continue
+        if fn not in live: continue
         s = open(os.path.join(B.POSTS, fn), encoding='utf-8').read()
         open(os.path.join(SITE, fn), 'w', encoding='utf-8').write(flatten(s, 1))
         n += 1
@@ -109,6 +118,10 @@ def main():
     os.makedirs(os.path.join(OUT, 'iljin'), exist_ok=True)
     open(os.path.join(OUT, 'iljin', 'index.html'), 'w', encoding='utf-8').write(
         ILJIN.render(ga, B.ADS['client'], B.ADS['slot']))
+
+    # /hunt/ — 사냥터. 카카오 로그인 뒤에 열린다. 검색에는 안 잡히게 noindex.
+    HUNT.build(os.path.join(OUT, 'hunt'), site_root=SITE_ROOT, ga=ga,
+               kakao_js_key=KAKAO_JS_KEY, supabase=SUPABASE)
 
     # 지도 그림은 완성본 .jpg 만. img/map/src/ 의 생성 원본 PNG 는 배포에서 뺀다.
     mimg = os.path.join(OUT, 'map', 'img')
