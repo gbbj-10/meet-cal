@@ -88,6 +88,12 @@ jobs:
           test -f love/index.html || echo "::warning::love/index.html 이 없습니다 — 허브의 링크가 404 가 됩니다"
           grep -q 'G-' ohaeng/index.html || echo "::warning::GA4 태그가 안 보입니다"
 
+      # 페이지마다 '나가는 곳' 을 세어, 깨진 링크와 막다른 길을 잡는다.
+      # 2026-09-20 에 넣었다. 그 전까지 글 목록 페이지는 사이트 바깥으로 나가는
+      # 링크가 0개인 채로 몇 주를 서 있었는데, 눈으로는 아무도 못 봤다.
+      - name: 확인 — 링크 전수 검사
+        run: python _content/build/link_check.py --root .
+
       - name: 커밋
         run: |
           git config user.name  "github-actions[bot]"
