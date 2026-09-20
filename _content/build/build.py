@@ -412,7 +412,7 @@ gtag('js',new Date());gtag('config','{SITE['ga']}');</script>"""
   <nav>
     <a href="/" data-cta="nav_saju">계산기</a><a href="/iljin/" data-cta="nav_iljin">일진</a>
     <a href="/map/" data-cta="nav_map">지도</a><a class="hl" href="/hunt/" data-cta="nav_hunt">사냥터</a>
-    <a href="blog.html" data-cta="nav_blog">글</a>
+    <a href="blog.html" data-cta="nav_blog">글</a><span data-fp-chip></span>
   </nav>
 </div></header>"""
 

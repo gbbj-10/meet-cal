@@ -279,7 +279,7 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
   <a class="nm" href="/">__MARK__Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
   <nav>
     <a href="/">계산기</a><a href="/iljin/">일진</a><a href="/map/">지도</a>
-    <a href="/ohaeng/">글</a>
+    <a href="/ohaeng/">글</a><span data-fp-chip></span>
     <span class="me" id="me" hidden></span>
   </nav>
 </header>
@@ -758,29 +758,14 @@ function show(id){
   window.scrollTo({top:0,behavior:'instant'});
 }
 
+/* 내 오행은 **홈에서 만든 캐릭터** 하나뿐이다.
+   예전에는 여기서 생년월일을 또 물어봤다 — 같은 사람에게 같은 걸 두 번 묻는
+   꼴이었고, 카카오로 로그인하고 나면 그 값이 어디로 갔는지도 헷갈렸다.
+   (2026-09-20) */
 function myElement(){
-  /* 허브 계산기가 저장해 둔 값이 있으면 쓰고, 없으면 물어본다 */
-  var saved = LS.get('saju.dominant', null);
-  if(saved) return saved;
+  if(window.FP && FP.el()) return FP.el();
   if(ME && ME.el) return ME.el;
   return null;
-}
-
-function askBirth(){
-  var s = prompt('내 오행을 계산하려면 생년월일이 필요합니다.\n예: 1995-09-15 (시각은 몰라도 됩니다)','');
-  if(!s) return;
-  var m = String(s).match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/);
-  if(!m){ alert('날짜를 알아보지 못했습니다. 1995-09-15 처럼 넣어 주세요.'); return; }
-  if(typeof calculateSaju!=='function'){ alert('계산기를 불러오지 못했습니다.'); return; }
-  var r = calculateSaju({year:+m[1], month:+m[2], day:+m[3], hour:null});
-  MYEL = r.dominantElement;
-  LS.set('saju.dominant', MYEL);
-  Store.saveEl(MYEL);
-  ev('hunt_saju_set',{element:MYEL});
-  /* 초대로 들어온 사람은 오행이 정해진 뒤 다시 등록한다 — 안 그러면 '?'로 남는다 */
-  var host=qs('invite');
-  if(ME && host && host!==Store.myCode(ME)) Store.join(host,{id:ME.id,nick:ME.nick,el:MYEL});
-  if(CUR) renderParty(); else renderPick();
 }
 
 function renderTop(){
@@ -793,11 +778,10 @@ function renderTop(){
 
   if(MYEL){
     $('mine').innerHTML='내 오행은 <b>'+MYEL+'</b>입니다. '+
-      '<a id="reset-el">다시 계산</a>';
-    var r=$('reset-el'); if(r) r.onclick=function(){ LS.set('saju.dominant',null); MYEL=null; renderPick(); };
+      '<a href="/?edit=1">오행 수정</a>';
   } else {
-    $('mine').innerHTML='<a id="ask-el">생년월일을 넣으면</a> 내 사주로도 추천해 드립니다.';
-    var q=$('ask-el'); if(q) q.onclick=askBirth;
+    $('mine').innerHTML='아직 캐릭터가 없습니다. '+
+      '<a href="/">생년월일로 캐릭터 만들기 &rarr;</a>';
   }
 }
 
@@ -987,10 +971,14 @@ function afterLogin(me){
     });
   }
   var g=qs('g');
-  /* 초대로 처음 온 사람은 오행부터 정해야 자리에 앉힐 수 있다 */
+  /* 초대로 처음 온 사람은 캐릭터부터 만들어야 자리에 앉힐 수 있다.
+     여기서 생년월일을 묻지 않고 홈으로 보낸다 — 캐릭터는 한 곳에서만 만든다. */
   if(host && host!==Store.myCode(ME) && !MYEL){
     if(g && gOf(g)) CUR=gOf(g);
-    renderPick(); askBirth(); return;
+    renderPick();
+    $('mine').innerHTML='초대를 받으셨습니다. '+
+      '<a href="/">먼저 내 캐릭터를 만들어 주세요 &rarr;</a>';
+    return;
   }
   if(g && gOf(g)){ MYEL=myElement(); renderTop(); openGround(g); }
   else renderPick();

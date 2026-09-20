@@ -111,6 +111,10 @@ PAGE = r"""<!DOCTYPE html>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0d1119">
 __HEAD__
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+            "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}
+</script>
 <meta name="color-scheme" content="dark">
 <title>__TITLE__</title>
 <meta name="description" content="__DESC__">
@@ -195,6 +199,14 @@ svg.map{display:block;width:100%}
 .hello > *{position:relative}
 .hello img{width:min(86vw,520px);height:auto;max-height:34vh;object-fit:contain;
   border-radius:14px;margin-bottom:10px}
+.hello .dog{width:min(78vw,340px);height:min(38vh,270px);margin-bottom:4px}
+.hello .dog canvas{display:block;width:100%;height:100%}
+.hello .el{display:inline-flex;align-items:center;gap:7px;margin-bottom:10px;
+  background:rgba(0,0,0,.45);border-radius:999px;padding:5px 14px 5px 5px;
+  font-size:14px;font-weight:700}
+.hello .el i{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;
+  font-style:normal;font-size:13px;font-weight:800;color:#0a0f18;
+  font-family:"Noto Serif KR",serif}
 .hello h1{font-size:clamp(22px,5.4vw,33px);margin:0;letter-spacing:-.02em;line-height:1.35;
   text-shadow:0 2px 18px rgba(0,0,0,.8)}
 .hello p{color:#b7c2d2;margin:10px 0 22px;font-size:clamp(14px,3.6vw,16px);line-height:1.7;
@@ -209,9 +221,11 @@ svg.map{display:block;width:100%}
 </head><body>
 
 <div class="hello" id="hello" style="background-image:url(img/map-bg.jpg)">
-  <img src="/ohaeng/img/og-ohaeng.png" alt="다섯 오행 캐릭터">
-  <h1>사주 여덟 글자가<br>내 캐릭터가 됩니다</h1>
-  <p>태어난 해·달·날·시각 네 기둥을 계산해서<br>목·화·토·금·수 다섯 속성 중 하나를 찾아 드립니다.</p>
+  <!-- 캐릭터가 있으면 여기에 그 개가 서 있고, 없으면 아래 안내가 나온다 -->
+  <div class="dog" id="dog" hidden></div>
+  <img id="hello-img" src="/ohaeng/img/og-ohaeng.png" alt="다섯 오행 캐릭터">
+  <h1 id="hello-h">사주 여덟 글자가<br>내 캐릭터가 됩니다</h1>
+  <p id="hello-p">태어난 해·달·날·시각 네 기둥을 계산해서<br>목·화·토·금·수 다섯 속성 중 하나를 찾아 드립니다.</p>
   <button id="start">시작하기</button>
   <button class="skip" id="skip">바로 지도 보기</button>
 </div>
@@ -219,7 +233,7 @@ svg.map{display:block;width:100%}
 <div class="bar">
   <a class="nm" href="/">__MARK__Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
   <nav><a href="/">계산기</a><a href="/iljin/">일진</a>
-       <a class="hl" href="/hunt/">사냥터</a><a href="/ohaeng/">글</a></nav>
+       <a class="hl" href="/hunt/">사냥터</a><a href="/ohaeng/">글</a><span data-fp-chip></span></nav>
 </div>
 
 <div class="mapwrap" id="mapwrap">
@@ -235,12 +249,35 @@ __FALLBACK__
 <script>
 (function(){
 var $=function(i){return document.getElementById(i)};
+function COLOF(el){ for(var i=0;i<SPOTS.length;i++) if(SPOTS[i].el===el) return SPOTS[i].col;
+  return ({목:'#6fd07d',화:'#f2634f',토:'#ffd93d',금:'#b3c0d2',수:'#5aa6ee'})[el]||'#8e9bb0'; }
 var SPOTS=__SPOTS__, ROADS=__ROADS__, POS=__POS__;
 var NS='http://www.w3.org/2000/svg';
 
-// ── 환영 화면은 처음 온 사람에게만 ──
+// ── 들어서는 화면 ──
+// 캐릭터가 있으면 **그 개가 가운데 서 있는 화면**으로 맞이한다.
+// 홈에서 막 만들고 넘어온 사람(?new=1)에게는 늘 보여 준다.
 var seen=null; try{ seen=localStorage.getItem('ohaeng_seen') }catch(e){}
-if(seen) $('hello').hidden=true;
+var fresh=/[?&]new=1/.test(location.search);
+var MYEL=(window.FP&&FP.el())||null;
+
+if(MYEL){
+  var HJ={목:'木',화:'火',토:'土',금:'金',수:'水'};
+  var SAY={목:'뻗어 나가는 성질입니다.',화:'퍼지는 성질입니다.',토:'품는 성질입니다.',
+           금:'가르는 성질입니다.',수:'스미는 성질입니다.'};
+  $('hello-img').hidden=true;
+  $('dog').hidden=false;
+  $('hello-h').innerHTML='<span class="el"><i style="background:'+COLOF(MYEL)+'">'+
+    HJ[MYEL]+'</i>'+MYEL+' 속성</span><br>내 캐릭터가 준비됐습니다';
+  $('hello-p').textContent=SAY[MYEL]+' 지도에서 사냥터·일진·글로 갑니다.';
+  $('start').textContent='지도 보기';
+  $('skip').hidden=true;
+  import('/3d/profile3d.js').then(function(m){
+    return m.showDog({mount:$('dog'), base:'/3d/', el:MYEL});
+  }).catch(function(){ $('dog').hidden=true; $('hello-img').hidden=false; });
+}
+if(seen && !fresh && !MYEL) $('hello').hidden=true;
+if(seen && !fresh && MYEL) $('hello').hidden=true;
 function enter(){ $('hello').hidden=true;
   try{ localStorage.setItem('ohaeng_seen','1') }catch(e){}
   if(window.gtag) gtag('event','map_enter',{first: !seen});
@@ -390,6 +427,19 @@ function redraw(){ clearTimeout(t); t=setTimeout(draw, 120) }
 window.addEventListener('resize', redraw);
 window.addEventListener('orientationchange', redraw);
 if(window.ResizeObserver) new ResizeObserver(redraw).observe(wrap);
+
+/* 사주각은 프로필 건물이다. 캐릭터가 있으면 '만들기' 가 아니라
+   '내 캐릭터' 로 바뀌고, 오행 수정도 여기서 한다. */
+(function(){
+  if(!MYEL) return;
+  var p=$('p-sajugak'); if(!p) return;
+  var one=p.querySelector('.one'), a=p.querySelector('.enter');
+  if(one) one.innerHTML='내 캐릭터는 <b>'+MYEL+' 속성</b>입니다';
+  if(a){ a.textContent='내 캐릭터 보기 →'; a.setAttribute('href','/'); }
+  var ds=p.querySelector('.ds');
+  if(ds) ds.insertAdjacentHTML('afterend',
+    '<p class="ds" style="margin-top:-8px"><a href="/?edit=1" data-cta="edit_el">오행 다시 계산하기</a></p>');
+})();
 
 var f=$('flist'); if(f) f.parentNode.removeChild(f);   // 지도가 그려지니 목록은 뺀다
 draw();

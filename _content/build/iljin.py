@@ -213,7 +213,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
   <a class="nm" href="/">__MARK__Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
   <nav><a href="/">계산기</a><a href="/iljin/" aria-current="page">일진</a>
        <a href="/map/">지도</a><a class="hl" href="/hunt/">사냥터</a>
-       <a href="/ohaeng/">글</a></nav>
+       <a href="/ohaeng/">글</a><span data-fp-chip></span></nav>
 </div></header>
 
 <main class="wrap">

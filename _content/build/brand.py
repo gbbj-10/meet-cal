@@ -42,11 +42,27 @@ FAVICON = 'data:image/svg+xml,' + quote(_svg(mono=True, attrs=''), safe="~()*!.'
 # 좁은 화면에서 메뉴의 '계산기' 를 숨긴다. 마크를 넣으면서 30px 을 더 먹어
 # 390px 에서 '글' 한 글자가 둘째 줄로 떨어졌다. 로고 자체가 / 로 가는 링크라
 # '계산기' 는 같은 곳을 두 번 가리키는 항목이다. 지울 것이 있으면 이것부터 지운다.
-CSS = ('.mk{width:24px;height:24px;flex:none;display:block}'
+# 헤더의 작은 프로필 — 캐릭터가 있을 때만 들어찬다.
+CHIP = ('.fpchip{display:inline-flex;align-items:center;gap:5px;text-decoration:none;'
+        'background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:999px;'
+        'padding:3px 9px 3px 3px;font-size:13px;font-weight:700;color:var(--ink)}'
+        '.fpchip i{width:19px;height:19px;border-radius:50%;display:grid;place-items:center;'
+        'font-style:normal;font-size:11px;font-weight:800;color:#0a0f18;'
+        'font-family:"Noto Serif KR",serif}'
+        '@media(max-width:430px){.fpchip b{display:none}.fpchip{padding:3px}}')
+
+CSS = (CHIP +
+       '.mk{width:24px;height:24px;flex:none;display:block}'
        '.bar .mk,.top-bar .mk{width:21px;height:21px}'
        '@media(max-width:430px){'
        'header.site nav a[href="/"],.bar nav a[href="/"],.top-bar nav a[href="/"]{display:none}'
        'header.site nav,.bar nav,.top-bar nav{gap:12px}}')
 
+# 내 오행 캐릭터는 모든 페이지가 같은 파일에서 읽는다. 페이지마다 따로
+# 물어보면 사용자는 같은 걸 세 번 입력하게 된다.
 HEAD = ('<link rel="icon" href="%s">'
-        '<link rel="apple-touch-icon" href="/apple-touch-icon.png">' % FAVICON)
+        '<link rel="apple-touch-icon" href="/apple-touch-icon.png">'
+        # defer 를 붙이면 안 된다. 본문 끝의 일반 <script> 가 defer 보다 먼저
+        # 돌아서, 지도처럼 바로 FP 를 읽는 페이지에서 window.FP 가 없다.
+        # 2.7KB 라 동기로 받아도 체감되지 않는다. (2026-09-20)
+        '<script src="/me.js"></script>' % FAVICON)

@@ -156,6 +156,18 @@ footer.site{margin-top:60px;border-top:1px solid var(--line);padding:24px 0 40px
   font-size:13px;color:var(--dim)}
 footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 @media(max-width:560px){header.site .tl{display:none}}
+.mine2{margin:26px 0 8px;padding:20px 20px 18px;border-radius:16px;
+  border:1px solid rgba(255,217,61,.4);background:rgba(255,217,61,.07)}
+.mine2 .mw{display:flex;align-items:center;gap:16px}
+.mine2 .orb2{width:62px;height:62px;border-radius:50%;flex:none;display:grid;place-items:center;
+  font-size:27px;font-weight:800;color:#0a0f18;font-family:"Noto Serif KR",serif}
+.mine2 .k{font-size:12px;font-weight:700;color:var(--to);letter-spacing:.2px}
+.mine2 .t{font-size:21px;font-weight:800;letter-spacing:-.02em;margin:3px 0 4px}
+.mine2 .d{font-size:13.5px;color:var(--mut);line-height:1.6}
+.mine2 .mgo{display:block;margin-top:16px;padding:14px;border-radius:12px;background:var(--to);
+  color:#191600;font-weight:800;font-size:16px;text-align:center;text-decoration:none}
+.mine2 .medit{display:block;margin:10px auto 0;background:0;border:0;color:var(--dim);
+  font:inherit;font-size:12.5px;cursor:pointer;text-decoration:underline;padding:4px}
 @media(max-width:430px){
   .hero h1{font-size:26px}
   .cell .hj{font-size:23px}
@@ -168,17 +180,32 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 <header class="site"><div class="wrap">
   <a class="nm" href="/">__MARK__Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
   <nav><a href="/iljin/">일진</a><a href="/map/">지도</a>
-       <a class="hl" href="/hunt/">사냥터</a><a href="/ohaeng/">글</a></nav>
+       <a class="hl" href="/hunt/">사냥터</a><a href="/ohaeng/">글</a><span data-fp-chip></span></nav>
 </div></header>
 
 <main class="wrap">
 
-<section class="hero">
+<!-- 이미 캐릭터가 있으면 이것이 먼저 뜨고, 아래 계산기는 접힌다.
+     같은 사람에게 같은 걸 두 번 물어보지 않는다. -->
+<section class="mine2" id="mine2" hidden>
+  <div class="mw">
+    <div class="orb2" id="m2-orb"></div>
+    <div class="mt">
+      <div class="k">내 캐릭터</div>
+      <div class="t" id="m2-t"></div>
+      <div class="d" id="m2-d"></div>
+    </div>
+  </div>
+  <a class="mgo" href="/map/?new=1" data-cta="mine_map">지도로 들어가기</a>
+  <button class="medit" id="m2-edit">오행 다시 계산</button>
+</section>
+
+<section class="hero" id="hero">
   <h1>생년월일로 만드는<br>내 오행 캐릭터</h1>
   <p>사주 여덟 글자를 직접 계산해서, 내 오행이 어디에 몰려 있고 무엇이 비어 있는지 보여 드립니다.</p>
 </section>
 
-<section class="tool">
+<section class="tool" id="tool">
   <div class="lab">태어난 날</div>
   <div class="frow">
     <label class="f"><span>연도</span><input type="number" id="y" min="1900" max="2100" value="1995" inputmode="numeric"></label>
@@ -210,10 +237,10 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 
     <div id="notes"></div>
 
-    <a class="hcta" href="/hunt/" data-cta="result_hunt">
-      <span class="k">이 캐릭터로 이어서</span>
-      <span class="t">오행 사냥터 들어가기</span>
-      <span class="d">사냥터 다섯 곳 중 한 곳을 고르고, 친구를 불러 최대 다섯이 함께 들어갑니다. 혼자서도 됩니다.</span>
+    <a class="hcta" href="/map/?new=1" data-cta="result_map">
+      <span class="k">캐릭터가 만들어졌습니다</span>
+      <span class="t">지도로 들어가기</span>
+      <span class="d">사냥터·일진·글은 전부 지도에서 갑니다. 이 캐릭터가 그대로 따라갑니다.</span>
     </a>
 
     <div class="cad">
@@ -230,30 +257,6 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
   __POSTS__
 </section>
 
-<section class="sec">
-  <div class="h"><h2>그 밖에</h2></div>
-  <a class="tile" href="/iljin/" data-cta="iljin">
-    <span class="k">매일 바뀝니다</span>
-    <span class="t">오늘의 일진</span>
-    <span class="d">오늘이 60갑자 중 어느 날인지, 그 기운이 내 오행과 맞는지 &rarr;</span>
-  </a>
-  <a class="tile" href="/hunt/" data-cta="hunt">
-    <span class="k">카카오 로그인</span>
-    <span class="t">오행 사냥터</span>
-    <span class="d">오늘의 기운과 내 사주로 유리한 사냥터를 고르고, 친구를 불러 파티를 짭니다 &rarr;</span>
-  </a>
-  <a class="tile map" href="/map/" data-cta="map">
-    <span class="k">지도</span>
-    <span class="t">오행 세계 둘러보기</span>
-    <span class="d">사주각 &middot; 십간의 기록 &middot; 명식의 탑 &middot; 십이지 궁 &middot; 연의 저울 &mdash;
-      다섯 건물을 눌러 보세요 &rarr;</span>
-  </a>
-  <a class="tile" href="/love/" data-cta="love">
-    <span class="k">계산기</span>
-    <span class="t">이성 조건 계산기</span>
-    <span class="d">나이·연봉·자산·학력·외모·신체 여섯 항목으로 만날 수 있는 이성 조건을 계산합니다 &rarr;</span>
-  </a>
-</section>
 
 </main>
 
@@ -377,6 +380,10 @@ $('go').addEventListener('click', function(){
   }
   $('notes').innerHTML=notes;
 
+  /* ★ 만든 캐릭터를 사이트 전체가 쓰는 자리에 저장한다.
+     여기서 저장하지 않아서, 홈으로 돌아오거나 사냥터에 가면 같은 걸 또 물어봤다. */
+  if(window.FP) FP.set({el:dom, tied:tied, top:top, ratio:er, timeKnown:r.timeKnown});
+
   $('out').hidden=false;
   try{
     (adsbygoogle=window.adsbygoogle||[]).push({});
@@ -385,6 +392,32 @@ $('go').addEventListener('click', function(){
     {dominant:tied.join(''), time_known:r.timeKnown, empty:empty.join('')||'none'});
   $('out').scrollIntoView({behavior:'smooth', block:'start'});
 });
+
+/* 이미 캐릭터가 있으면 계산기를 접고 '내 캐릭터' 카드를 먼저 보여 준다.
+   ?edit=1 로 들어오면(프로필의 '오행 수정') 곧바로 계산기를 편다. */
+(function(){
+  var SAY2={목:'뻗어 나가는 성질입니다.',화:'퍼지는 성질입니다.',토:'품는 성질입니다.',
+            금:'가르는 성질입니다.',수:'스미는 성질입니다.'};
+  function showMine(){
+    if(!window.FP) return;
+    var me=FP.get();
+    var edit=/[?&]edit=1/.test(location.search);
+    if(!me || edit){ $('mine2').hidden=true; return; }
+    $('m2-orb').textContent=FP.HJ[me.el]||'?';
+    $('m2-orb').style.background=FP.COL[me.el]||'#8e9bb0';
+    $('m2-t').textContent=me.el+' 속성'+(me.top?' ('+me.top+'%)':'');
+    $('m2-d').textContent=(SAY2[me.el]||'')+' 지도·사냥터·일진이 이 캐릭터로 이어집니다.';
+    $('mine2').hidden=false;
+    $('hero').hidden=true;
+    $('tool').hidden=true;
+  }
+  $('m2-edit').addEventListener('click', function(){
+    $('mine2').hidden=true; $('hero').hidden=false; $('tool').hidden=false;
+    $('tool').scrollIntoView({behavior:'smooth', block:'start'});
+  });
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', showMine);
+  else showMine();
+})();
 
 document.addEventListener('click', function(e){
   var a=e.target.closest ? e.target.closest('[data-cta]') : null;
