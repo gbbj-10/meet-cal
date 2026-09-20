@@ -10,6 +10,7 @@
   demo     — 브라우저 안에서만 (localStorage). 친구와 공유되지 않는다.
   supabase — 실제 저장. 카카오 로그인도 Supabase Auth 의 kakao 공급자를 쓴다.
 """
+import brand
 import os
 
 # 사냥터 다섯 곳 — (오행, id, 이름, 한 줄, 사냥감)
@@ -53,6 +54,9 @@ def build(out_dir, site_root='https://meetcal.co.kr', ga='', kakao_js_key='', su
     html = PAGE.replace('__JS__', JS)
     html = html.replace('__GROUNDS__', grounds_json())
     html = html.replace('__FALLBACK__', fallback())
+    html = html.replace('__MARK__', brand.MARK)
+    html = html.replace('__HEAD__', brand.HEAD)
+    html = html.replace('__MKCSS__', brand.CSS)
     html = html.replace('__ROOT__', site_root)
     html = html.replace('__GA__', ga or '')
     html = html.replace('__KAKAO_KEY__', kakao_js_key or '')
@@ -70,6 +74,7 @@ PAGE = r"""<!DOCTYPE html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0d1119">
+__HEAD__
 <meta name="color-scheme" content="dark">
 <meta name="robots" content="noindex,nofollow">
 <title>사냥터 — Four Paws</title>
@@ -88,7 +93,9 @@ html,body{margin:0;background:#080c13;color:var(--ink);
  word-break:keep-all;-webkit-text-size-adjust:100%;line-height:1.65}
 a{color:var(--acc)}
 .bar{display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--line)}
-.bar .nm{font-weight:800;font-size:17px;color:var(--ink);text-decoration:none;letter-spacing:-.02em}
+.bar .nm{font-weight:800;font-size:17px;color:var(--ink);text-decoration:none;
+  letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
+__MKCSS__
 .bar .tl{font-size:12px;color:var(--dim);margin-left:-3px}
 @media(max-width:560px){.bar .tl{display:none}}
 .bar nav{margin-left:auto;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
@@ -218,7 +225,7 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 </head><body>
 
 <header class="bar">
-  <a class="nm" href="/">Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
+  <a class="nm" href="/">__MARK__Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
   <nav>
     <a href="/">계산기</a><a href="/iljin/">일진</a><a href="/map/">지도</a>
     <a href="/ohaeng/">글</a>

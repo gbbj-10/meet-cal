@@ -13,6 +13,7 @@
 일주(日柱)는 60갑자가 하루에 하나씩 도는 것이라 자정에 바뀝니다.
 계산 기준일은 data/saju-calculator.js 와 같습니다 (1900-01-31 = 갑자일).
 """
+import brand
 import datetime
 import html
 
@@ -67,6 +68,7 @@ def render(ga_snippet, ad_client, ad_slot):
 
     page = PAGE
     for k, v in (
+        ('__MARK__', brand.MARK), ('__HEAD__', brand.HEAD), ('__MKCSS__', brand.CSS),
         ('__ROOT__', SITE_ROOT),
         ('__DESC__', html.escape(desc, quote=True)),
         ('__GA__', ga_snippet),
@@ -89,6 +91,7 @@ PAGE = r"""<!DOCTYPE html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0d1119">
+__HEAD__
 <meta name="color-scheme" content="dark">
 <title>오늘의 일진 — 매일 계산해서 올립니다 | Four Paws</title>
 <meta name="description" content="__DESC__">
@@ -119,7 +122,9 @@ a{color:var(--acc)}
 .wrap{max-width:720px;margin:0 auto;padding:0 20px}
 header.site{border-bottom:1px solid var(--line);padding:16px 0}
 header.site .wrap{display:flex;align-items:center;gap:14px}
-header.site .nm{font-weight:800;font-size:19px;color:var(--ink);text-decoration:none;letter-spacing:-.02em}
+header.site .nm{font-weight:800;font-size:19px;color:var(--ink);text-decoration:none;
+  letter-spacing:-.02em;display:flex;align-items:center;gap:9px}
+__MKCSS__
 header.site .tl{font-size:12.5px;color:var(--dim);margin-left:-4px}
 header.site nav{margin-left:auto;display:flex;gap:15px;flex-wrap:wrap}
 header.site nav a{font-size:14.5px;color:var(--mut);text-decoration:none}
@@ -205,7 +210,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 </head><body>
 
 <header class="site"><div class="wrap">
-  <a class="nm" href="/">Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
+  <a class="nm" href="/">__MARK__Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
   <nav><a href="/">계산기</a><a href="/iljin/" aria-current="page">일진</a>
        <a href="/map/">지도</a><a class="hl" href="/hunt/">사냥터</a>
        <a href="/ohaeng/">글</a></nav>

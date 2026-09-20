@@ -6,6 +6,7 @@
 글 카드는 deploy.py 가 넘겨주는 실제 글 목록으로 채워지므로,
 초고를 하나 올리면 루트 첫 화면도 같이 갱신됩니다.
 """
+import brand
 import html
 
 SITE_ROOT = 'https://meetcal.co.kr'
@@ -18,6 +19,7 @@ PAGE = r"""<!DOCTYPE html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0d1119">
+__HEAD__
 <meta name="color-scheme" content="dark">
 <title>__TITLE__</title>
 <meta name="description" content="__DESC__">
@@ -52,7 +54,9 @@ a{color:var(--acc)}
 .wrap{max-width:720px;margin:0 auto;padding:0 20px}
 header.site{border-bottom:1px solid var(--line);padding:16px 0}
 header.site .wrap{display:flex;align-items:center;gap:14px}
-header.site .nm{font-weight:800;font-size:19px;color:var(--ink);text-decoration:none;letter-spacing:-.02em}
+header.site .nm{font-weight:800;font-size:19px;color:var(--ink);text-decoration:none;
+  letter-spacing:-.02em;display:flex;align-items:center;gap:9px}
+__MKCSS__
 header.site .tl{font-size:12.5px;color:var(--dim);margin-left:-4px}
 header.site nav{margin-left:auto;display:flex;gap:16px;flex-wrap:wrap}
 header.site nav a{font-size:14.5px;color:var(--mut);text-decoration:none}
@@ -162,7 +166,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 </head><body>
 
 <header class="site"><div class="wrap">
-  <a class="nm" href="/">Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
+  <a class="nm" href="/">__MARK__Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
   <nav><a href="/iljin/">일진</a><a href="/map/">지도</a>
        <a class="hl" href="/hunt/">사냥터</a><a href="/ohaeng/">글</a></nav>
 </div></header>
@@ -406,7 +410,9 @@ def render(posts, ga_snippet, ad_client, ad_slot, limit=4):
     cards = ''.join(card(m) for m, _ in posts[:limit]) or \
         '<p style="color:var(--dim)">아직 올린 글이 없습니다.</p>'
     s = PAGE
-    for k, v in (('__TITLE__', TITLE), ('__DESC__', DESC), ('__ROOT__', SITE_ROOT),
+    for k, v in (('__MARK__', brand.MARK), ('__HEAD__', brand.HEAD),
+                 ('__MKCSS__', brand.CSS),
+                 ('__TITLE__', TITLE), ('__DESC__', DESC), ('__ROOT__', SITE_ROOT),
                  ('__GA__', ga_snippet), ('__ADCLIENT__', ad_client),
                  ('__ADSLOT__', ad_slot), ('__POSTS__', cards)):
         s = s.replace(k, v)

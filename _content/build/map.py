@@ -12,6 +12,7 @@
 
 건물 그림은 게임 캐릭터와 같은 회화 화풍이고, 만든 방법은 build/mk_mapart.py 에 있습니다.
 """
+import brand
 import html
 import json
 
@@ -109,6 +110,7 @@ PAGE = r"""<!DOCTYPE html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0d1119">
+__HEAD__
 <meta name="color-scheme" content="dark">
 <title>__TITLE__</title>
 <meta name="description" content="__DESC__">
@@ -130,7 +132,9 @@ html,body{margin:0;background:#080c13;color:var(--ink);
  word-break:keep-all;-webkit-text-size-adjust:100%}
 a{color:var(--acc)}
 .bar{display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--line)}
-.bar .nm{font-weight:800;font-size:17px;color:var(--ink);text-decoration:none;letter-spacing:-.02em}
+.bar .nm{font-weight:800;font-size:17px;color:var(--ink);text-decoration:none;
+  letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
+__MKCSS__
 .bar .tl{font-size:12px;color:var(--dim);margin-left:-3px}
 @media(max-width:560px){.bar .tl{display:none}}
 .bar nav{margin-left:auto;display:flex;gap:14px;flex-wrap:wrap}
@@ -213,7 +217,7 @@ svg.map{display:block;width:100%}
 </div>
 
 <div class="bar">
-  <a class="nm" href="/">Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
+  <a class="nm" href="/">__MARK__Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
   <nav><a href="/">계산기</a><a href="/iljin/">일진</a>
        <a class="hl" href="/hunt/">사냥터</a><a href="/ohaeng/">글</a></nav>
 </div>
@@ -397,7 +401,9 @@ draw();
 
 def render(ga_snippet):
     s = PAGE
-    for k, v in (('__TITLE__', TITLE), ('__DESC__', DESC), ('__ROOT__', SITE_ROOT),
+    for k, v in (('__MARK__', brand.MARK), ('__HEAD__', brand.HEAD),
+                 ('__MKCSS__', brand.CSS),
+                 ('__TITLE__', TITLE), ('__DESC__', DESC), ('__ROOT__', SITE_ROOT),
                  ('__GA__', ga_snippet), ('__PANELS__', panels()),
                  ('__FALLBACK__', fallback()),
                  ('__SPOTS__', spot_json()),

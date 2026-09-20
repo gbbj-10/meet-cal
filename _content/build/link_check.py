@@ -36,6 +36,11 @@ def stage():
         src = os.path.join(DEPLOY, d)
         if os.path.isdir(src):
             shutil.copytree(src, os.path.join(root, d))
+    # 루트에 그냥 놓여 있는 자산(apple-touch-icon.png 등)
+    static = os.path.join(CONTENT, 'static')
+    if os.path.isdir(static):
+        for f in os.listdir(static):
+            shutil.copy(os.path.join(static, f), root)
     # love/ 는 빌드가 만들지 않는 정적 페이지다. 내 PC 에서는 content/love/ 에,
     # 저장소에서는 루트의 love/ 에 있다. 둘 다 본다.
     for cand in (LOVE, os.path.join(os.path.dirname(CONTENT), 'love')):

@@ -4,6 +4,7 @@ PUB — 블로그 빌드
   content/draft/*.md  →  content/posts/*.html  +  content/blog.html  +  content/index.json  +  sitemap.xml
 재현: python3 build.py            (content/ 폴더 기준 상대경로)
 """
+import brand
 import os, re, json, html, datetime, sys
 import markdown, yaml
 
@@ -61,7 +62,8 @@ a{color:var(--acc)}
 .wrap{max-width:720px;margin:0 auto;padding:0 20px}
 header.site{border-bottom:1px solid var(--line);padding:15px 0;margin-bottom:34px}
 header.site .wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-header.site .nm{font-weight:800;font-size:19px;color:var(--ink);text-decoration:none;letter-spacing:-.01em}
+header.site .nm{font-weight:800;font-size:19px;color:var(--ink);text-decoration:none;
+  letter-spacing:-.02em;display:flex;align-items:center;gap:9px}
 header.site .tl{font-size:12.5px;color:var(--dim);margin-left:-4px}
 header.site .tl a{color:var(--dim);text-decoration:none}
 header.site .tl a:hover{color:var(--mut)}
@@ -401,9 +403,11 @@ gtag('js',new Date());gtag('config','{SITE['ga']}');</script>"""
 {ga}
 {ads}
 <style>{CSS}</style>
+<style>{brand.CSS}</style>
+{brand.HEAD}
 </head><body>
 <header class="site"><div class="wrap">
-  <a class="nm" href="/">Four&nbsp;Paws</a>
+  <a class="nm" href="/">{brand.MARK}Four&nbsp;Paws</a>
   <span class="tl"><a href="blog.html">{SITE['name']}</a></span>
   <nav>
     <a href="/" data-cta="nav_saju">계산기</a><a href="/iljin/" data-cta="nav_iljin">일진</a>
