@@ -12,13 +12,21 @@
 """
 import os
 
-# 사냥터 다섯 곳 — (오행, 이름, 한자, 한 줄, 사냥감)
+# 사냥터 다섯 곳 — (오행, id, 이름, 한 줄, 사냥감)
+#
+# 2026-09-20 이름 교체. 예전 이름은 무협풍 한자어(청림곡 靑林谷 …)였는데,
+# 한자를 읽어야 뜻이 잡혀서 사주를 모르고 들어온 사람에게는 그냥 소리였다.
+# Four Paws(오행 댕댕이 키우기)에 맞춰 '색 + 장소' 네 글자로 통일했다.
+# 사냥감은 오행 + 령(靈) 으로 다섯을 한 규칙에 묶었다.
+#
+# 한자 칸은 없앴다. 카드 왼쪽에 오행 구슬(木火土金水)이 이미 붙어 있어
+# 부제에 '목(木)' 을 또 쓰면 같은 말을 두 번 하는 꼴이 된다.
 GROUNDS = [
-    ('목', 'cheongrim', '청림곡', '靑林谷', '안개가 걷히지 않는 젊은 숲',   '목령(木靈)'),
-    ('화', 'jeogyeom', '적염굴', '赤炎窟', '불씨가 꺼지지 않는 동굴',       '염수(炎獸)'),
-    ('토', 'hwangsa',  '황사령', '黃沙嶺', '바람이 모래를 쌓아 만든 고개',   '사귀(沙鬼)'),
-    ('금', 'baekcheol','백철갱', '白鐵坑', '버려진 광맥이 울리는 갱도',     '철갑충(鐵甲蟲)'),
-    ('수', 'hyeonhae', '현해연', '玄海淵', '바닥이 보이지 않는 검은 못',    '수룡(水龍)'),
+    ('목', 'nokbit',   '녹빛 언덕', '풀이 무릎까지 자란 비탈',     '목령'),
+    ('화', 'bulgeun',  '붉은 마당', '불씨가 밤새 꺼지지 않는 마당', '화령'),
+    ('토', 'hwangto',  '황토 텃밭', '파도 파도 끝이 없는 붉은 흙', '토령'),
+    ('금', 'hayan',    '하얀 골목', '쇠붙이가 발에 차이는 뒷골목', '금령'),
+    ('수', 'cheongbit','청빛 호수', '바닥이 보이지 않는 깊은 물',  '수령'),
 ]
 COL = {'목': '#4fb95f', '화': '#e8483c', '토': '#c9a227', '금': '#8e9bb0', '수': '#3f8fe0'}
 HJ  = {'목': '木', '화': '火', '토': '土', '금': '金', '수': '水'}
@@ -26,17 +34,17 @@ HJ  = {'목': '木', '화': '火', '토': '土', '금': '金', '수': '水'}
 
 def grounds_json():
     import json
-    rows = [{'el': e, 'id': i, 'nm': n, 'hj': h, 'one': o, 'prey': p,
-             'col': COL[e], 'elhj': HJ[e]} for e, i, n, h, o, p in GROUNDS]
+    rows = [{'el': e, 'id': i, 'nm': n, 'one': o, 'prey': p,
+             'col': COL[e], 'elhj': HJ[e]} for e, i, n, o, p in GROUNDS]
     return json.dumps(rows, ensure_ascii=False, separators=(',', ':'))
 
 
 def fallback():
     """자바스크립트가 못 돌 때도 읽히는 목록."""
     o = ['<ul class="flist">']
-    for e, i, n, h, one, prey in GROUNDS:
+    for e, i, n, one, prey in GROUNDS:
         o.append(f'<li><i style="background:{COL[e]}">{HJ[e]}</i>'
-                 f'<b>{n}</b><span>{h}</span><em>{one} · {prey}</em></li>')
+                 f'<b>{n}</b><span>{prey}</span><em>{one}</em></li>')
     o.append('</ul>')
     return ''.join(o)
 
@@ -510,7 +518,7 @@ function renderPick(){
             + (rel ? rel.why : '');
     html += '<button class="card'+((ts>=2&&ts===best)?' best':'')+'" data-g="'+g.id+'">'+
       '<span class="orb" style="background:'+g.col+'">'+g.elhj+'</span>'+
-      '<span><span class="t"><b>'+g.nm+'</b><span>'+g.hj+' · '+g.prey+'</span></span>'+
+      '<span><span class="t"><b>'+g.nm+'</b><span>'+g.prey+'</span></span>'+
       '<span class="one">'+g.one+'</span>'+
       (tags?'<span class="tags">'+tags+'</span>':'')+
       (why?'<span class="why">'+why+'</span>':'')+'</span></button>';
@@ -541,7 +549,7 @@ function openGround(id){
 function renderParty(){
   var g=CUR, ts=todayScore(g.el,DAY.els), rel=mineRel(MYEL,g.el);
   $('gh').innerHTML='<span class="orb" style="background:'+g.col+'">'+g.elhj+'</span>'+
-    '<span><h1>'+g.nm+'</h1><span class="hj">'+g.hj+' · '+g.prey+'</span></span>';
+    '<span><h1>'+g.nm+'</h1><span class="hj">'+g.prey+'</span></span>';
   $('gsub').textContent = g.one + ' — ' +
     (ts>0?'오늘 기운이 이곳에 실립니다.':ts<0?'오늘 기운이 이곳을 누릅니다.':'오늘 기운은 이곳과 무관합니다.') +
     (rel? ' '+rel.why : '');
