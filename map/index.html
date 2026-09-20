@@ -3,7 +3,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0d1119">
-<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20%3E%3Cpath%20fill%3D%22%23ffd93d%22%20d%3D%22M24%2025.6c7.6%200%2014%205.1%2014%2011.1%200%204.9-4.1%208.3-8.6%208.3-2.6%200-3.8-.9-5.4-.9s-2.8.9-5.4.9C14.1%2045%2010%2041.6%2010%2036.7c0-6%206.4-11.1%2014-11.1z%22%2F%3E%3Cellipse%20cx%3D%2211.06%22%20cy%3D%2221.75%22%20rx%3D%225.3%22%20ry%3D%226.5%22%20transform%3D%22rotate(-30%2011.06%2021.75)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2218.73%22%20cy%3D%2216.18%22%20rx%3D%225.8%22%20ry%3D%227.1%22%20transform%3D%22rotate(-9%2018.73%2016.18)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2229.27%22%20cy%3D%2216.18%22%20rx%3D%225.8%22%20ry%3D%227.1%22%20transform%3D%22rotate(9%2029.27%2016.18)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2236.94%22%20cy%3D%2221.75%22%20rx%3D%225.3%22%20ry%3D%226.5%22%20transform%3D%22rotate(30%2036.94%2021.75)%22%20fill%3D%22%23ffd93d%22%2F%3E%3C%2Fsvg%3E"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20%3E%3Cpath%20fill%3D%22%23ffd93d%22%20d%3D%22M24%2025.6c7.6%200%2014%205.1%2014%2011.1%200%204.9-4.1%208.3-8.6%208.3-2.6%200-3.8-.9-5.4-.9s-2.8.9-5.4.9C14.1%2045%2010%2041.6%2010%2036.7c0-6%206.4-11.1%2014-11.1z%22%2F%3E%3Cellipse%20cx%3D%2211.06%22%20cy%3D%2221.75%22%20rx%3D%225.3%22%20ry%3D%226.5%22%20transform%3D%22rotate(-30%2011.06%2021.75)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2218.73%22%20cy%3D%2216.18%22%20rx%3D%225.8%22%20ry%3D%227.1%22%20transform%3D%22rotate(-9%2018.73%2016.18)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2229.27%22%20cy%3D%2216.18%22%20rx%3D%225.8%22%20ry%3D%227.1%22%20transform%3D%22rotate(9%2029.27%2016.18)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2236.94%22%20cy%3D%2221.75%22%20rx%3D%225.3%22%20ry%3D%226.5%22%20transform%3D%22rotate(30%2036.94%2021.75)%22%20fill%3D%22%23ffd93d%22%2F%3E%3C%2Fsvg%3E"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><script src="/me.js"></script>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+            "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}
+</script>
 <meta name="color-scheme" content="dark">
 <title>지도 — Four Paws</title>
 <meta name="description" content="사주각·십간의 기록·명식의 탑·십이지 궁·연의 저울. 사주 여덟 글자로 만든 캐릭터로 돌아다니는 오행 세계의 지도입니다.">
@@ -27,7 +31,7 @@ a{color:var(--acc)}
 .bar{display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--line)}
 .bar .nm{font-weight:800;font-size:17px;color:var(--ink);text-decoration:none;
   letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
-.mk{width:24px;height:24px;flex:none;display:block}.bar .mk,.top-bar .mk{width:21px;height:21px}@media(max-width:430px){header.site nav a[href="/"],.bar nav a[href="/"],.top-bar nav a[href="/"]{display:none}header.site nav,.bar nav,.top-bar nav{gap:12px}}
+.fpchip{display:inline-flex;align-items:center;gap:5px;text-decoration:none;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:999px;padding:3px 9px 3px 3px;font-size:13px;font-weight:700;color:var(--ink)}.fpchip i{width:19px;height:19px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:800;color:#0a0f18;font-family:"Noto Serif KR",serif}@media(max-width:430px){.fpchip b{display:none}.fpchip{padding:3px}}.mk{width:24px;height:24px;flex:none;display:block}.bar .mk,.top-bar .mk{width:21px;height:21px}@media(max-width:430px){header.site nav a[href="/"],.bar nav a[href="/"],.top-bar nav a[href="/"]{display:none}header.site nav,.bar nav,.top-bar nav{gap:12px}}
 .bar .tl{font-size:12px;color:var(--dim);margin-left:-3px}
 @media(max-width:560px){.bar .tl{display:none}}
 .bar nav{margin-left:auto;display:flex;gap:14px;flex-wrap:wrap}
@@ -88,6 +92,14 @@ svg.map{display:block;width:100%}
 .hello > *{position:relative}
 .hello img{width:min(86vw,520px);height:auto;max-height:34vh;object-fit:contain;
   border-radius:14px;margin-bottom:10px}
+.hello .dog{width:min(78vw,340px);height:min(38vh,270px);margin-bottom:4px}
+.hello .dog canvas{display:block;width:100%;height:100%}
+.hello .el{display:inline-flex;align-items:center;gap:7px;margin-bottom:10px;
+  background:rgba(0,0,0,.45);border-radius:999px;padding:5px 14px 5px 5px;
+  font-size:14px;font-weight:700}
+.hello .el i{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;
+  font-style:normal;font-size:13px;font-weight:800;color:#0a0f18;
+  font-family:"Noto Serif KR",serif}
 .hello h1{font-size:clamp(22px,5.4vw,33px);margin:0;letter-spacing:-.02em;line-height:1.35;
   text-shadow:0 2px 18px rgba(0,0,0,.8)}
 .hello p{color:#b7c2d2;margin:10px 0 22px;font-size:clamp(14px,3.6vw,16px);line-height:1.7;
@@ -102,9 +114,11 @@ svg.map{display:block;width:100%}
 </head><body>
 
 <div class="hello" id="hello" style="background-image:url(img/map-bg.jpg)">
-  <img src="/ohaeng/img/og-ohaeng.png" alt="다섯 오행 캐릭터">
-  <h1>사주 여덟 글자가<br>내 캐릭터가 됩니다</h1>
-  <p>태어난 해·달·날·시각 네 기둥을 계산해서<br>목·화·토·금·수 다섯 속성 중 하나를 찾아 드립니다.</p>
+  <!-- 캐릭터가 있으면 여기에 그 개가 서 있고, 없으면 아래 안내가 나온다 -->
+  <div class="dog" id="dog" hidden></div>
+  <img id="hello-img" src="/ohaeng/img/og-ohaeng.png" alt="다섯 오행 캐릭터">
+  <h1 id="hello-h">사주 여덟 글자가<br>내 캐릭터가 됩니다</h1>
+  <p id="hello-p">태어난 해·달·날·시각 네 기둥을 계산해서<br>목·화·토·금·수 다섯 속성 중 하나를 찾아 드립니다.</p>
   <button id="start">시작하기</button>
   <button class="skip" id="skip">바로 지도 보기</button>
 </div>
@@ -112,7 +126,7 @@ svg.map{display:block;width:100%}
 <div class="bar">
   <a class="nm" href="/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="mk" aria-hidden="true"><path fill="#ffd93d" d="M24 25.6c7.6 0 14 5.1 14 11.1 0 4.9-4.1 8.3-8.6 8.3-2.6 0-3.8-.9-5.4-.9s-2.8.9-5.4.9C14.1 45 10 41.6 10 36.7c0-6 6.4-11.1 14-11.1z"/><ellipse cx="11.06" cy="21.75" rx="5.3" ry="6.5" transform="rotate(-30 11.06 21.75)" fill="#4fb95f"/><ellipse cx="18.73" cy="16.18" rx="5.8" ry="7.1" transform="rotate(-9 18.73 16.18)" fill="#e8483c"/><ellipse cx="29.27" cy="16.18" rx="5.8" ry="7.1" transform="rotate(9 29.27 16.18)" fill="#8e9bb0"/><ellipse cx="36.94" cy="21.75" rx="5.3" ry="6.5" transform="rotate(30 36.94 21.75)" fill="#3f8fe0"/></svg>Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
   <nav><a href="/">계산기</a><a href="/iljin/">일진</a>
-       <a class="hl" href="/hunt/">사냥터</a><a href="/ohaeng/">글</a></nav>
+       <a class="hl" href="/hunt/">사냥터</a><a href="/ohaeng/">글</a><span data-fp-chip></span></nav>
 </div>
 
 <div class="mapwrap" id="mapwrap">
@@ -128,12 +142,35 @@ svg.map{display:block;width:100%}
 <script>
 (function(){
 var $=function(i){return document.getElementById(i)};
+function COLOF(el){ for(var i=0;i<SPOTS.length;i++) if(SPOTS[i].el===el) return SPOTS[i].col;
+  return ({목:'#6fd07d',화:'#f2634f',토:'#ffd93d',금:'#b3c0d2',수:'#5aa6ee'})[el]||'#8e9bb0'; }
 var SPOTS=[{"id":"sajugak","nm":"사주각","el":"토","img":"to","k":1.0,"one":"생년월일시를 넣으면 내 오행 캐릭터가 나옵니다","lock":false,"col":"#ffd93d","hj":"土"},{"id":"jeondang","nm":"십간의 기록","el":"수","img":"su","k":0.7,"one":"사주를 계산해서 쓴 글을 읽습니다","lock":false,"col":"#5aa6ee","hj":"水"},{"id":"gung","nm":"십이지 궁","el":"화","img":"hwa","k":0.7,"one":"친구 넷과 함께 오행 사냥터로 들어갑니다","lock":false,"col":"#f2634f","hj":"火"},{"id":"jeoul","nm":"연의 저울","el":"목","img":"mok","k":0.7,"one":"내 조건으로 만날 수 있는 이성의 조건을 봅니다","lock":false,"col":"#6fd07d","hj":"木"},{"id":"tap","nm":"명식의 탑","el":"금","img":"geum","k":0.7,"one":"사냥터에서 올린 기록으로 순위를 봅니다","lock":true,"col":"#b3c0d2","hj":"金"}], ROADS=[["sajugak","jeondang"],["sajugak","tap"],["jeondang","gung"],["tap","jeoul"]], POS={"wide":{"sajugak":[0.5,0.645],"jeondang":[0.152,0.484],"gung":[0.322,0.2],"jeoul":[0.678,0.2],"tap":[0.848,0.484]},"tall":{"sajugak":[0.5,0.815],"jeondang":[0.215,0.6],"tap":[0.785,0.6],"gung":[0.278,0.315],"jeoul":[0.722,0.315]}};
 var NS='http://www.w3.org/2000/svg';
 
-// ── 환영 화면은 처음 온 사람에게만 ──
+// ── 들어서는 화면 ──
+// 캐릭터가 있으면 **그 개가 가운데 서 있는 화면**으로 맞이한다.
+// 홈에서 막 만들고 넘어온 사람(?new=1)에게는 늘 보여 준다.
 var seen=null; try{ seen=localStorage.getItem('ohaeng_seen') }catch(e){}
-if(seen) $('hello').hidden=true;
+var fresh=/[?&]new=1/.test(location.search);
+var MYEL=(window.FP&&FP.el())||null;
+
+if(MYEL){
+  var HJ={목:'木',화:'火',토:'土',금:'金',수:'水'};
+  var SAY={목:'뻗어 나가는 성질입니다.',화:'퍼지는 성질입니다.',토:'품는 성질입니다.',
+           금:'가르는 성질입니다.',수:'스미는 성질입니다.'};
+  $('hello-img').hidden=true;
+  $('dog').hidden=false;
+  $('hello-h').innerHTML='<span class="el"><i style="background:'+COLOF(MYEL)+'">'+
+    HJ[MYEL]+'</i>'+MYEL+' 속성</span><br>내 캐릭터가 준비됐습니다';
+  $('hello-p').textContent=SAY[MYEL]+' 지도에서 사냥터·일진·글로 갑니다.';
+  $('start').textContent='지도 보기';
+  $('skip').hidden=true;
+  import('/3d/profile3d.js').then(function(m){
+    return m.showDog({mount:$('dog'), base:'/3d/', el:MYEL});
+  }).catch(function(){ $('dog').hidden=true; $('hello-img').hidden=false; });
+}
+if(seen && !fresh && !MYEL) $('hello').hidden=true;
+if(seen && !fresh && MYEL) $('hello').hidden=true;
 function enter(){ $('hello').hidden=true;
   try{ localStorage.setItem('ohaeng_seen','1') }catch(e){}
   if(window.gtag) gtag('event','map_enter',{first: !seen});
@@ -283,6 +320,19 @@ function redraw(){ clearTimeout(t); t=setTimeout(draw, 120) }
 window.addEventListener('resize', redraw);
 window.addEventListener('orientationchange', redraw);
 if(window.ResizeObserver) new ResizeObserver(redraw).observe(wrap);
+
+/* 사주각은 프로필 건물이다. 캐릭터가 있으면 '만들기' 가 아니라
+   '내 캐릭터' 로 바뀌고, 오행 수정도 여기서 한다. */
+(function(){
+  if(!MYEL) return;
+  var p=$('p-sajugak'); if(!p) return;
+  var one=p.querySelector('.one'), a=p.querySelector('.enter');
+  if(one) one.innerHTML='내 캐릭터는 <b>'+MYEL+' 속성</b>입니다';
+  if(a){ a.textContent='내 캐릭터 보기 →'; a.setAttribute('href','/'); }
+  var ds=p.querySelector('.ds');
+  if(ds) ds.insertAdjacentHTML('afterend',
+    '<p class="ds" style="margin-top:-8px"><a href="/?edit=1" data-cta="edit_el">오행 다시 계산하기</a></p>');
+})();
 
 var f=$('flist'); if(f) f.parentNode.removeChild(f);   // 지도가 그려지니 목록은 뺀다
 draw();

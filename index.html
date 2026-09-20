@@ -3,7 +3,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0d1119">
-<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20%3E%3Cpath%20fill%3D%22%23ffd93d%22%20d%3D%22M24%2025.6c7.6%200%2014%205.1%2014%2011.1%200%204.9-4.1%208.3-8.6%208.3-2.6%200-3.8-.9-5.4-.9s-2.8.9-5.4.9C14.1%2045%2010%2041.6%2010%2036.7c0-6%206.4-11.1%2014-11.1z%22%2F%3E%3Cellipse%20cx%3D%2211.06%22%20cy%3D%2221.75%22%20rx%3D%225.3%22%20ry%3D%226.5%22%20transform%3D%22rotate(-30%2011.06%2021.75)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2218.73%22%20cy%3D%2216.18%22%20rx%3D%225.8%22%20ry%3D%227.1%22%20transform%3D%22rotate(-9%2018.73%2016.18)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2229.27%22%20cy%3D%2216.18%22%20rx%3D%225.8%22%20ry%3D%227.1%22%20transform%3D%22rotate(9%2029.27%2016.18)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2236.94%22%20cy%3D%2221.75%22%20rx%3D%225.3%22%20ry%3D%226.5%22%20transform%3D%22rotate(30%2036.94%2021.75)%22%20fill%3D%22%23ffd93d%22%2F%3E%3C%2Fsvg%3E"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20%3E%3Cpath%20fill%3D%22%23ffd93d%22%20d%3D%22M24%2025.6c7.6%200%2014%205.1%2014%2011.1%200%204.9-4.1%208.3-8.6%208.3-2.6%200-3.8-.9-5.4-.9s-2.8.9-5.4.9C14.1%2045%2010%2041.6%2010%2036.7c0-6%206.4-11.1%2014-11.1z%22%2F%3E%3Cellipse%20cx%3D%2211.06%22%20cy%3D%2221.75%22%20rx%3D%225.3%22%20ry%3D%226.5%22%20transform%3D%22rotate(-30%2011.06%2021.75)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2218.73%22%20cy%3D%2216.18%22%20rx%3D%225.8%22%20ry%3D%227.1%22%20transform%3D%22rotate(-9%2018.73%2016.18)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2229.27%22%20cy%3D%2216.18%22%20rx%3D%225.8%22%20ry%3D%227.1%22%20transform%3D%22rotate(9%2029.27%2016.18)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2236.94%22%20cy%3D%2221.75%22%20rx%3D%225.3%22%20ry%3D%226.5%22%20transform%3D%22rotate(30%2036.94%2021.75)%22%20fill%3D%22%23ffd93d%22%2F%3E%3C%2Fsvg%3E"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><script src="/me.js"></script>
 <meta name="color-scheme" content="dark">
 <title>사주 오행 계산기 — 생년월일로 만드는 내 오행 캐릭터 | Four Paws</title>
 <meta name="description" content="생년월일시를 넣으면 사주 여덟 글자와 오행 비율, 내 대표 속성과 부족한 오행을 계산해 보여 줍니다. 만세력을 직접 계산합니다.">
@@ -40,7 +40,7 @@ header.site{border-bottom:1px solid var(--line);padding:16px 0}
 header.site .wrap{display:flex;align-items:center;gap:14px}
 header.site .nm{font-weight:800;font-size:19px;color:var(--ink);text-decoration:none;
   letter-spacing:-.02em;display:flex;align-items:center;gap:9px}
-.mk{width:24px;height:24px;flex:none;display:block}.bar .mk,.top-bar .mk{width:21px;height:21px}@media(max-width:430px){header.site nav a[href="/"],.bar nav a[href="/"],.top-bar nav a[href="/"]{display:none}header.site nav,.bar nav,.top-bar nav{gap:12px}}
+.fpchip{display:inline-flex;align-items:center;gap:5px;text-decoration:none;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:999px;padding:3px 9px 3px 3px;font-size:13px;font-weight:700;color:var(--ink)}.fpchip i{width:19px;height:19px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:800;color:#0a0f18;font-family:"Noto Serif KR",serif}@media(max-width:430px){.fpchip b{display:none}.fpchip{padding:3px}}.mk{width:24px;height:24px;flex:none;display:block}.bar .mk,.top-bar .mk{width:21px;height:21px}@media(max-width:430px){header.site nav a[href="/"],.bar nav a[href="/"],.top-bar nav a[href="/"]{display:none}header.site nav,.bar nav,.top-bar nav{gap:12px}}
 header.site .tl{font-size:12.5px;color:var(--dim);margin-left:-4px}
 header.site nav{margin-left:auto;display:flex;gap:16px;flex-wrap:wrap}
 header.site nav a{font-size:14.5px;color:var(--mut);text-decoration:none}
@@ -140,6 +140,18 @@ footer.site{margin-top:60px;border-top:1px solid var(--line);padding:24px 0 40px
   font-size:13px;color:var(--dim)}
 footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 @media(max-width:560px){header.site .tl{display:none}}
+.mine2{margin:26px 0 8px;padding:20px 20px 18px;border-radius:16px;
+  border:1px solid rgba(255,217,61,.4);background:rgba(255,217,61,.07)}
+.mine2 .mw{display:flex;align-items:center;gap:16px}
+.mine2 .orb2{width:62px;height:62px;border-radius:50%;flex:none;display:grid;place-items:center;
+  font-size:27px;font-weight:800;color:#0a0f18;font-family:"Noto Serif KR",serif}
+.mine2 .k{font-size:12px;font-weight:700;color:var(--to);letter-spacing:.2px}
+.mine2 .t{font-size:21px;font-weight:800;letter-spacing:-.02em;margin:3px 0 4px}
+.mine2 .d{font-size:13.5px;color:var(--mut);line-height:1.6}
+.mine2 .mgo{display:block;margin-top:16px;padding:14px;border-radius:12px;background:var(--to);
+  color:#191600;font-weight:800;font-size:16px;text-align:center;text-decoration:none}
+.mine2 .medit{display:block;margin:10px auto 0;background:0;border:0;color:var(--dim);
+  font:inherit;font-size:12.5px;cursor:pointer;text-decoration:underline;padding:4px}
 @media(max-width:430px){
   .hero h1{font-size:26px}
   .cell .hj{font-size:23px}
@@ -152,17 +164,32 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 <header class="site"><div class="wrap">
   <a class="nm" href="/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="mk" aria-hidden="true"><path fill="#ffd93d" d="M24 25.6c7.6 0 14 5.1 14 11.1 0 4.9-4.1 8.3-8.6 8.3-2.6 0-3.8-.9-5.4-.9s-2.8.9-5.4.9C14.1 45 10 41.6 10 36.7c0-6 6.4-11.1 14-11.1z"/><ellipse cx="11.06" cy="21.75" rx="5.3" ry="6.5" transform="rotate(-30 11.06 21.75)" fill="#4fb95f"/><ellipse cx="18.73" cy="16.18" rx="5.8" ry="7.1" transform="rotate(-9 18.73 16.18)" fill="#e8483c"/><ellipse cx="29.27" cy="16.18" rx="5.8" ry="7.1" transform="rotate(9 29.27 16.18)" fill="#8e9bb0"/><ellipse cx="36.94" cy="21.75" rx="5.3" ry="6.5" transform="rotate(30 36.94 21.75)" fill="#3f8fe0"/></svg>Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
   <nav><a href="/iljin/">일진</a><a href="/map/">지도</a>
-       <a class="hl" href="/hunt/">사냥터</a><a href="/ohaeng/">글</a></nav>
+       <a class="hl" href="/hunt/">사냥터</a><a href="/ohaeng/">글</a><span data-fp-chip></span></nav>
 </div></header>
 
 <main class="wrap">
 
-<section class="hero">
+<!-- 이미 캐릭터가 있으면 이것이 먼저 뜨고, 아래 계산기는 접힌다.
+     같은 사람에게 같은 걸 두 번 물어보지 않는다. -->
+<section class="mine2" id="mine2" hidden>
+  <div class="mw">
+    <div class="orb2" id="m2-orb"></div>
+    <div class="mt">
+      <div class="k">내 캐릭터</div>
+      <div class="t" id="m2-t"></div>
+      <div class="d" id="m2-d"></div>
+    </div>
+  </div>
+  <a class="mgo" href="/map/?new=1" data-cta="mine_map">지도로 들어가기</a>
+  <button class="medit" id="m2-edit">오행 다시 계산</button>
+</section>
+
+<section class="hero" id="hero">
   <h1>생년월일로 만드는<br>내 오행 캐릭터</h1>
   <p>사주 여덟 글자를 직접 계산해서, 내 오행이 어디에 몰려 있고 무엇이 비어 있는지 보여 드립니다.</p>
 </section>
 
-<section class="tool">
+<section class="tool" id="tool">
   <div class="lab">태어난 날</div>
   <div class="frow">
     <label class="f"><span>연도</span><input type="number" id="y" min="1900" max="2100" value="1995" inputmode="numeric"></label>
@@ -194,10 +221,10 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 
     <div id="notes"></div>
 
-    <a class="hcta" href="/hunt/" data-cta="result_hunt">
-      <span class="k">이 캐릭터로 이어서</span>
-      <span class="t">오행 사냥터 들어가기</span>
-      <span class="d">사냥터 다섯 곳 중 한 곳을 고르고, 친구를 불러 최대 다섯이 함께 들어갑니다. 혼자서도 됩니다.</span>
+    <a class="hcta" href="/map/?new=1" data-cta="result_map">
+      <span class="k">캐릭터가 만들어졌습니다</span>
+      <span class="t">지도로 들어가기</span>
+      <span class="d">사냥터·일진·글은 전부 지도에서 갑니다. 이 캐릭터가 그대로 따라갑니다.</span>
     </a>
 
     <div class="cad">
@@ -214,30 +241,6 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
   <a class="card" href="/ohaeng/useh-ohaeng-to.html" data-cta="post"><img src="/ohaeng/img/useh-ohaeng-to-우세오행분포.png" alt="" loading="lazy" width="112" height="72"><div><div class="t">가장 흔한 오행은 토(土) 35.9% — 2위와 두 배 차이</div><div class="d">26만 건을 전수 계산해 우세 오행 분포를 냈습니다. 토가 35.9%로 1위였고, 계산을 처음 돌렸을 때는 55%가 나왔습니다. 그 차이가 왜 생겼는지까지 적었습니다.</div><div class="m">2026-09-20</div></div></a><a class="card" href="/ohaeng/ki-yeonbong.html" data-cta="post"><img src="/ohaeng/img/ki-yeonbong.png" alt="" loading="lazy" width="112" height="72"><div><div class="t">키 10cm는 연봉 두 칸 — 제 계산기를 제가 뜯어봤습니다</div><div class="d">이성 조건 계산기의 점수표를 직접 계산해 키와 연봉의 교환비를 뽑았습니다. 그리고 평균 이상은 아무 보상이 없다는 것도 같이 나왔습니다.</div><div class="m">2026-09-19</div></div></a><a class="card" href="/ohaeng/buljokhan-ohaeng.html" data-cta="post"><img src="/ohaeng/img/choeyak-ohaeng-분포.png" alt="" loading="lazy" width="112" height="72"><div><div class="t">사주에 부족한 오행, 나는 어느 방향일까 — 10명 중 7명은 하나가 비어 있습니다</div><div class="d">262,980건을 계산했더니 69.5%는 오행 다섯 중 하나가 아예 0%였습니다. 생년월일만 넣으면 내 약한 오행과 방향이 바로 나옵니다.</div><div class="m">2026-09-18</div></div></a><a class="card" href="/ohaeng/taeeonan-sigak.html" data-cta="post"><img src="/ohaeng/img/sigak-yeonghyang.png" alt="" loading="lazy" width="112" height="72"><div><div class="t">태어난 시간 확인하는 3가지 방법 — 모르면 사주가 72.6% 달라집니다</div><div class="d">출생신고서·병원 기록·기억으로 태어난 시각을 찾는 방법을 정리했습니다. 21,915일을 전부 계산해 보니 같은 날이라도 시각에 따라 72.6%는 우세 오행이 바뀌었습니다.</div><div class="m">2026-09-18</div></div></a>
 </section>
 
-<section class="sec">
-  <div class="h"><h2>그 밖에</h2></div>
-  <a class="tile" href="/iljin/" data-cta="iljin">
-    <span class="k">매일 바뀝니다</span>
-    <span class="t">오늘의 일진</span>
-    <span class="d">오늘이 60갑자 중 어느 날인지, 그 기운이 내 오행과 맞는지 &rarr;</span>
-  </a>
-  <a class="tile" href="/hunt/" data-cta="hunt">
-    <span class="k">카카오 로그인</span>
-    <span class="t">오행 사냥터</span>
-    <span class="d">오늘의 기운과 내 사주로 유리한 사냥터를 고르고, 친구를 불러 파티를 짭니다 &rarr;</span>
-  </a>
-  <a class="tile map" href="/map/" data-cta="map">
-    <span class="k">지도</span>
-    <span class="t">오행 세계 둘러보기</span>
-    <span class="d">사주각 &middot; 십간의 기록 &middot; 명식의 탑 &middot; 십이지 궁 &middot; 연의 저울 &mdash;
-      다섯 건물을 눌러 보세요 &rarr;</span>
-  </a>
-  <a class="tile" href="/love/" data-cta="love">
-    <span class="k">계산기</span>
-    <span class="t">이성 조건 계산기</span>
-    <span class="d">나이·연봉·자산·학력·외모·신체 여섯 항목으로 만날 수 있는 이성 조건을 계산합니다 &rarr;</span>
-  </a>
-</section>
 
 </main>
 
@@ -361,6 +364,10 @@ $('go').addEventListener('click', function(){
   }
   $('notes').innerHTML=notes;
 
+  /* ★ 만든 캐릭터를 사이트 전체가 쓰는 자리에 저장한다.
+     여기서 저장하지 않아서, 홈으로 돌아오거나 사냥터에 가면 같은 걸 또 물어봤다. */
+  if(window.FP) FP.set({el:dom, tied:tied, top:top, ratio:er, timeKnown:r.timeKnown});
+
   $('out').hidden=false;
   try{
     (adsbygoogle=window.adsbygoogle||[]).push({});
@@ -369,6 +376,32 @@ $('go').addEventListener('click', function(){
     {dominant:tied.join(''), time_known:r.timeKnown, empty:empty.join('')||'none'});
   $('out').scrollIntoView({behavior:'smooth', block:'start'});
 });
+
+/* 이미 캐릭터가 있으면 계산기를 접고 '내 캐릭터' 카드를 먼저 보여 준다.
+   ?edit=1 로 들어오면(프로필의 '오행 수정') 곧바로 계산기를 편다. */
+(function(){
+  var SAY2={목:'뻗어 나가는 성질입니다.',화:'퍼지는 성질입니다.',토:'품는 성질입니다.',
+            금:'가르는 성질입니다.',수:'스미는 성질입니다.'};
+  function showMine(){
+    if(!window.FP) return;
+    var me=FP.get();
+    var edit=/[?&]edit=1/.test(location.search);
+    if(!me || edit){ $('mine2').hidden=true; return; }
+    $('m2-orb').textContent=FP.HJ[me.el]||'?';
+    $('m2-orb').style.background=FP.COL[me.el]||'#8e9bb0';
+    $('m2-t').textContent=me.el+' 속성'+(me.top?' ('+me.top+'%)':'');
+    $('m2-d').textContent=(SAY2[me.el]||'')+' 지도·사냥터·일진이 이 캐릭터로 이어집니다.';
+    $('mine2').hidden=false;
+    $('hero').hidden=true;
+    $('tool').hidden=true;
+  }
+  $('m2-edit').addEventListener('click', function(){
+    $('mine2').hidden=true; $('hero').hidden=false; $('tool').hidden=false;
+    $('tool').scrollIntoView({behavior:'smooth', block:'start'});
+  });
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', showMine);
+  else showMine();
+})();
 
 document.addEventListener('click', function(e){
   var a=e.target.closest ? e.target.closest('[data-cta]') : null;
