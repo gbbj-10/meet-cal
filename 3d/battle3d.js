@@ -34,6 +34,11 @@ function load(base, name, dracoPath) {
     getLoader(base, dracoPath).load(name + '.glb', g => { cache[name] = g; res(g); }, undefined, rej));
 }
 
+function eachMat(mesh, fn) {
+  const m = mesh.material;
+  if (Array.isArray(m)) m.forEach(fn); else fn(m);
+}
+
 /* 화면 밖에서 흐르는 시간에 맞춰 도는 간단한 트윈 */
 function mkTween() {
   const all = [];
@@ -120,7 +125,19 @@ export async function runBattle(o) {
     const mx = new THREE.AnimationMixer(root);
     const clip = {};
     g.animations.forEach(a => { clip[a.name] = mx.clipAction(a); });
-    const meshes = []; root.traverse(m => { if (m.isMesh) { meshes.push(m); m.frustumCulled = false; } });
+    /* ★ 재질은 반드시 이 유닛만의 것으로 복제한다.
+       SkeletonUtils.clone 은 뼈와 메시는 복제해도 **재질은 원본과 공유**한다.
+       쓰러질 때 낮춘 opacity 와 피격 때 올린 emissive 가 캐시된 원본에 남아,
+       두 번째 판부터 처음부터 반투명한 개가 나왔다. (2026-09-20) */
+    const meshes = [];
+    root.traverse(m => {
+      if (!m.isMesh) return;
+      m.material = Array.isArray(m.material) ? m.material.map(x => x.clone()) : m.material.clone();
+      const mm = Array.isArray(m.material) ? m.material : [m.material];
+      mm.forEach(x => { x.transparent = false; x.opacity = 1; if (x.emissive) x.emissive.setScalar(0); });
+      m.frustumCulled = false;
+      meshes.push(m);
+    });
 
     /* 발밑 그림자 — 바닥에 붙어 있어야 공중에 뜬 것처럼 안 보인다 */
     const sh = new THREE.Mesh(new THREE.CircleGeometry(0.42, 24),
@@ -192,18 +209,25 @@ export async function runBattle(o) {
     shake = Math.max(shake, kind === 'big' ? 0.16 : 0.08);
     zoom = Math.max(zoom, kind === 'big' ? 0.5 : 0.24);
   }
+  /* 달려드는 거리는 **상대까지의 실제 거리**에서 정한다. 고정값(0.7)을 쓰던 동안에는
+     서로 3m 쯤 떨어진 채 허공을 때렸다. 코앞(CONTACT)까지 파고들었다가 돌아온다. */
+  const CONTACT = 1.15;
   function lunge(u, target, kind, onLand) {
-    const dir = new THREE.Vector3().subVectors(target.holder.position, u.holder.position).setY(0).normalize();
-    const back = -0.16, push = kind === 'big' ? 0.95 : 0.72;
-    once(u, 'attack', 0.72);
+    const away = new THREE.Vector3().subVectors(target.holder.position, u.holder.position).setY(0);
+    const dist = away.length();
+    const dir = away.normalize();
+    const back = -0.18;
+    const push = Math.max(0.35, dist - CONTACT) * (kind === 'big' ? 1.04 : 0.96);
+    once(u, 'attack', 0.78 + Math.min(0.5, push * 0.14));
     TW.add(0, back, 0.16, 'out', v => u.wob.position.set(dir.x * v, 0, dir.z * v), () => {
-      TW.add(back, push, 0.15, 'in', v => {
+      const run = Math.min(0.34, 0.1 + push * 0.075);
+      TW.add(back, push, run, 'in', v => {
         u.wob.position.set(dir.x * v, 0, dir.z * v);
         const p = (v - back) / (push - back);
-        u.wob.position.y = Math.sin(Math.max(0, p) * Math.PI) * 0.26;
+        u.wob.position.y = Math.sin(Math.max(0, p) * Math.PI) * 0.3;
       }, () => {
         onLand();
-        TW.add(push, 0, 0.3, 'out', v => u.wob.position.set(dir.x * v, 0, dir.z * v));
+        TW.add(push, 0, run + 0.14, 'out', v => u.wob.position.set(dir.x * v, 0, dir.z * v));
       });
     });
   }
@@ -243,18 +267,18 @@ export async function runBattle(o) {
       const v = mates[a.i]; if (!v) return next();
       if (onCaption) onCaption(a.text);
       v.alive = false; once(v, 'death', 0.95, true);
-      TW.add(0, 1, 1.2, 'in', p => v.meshes.forEach(m => {
-        m.material.transparent = true; m.material.opacity = 1 - p * 0.92;
-      }));
+      TW.add(0, 1, 1.2, 'in', p => v.meshes.forEach(m => eachMat(m, x => {
+        x.transparent = true; x.opacity = 1 - p * 0.92;
+      })));
       wait = 900;
     }
     else if (a.t === 'end') {
       if (onCaption) onCaption(a.text);
       if (a.win) {
         boss.alive = false; once(boss, 'death', 1.1, true);
-        TW.add(0, 1, 1.3, 'in', p => boss.meshes.forEach(m => {
-          m.material.transparent = true; m.material.opacity = 1 - p * 0.95;
-        }));
+        TW.add(0, 1, 1.3, 'in', p => boss.meshes.forEach(m => eachMat(m, x => {
+          x.transparent = true; x.opacity = 1 - p * 0.95;
+        })));
       }
       wait = 1500;
     }
@@ -275,7 +299,7 @@ export async function runBattle(o) {
       if (u.flash > 0) {
         u.flash -= dt;
         const k = Math.max(0, u.flash) * 7;
-        u.meshes.forEach(m => { if (m.material.emissive) m.material.emissive.setScalar(k); });
+        u.meshes.forEach(m => eachMat(m, x => { if (x.emissive) x.emissive.setScalar(k); }));
       }
     });
     shake = Math.max(0, shake - dt * 1.6);
