@@ -30,7 +30,7 @@ KAKAO_JS_KEY = '60b71fcf9ec72aad11e6f5d62358c8db'
 #                   'Publishable and secret API keys' 탭의 Publishable key
 #                   (sb_publishable_... 로 시작. 브라우저에 넣어도 되는 공개 키)
 #  ⚠️ Secret key(sb_secret_...) 는 절대 넣지 않습니다. RLS 를 무시합니다.
-SUPABASE = ('', '')
+SUPABASE = ('https://femyilypnjebpkiysqxm.supabase.co', 'sb_publishable_1QqOc0LpTC0pPCpm3CjqPg_hCTuEQHq')
 
 OUT  = os.path.join(B.ROOT, 'deploy')
 SITE = os.path.join(OUT, 'ohaeng')
