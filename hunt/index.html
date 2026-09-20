@@ -4,6 +4,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0d1119">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20%3E%3Cpath%20fill%3D%22%23ffd93d%22%20d%3D%22M24%2025.6c7.6%200%2014%205.1%2014%2011.1%200%204.9-4.1%208.3-8.6%208.3-2.6%200-3.8-.9-5.4-.9s-2.8.9-5.4.9C14.1%2045%2010%2041.6%2010%2036.7c0-6%206.4-11.1%2014-11.1z%22%2F%3E%3Cellipse%20cx%3D%2211.06%22%20cy%3D%2221.75%22%20rx%3D%225.3%22%20ry%3D%226.5%22%20transform%3D%22rotate(-30%2011.06%2021.75)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2218.73%22%20cy%3D%2216.18%22%20rx%3D%225.8%22%20ry%3D%227.1%22%20transform%3D%22rotate(-9%2018.73%2016.18)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2229.27%22%20cy%3D%2216.18%22%20rx%3D%225.8%22%20ry%3D%227.1%22%20transform%3D%22rotate(9%2029.27%2016.18)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2236.94%22%20cy%3D%2221.75%22%20rx%3D%225.3%22%20ry%3D%226.5%22%20transform%3D%22rotate(30%2036.94%2021.75)%22%20fill%3D%22%23ffd93d%22%2F%3E%3C%2Fsvg%3E"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<!-- 전투 화면(three.js)용. 모듈 스크립트보다 먼저 와야 한다. -->
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+            "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}
+</script>
 <meta name="color-scheme" content="dark">
 <meta name="robots" content="noindex,nofollow">
 <title>사냥터 — Four Paws</title>
@@ -137,6 +142,13 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mate.down{opacity:.38}
 .mate.down .n2:after{content:" 쓰러짐";color:#e8483c;font-weight:600}
+.stage{margin-top:14px;border-radius:14px;overflow:hidden;background:#0b0f17;
+  border:1px solid var(--line);min-height:150px;position:relative}
+.stage canvas{display:block;width:100%;height:auto}
+.load{position:absolute;inset:0;display:grid;place-items:center;font-size:13px;color:var(--dim)}
+.cap{margin:11px 2px 0;font-size:14px;line-height:1.6;color:var(--ink);min-height:44px}
+.lgtoggle{margin-top:14px;background:0;border:0;color:var(--mut);font:inherit;font-size:13px;
+  cursor:pointer;padding:6px 0;text-decoration:underline}
 .log{background:#0c111b;border:1px solid var(--line);border-radius:12px;padding:13px 15px;
   margin-top:16px;min-height:190px;max-height:290px;overflow-y:auto;font-size:13.5px;line-height:1.85}
 .log p{margin:0 0 3px;color:var(--mut)}
@@ -245,9 +257,12 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
   <section class="view" id="v-battle">
     <div class="foe" id="foe"></div>
     <div class="hp"><i id="foe-hp" style="width:100%"></i></div>
+    <div class="stage" id="stage"><div class="load" id="load">사냥터를 그리는 중…</div></div>
+    <p class="cap" id="cap"></p>
     <div class="team" id="team"></div>
-    <div class="log" id="log"></div>
     <div id="res"></div>
+    <button class="lgtoggle" id="lgtoggle" hidden>기록 보기</button>
+    <div class="log" id="log" hidden></div>
   </section>
 
 </div>
@@ -470,8 +485,10 @@ function buildFight(){
   var foe={nm:g.prey, el:gEl, hp:0, max:0, atk:13+n*2};
   foe.max=foe.hp=110+n*95;
 
-  var L=[], turn=0, bonus=1+syn.bonus/200;
-  function push(t,k){ L.push({t:t,k:k||''}) }
+  /* L = 사람이 읽는 기록, A = 3D 가 연기할 대본. 둘은 같은 사건을 두 가지로 적은 것이다. */
+  var L=[], A=[], turn=0, bonus=1+syn.bonus/200;
+  function push(t,k){ L.push({t:t,k:k||''}); return L[L.length-1]; }
+  function act(o){ A.push(o); }
 
   push(g.nm+'에 들어섰습니다. '+jn(foe.nm,['이','가'])+' 기다리고 있습니다.','big');
   if(syn.pairs) push('파티의 기운이 서로를 살립니다. 상생 '+syn.pairs+'쌍.','hit');
@@ -480,14 +497,16 @@ function buildFight(){
   while(foe.hp>0 && team.some(function(t){return !t.down}) && turn<24){
     turn++;
     push('— '+turn+'번째 겨룸','turn');
+    act({t:'turn', text:'— '+turn+'번째 겨룸'});
     for(var i=0;i<team.length && foe.hp>0;i++){
       var t=team[i]; if(t.down) continue;
       var r=strike(t.el, foe.el);
       var dmg=Math.max(3, Math.round(t.atk*r.m*bonus*(0.88+Math.random()*0.24)));
       foe.hp=Math.max(0, foe.hp-dmg);
-      push(t.nick+'의 '+J(t.el,'i')+' '+jn(foe.nm,['을','를'])+' 칩니다'+(r.s?' — '+r.s:'')+
-           ' (−'+dmg+')', r.k);
+      var line=t.nick+'의 '+J(t.el,'i')+' '+jn(foe.nm,['을','를'])+' 칩니다'+(r.s?' — '+r.s:'');
+      push(line+' (−'+dmg+')', r.k);
       L[L.length-1].foe=foe.hp/foe.max;
+      act({t:'hit', by:i, dmg:dmg, kind:(r.m>=1.5?'big':''), foeHp:foe.hp/foe.max, text:line});
     }
     if(foe.hp<=0) break;
     var alive=team.filter(function(t){return !t.down});
@@ -495,17 +514,24 @@ function buildFight(){
     var r2=strike(foe.el, v.el);
     var d2=Math.max(2, Math.round(foe.atk*r2.m*(0.85+Math.random()*0.3)));
     v.hp=Math.max(0, v.hp-d2);
-    push(jn(foe.nm,['이','가'])+' '+jn(v.nick,['을','를'])+' 덮칩니다'+
-         (r2.m>1.3?' — 눌립니다':'')+' (−'+d2+')', r2.m>1.3?'bad':'');
+    var line2=jn(foe.nm,['이','가'])+' '+jn(v.nick,['을','를'])+' 덮칩니다'+
+              (r2.m>1.3?' — 눌립니다':'');
+    push(line2+' (−'+d2+')', r2.m>1.3?'bad':'');
     L[L.length-1].team=team.map(function(t){return {hp:t.hp/t.max, down:t.down}});
-    if(v.hp<=0){ v.down=true; push(jn(v.nick,['이','가'])+' 쓰러졌습니다.','bad');
-      L[L.length-1].team=team.map(function(t){return {hp:t.hp/t.max, down:t.down}}); }
+    act({t:'foehit', to:team.indexOf(v), dmg:d2, kind:(r2.m>1.3?'big':''),
+         hp:team.map(function(t){return t.hp/t.max}), text:line2});
+    if(v.hp<=0){ v.down=true;
+      var line3=jn(v.nick,['이','가'])+' 쓰러졌습니다.';
+      push(line3,'bad');
+      L[L.length-1].team=team.map(function(t){return {hp:t.hp/t.max, down:t.down}});
+      act({t:'down', i:team.indexOf(v), text:line3}); }
   }
 
   var win=foe.hp<=0;
   var standing=team.filter(function(t){return !t.down}).length;
-  push(win ? jn(foe.nm,['이','가'])+' 물러갑니다.' : '더는 버틸 수 없습니다. 물러납니다.',
-       win?'big':'bad');
+  var endLine = win ? jn(foe.nm,['이','가'])+' 물러갑니다.' : '더는 버틸 수 없습니다. 물러납니다.';
+  push(endLine, win?'big':'bad');
+  act({t:'end', win:win, text:endLine});
 
   /* 왜 이렇게 됐는지 한 줄 — 관계가 결과를 갈랐다는 걸 읽히게 */
   var rel=mineRel(MYEL,gEl), why;
@@ -516,7 +542,7 @@ function buildFight(){
   else if(n===1)                  why='혼자서는 무리였습니다. 친구를 부르면 달라집니다.';
   else                            why='기운이 맞지 않았습니다. 다른 사냥터가 나을 수 있습니다.';
 
-  return {log:L, win:win, turns:turn, standing:standing, total:n, why:why,
+  return {log:L, acts:A, win:win, turns:turn, standing:standing, total:n, why:why,
           foe:foe, team:team, syn:syn};
 }
 
@@ -539,15 +565,72 @@ function paintTeam(st, team){
   }).join('');
 }
 
-var BT=null;                       /* 돌고 있는 재생 타이머 */
-function playBattle(){
+var BT=null;      /* 글로 흐를 때의 타이머 */
+var V3=null;      /* 돌고 있는 3D 화면 */
+
+/* 이 브라우저에서 3D 를 돌릴 수 있나. 못 돌리면 글로 흐른다 —
+   빈 화면을 보여 주느니 예전 방식이 낫다. */
+function can3D(){
+  try{
+    var c=document.createElement('canvas');
+    if(!(c.getContext('webgl2')||c.getContext('webgl'))) return false;
+  }catch(e){ return false; }
+  return typeof Promise!=='undefined' && !!window.fetch;
+}
+
+function stopBattle(){
   if(BT){ clearTimeout(BT); BT=null; }
+  if(V3){ try{ V3.destroy(); }catch(e){} V3=null; }
+}
+
+function playBattle(){
+  stopBattle();
   var F=buildFight();
   show('v-battle');
   renderBattleHead(F);
-  $('log').innerHTML=''; $('res').innerHTML='';
+  $('res').innerHTML=''; $('cap').textContent='';
+  $('log').hidden=true; $('lgtoggle').hidden=true; $('lgtoggle').textContent='기록 보기';
+  fillLog(F);
   ev('hunt_battle',{ground:CUR.nm, size:F.total});
 
+  if(!can3D()) return playLog(F);
+  $('stage').hidden=false;
+  $('stage').innerHTML='<div class="load" id="load">사냥터를 그리는 중…</div>';
+  import('/3d/battle3d.js').then(function(m){
+    return m.runBattle({
+      mount:$('stage'), base:'/3d/',
+      ground:{el:CUR.el, nm:CUR.nm},
+      team:F.team.map(function(t){ return {el:t.el, nick:t.nick}; }),
+      foe:{el:F.foe.el, nm:F.foe.nm},
+      acts:F.acts,
+      onProgress:function(p){ var l=$('load'); if(l) l.textContent='사냥터를 그리는 중… '+Math.round(p*100)+'%'; },
+      onCaption:function(t){ $('cap').textContent=t; },
+      onFoeHp:function(r){ $('foe-hp').style.width=Math.round(r*100)+'%'; },
+      onTeamHp:function(hp){ paintTeam(hp.map(function(h,i){
+        return {hp:h, down:F.team[i].down&&h<=0}; }), F.team); },
+      onDone:function(){ endBattle(F); }
+    });
+  }).then(function(h){ V3=h; }).catch(function(e){
+    /* 모델을 못 받았거나 three 가 안 뜬 경우 — 조용히 글로 넘어간다 */
+    ev('hunt_3d_fail',{msg:String(e&&e.message||e).slice(0,80)});
+    $('stage').hidden=true;
+    playLog(F);
+  });
+}
+
+/* 기록을 미리 다 적어 둔다. 3D 로 볼 때는 접어 두고, 눌러서 펼친다. */
+function fillLog(F){
+  $('log').innerHTML='';
+  F.log.forEach(function(l){
+    var p=document.createElement('p'); p.className=l.k; p.textContent=l.t;
+    $('log').appendChild(p);
+  });
+}
+
+/* 3D 를 못 쓸 때 — 예전처럼 한 줄씩 흐른다 */
+function playLog(F){
+  $('stage').hidden=true; $('cap').textContent='';
+  $('log').hidden=false; $('log').innerHTML='';
   var i=0;
   (function step(){
     if(i>=F.log.length){ BT=null; return endBattle(F); }
@@ -580,9 +663,15 @@ function endBattle(F){
   LS.set('hunt.last.'+CUR.id, {win:F.win, turns:F.turns, standing:F.standing,
                                total:F.total, at:Date.now()});
   ev('hunt_result',{ground:CUR.nm, win:F.win?1:0, turns:F.turns, size:F.total});
+  $('lgtoggle').hidden=false;
+  $('lgtoggle').onclick=function(){
+    var on=$('log').hidden;
+    $('log').hidden=!on;
+    this.textContent = on ? '기록 접기' : '기록 보기';
+  };
   $('b-again').onclick=playBattle;
-  $('b-party').onclick=function(){ if(BT){clearTimeout(BT);BT=null;} show('v-party'); };
-  $('b-ground').onclick=function(){ if(BT){clearTimeout(BT);BT=null;} renderPick(); };
+  $('b-party').onclick=function(){ stopBattle(); show('v-party'); };
+  $('b-ground').onclick=function(){ stopBattle(); renderPick(); };
 }
 
 /* ===================== 화면 ===================== */
@@ -837,7 +926,7 @@ function afterLogin(me){
     ev('hunt_login_try',{mode:MODE});
     Promise.resolve(Store.login()).then(function(me){ if(me) afterLogin(me); });
   };
-  $('btn-back').onclick=function(){ renderPick(); };
+  $('btn-back').onclick=function(){ stopBattle(); renderPick(); };
   $('btn-close').onclick=function(){ $('mask').classList.remove('on'); };
   $('mask').onclick=function(e){ if(e.target===$('mask')) $('mask').classList.remove('on'); };
   $('btn-go').onclick=function(){
