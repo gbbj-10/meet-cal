@@ -2,6 +2,8 @@
 <html lang="ko"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0d1119">
+<meta name="color-scheme" content="dark">
 <title>키 10cm는 연봉 두 칸 — 제 계산기를 제가 뜯어봤습니다</title>
 <meta name="description" content="이성 조건 계산기의 점수표를 직접 계산해 키와 연봉의 교환비를 뽑았습니다. 그리고 평균 이상은 아무 보상이 없다는 것도 같이 나왔습니다.">
 <link rel="canonical" href="https://meetcal.co.kr/ohaeng/ki-yeonbong.html">
@@ -16,8 +18,13 @@
 gtag('js',new Date());gtag('config','G-HMSZVTTJMB');</script>
 <script async crossorigin="anonymous" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6266949069255809"></script>
 <style>
-:root{--ink:#1a1e24;--mut:#5c6673;--dim:#8d96a3;--line:#e6e9ee;--bg:#fff;--soft:#f6f8fa;
-      --acc:#2f6fd0;--mok:#4fb95f;--hwa:#e8483c;--to:#c9a227;--geum:#8e9bb0;--su:#3f8fe0}
+:root{--ink:#e9eef6;--mut:#96a3b6;--dim:#6b7789;--line:#242d3d;--bg:#0d1119;--soft:#151b26;
+      --pan:#151b26;--acc:#5b9bf0;--mok:#4fb95f;--hwa:#e8483c;--to:#c9a227;--geum:#8e9bb0;--su:#3f8fe0}
+::selection{background:#1e3a5f;color:#e9eef6}
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-track{background:#0d1119}
+::-webkit-scrollbar-thumb{background:#2b3546;border-radius:6px}
+input,select,textarea,button{color-scheme:dark}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);line-height:1.75;
@@ -30,7 +37,7 @@ header.site .wrap{display:flex;align-items:baseline;gap:12px}
 header.site .nm{font-weight:800;font-size:19px;color:var(--ink);text-decoration:none;letter-spacing:-.01em}
 header.site .tl{font-size:13px;color:var(--dim)}
 header.site .go{margin-left:auto;font-size:14px;font-weight:700;text-decoration:none;
-  background:var(--acc);color:#fff;padding:8px 14px;border-radius:8px}
+  background:var(--acc);color:#08101c;padding:8px 14px;border-radius:8px}
 h1{font-size:30px;line-height:1.35;letter-spacing:-.02em;margin:0 0 14px}
 h2{font-size:22px;letter-spacing:-.015em;margin:44px 0 12px;padding-top:6px}
 h3{font-size:18px;margin:28px 0 8px}
@@ -44,17 +51,17 @@ th{background:var(--soft);font-weight:700;font-size:14px;color:var(--mut)}
 blockquote{margin:24px 0;padding:14px 18px;background:var(--soft);border-left:3px solid var(--acc);
   border-radius:0 8px 8px 0;color:var(--mut)}
 blockquote p{margin:0}
-pre{background:#1a1e24;color:#e6ecf4;padding:16px 18px;border-radius:10px;overflow-x:auto;
+pre{background:#080c12;color:#dfe7f2;padding:16px 18px;border-radius:10px;overflow-x:auto;
   font-size:14px;line-height:1.7}
 code{font-family:ui-monospace,Menlo,Consolas,monospace}
 ul,ol{margin:0 0 18px;padding-left:22px}
 li{margin-bottom:8px}
 hr{border:0;border-top:1px solid var(--line);margin:40px 0}
-.cta{margin:36px 0;padding:22px;border-radius:14px;border:1px solid #cfe0f5;
-  background:linear-gradient(135deg,#f2f7fe,#fbfdff);text-align:center}
+.cta{margin:36px 0;padding:22px;border-radius:14px;border:1px solid #2c3d57;
+  background:linear-gradient(135deg,#161e2e,#111722);text-align:center}
 .cta .t{font-size:19px;font-weight:800;margin-bottom:6px;letter-spacing:-.01em}
 .cta .s{font-size:14px;color:var(--mut);margin-bottom:16px}
-.cta a{display:inline-block;background:var(--acc);color:#fff;text-decoration:none;
+.cta a{display:inline-block;background:var(--acc);color:#08101c;text-decoration:none;
   font-weight:700;padding:13px 26px;border-radius:10px;font-size:16px}
 .disc{font-size:13px;color:var(--dim);background:var(--soft);padding:14px 16px;border-radius:9px;line-height:1.7}
 .related{margin:40px 0 0;padding-top:24px;border-top:1px solid var(--line)}
@@ -65,74 +72,74 @@ hr{border:0;border-top:1px solid var(--line);margin:40px 0}
 footer.site{margin-top:56px;padding:26px 0 44px;border-top:1px solid var(--line);
   color:var(--dim);font-size:13px}
 /* 글 안 계산기 */
-.calc{margin:32px 0;padding:24px 22px;border:1px solid #cfe0f5;border-radius:16px;
-  background:linear-gradient(135deg,#f5f9ff,#fdfeff)}
+.calc{margin:32px 0;padding:24px 22px;border:1px solid #2c3d57;border-radius:16px;
+  background:linear-gradient(135deg,#161e2e,#111722)}
 .calc .ct{font-size:20px;font-weight:800;letter-spacing:-.01em;margin-bottom:6px}
 .calc .cs{font-size:13.5px;color:var(--mut);line-height:1.65;margin-bottom:18px}
 .crow{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:8px;margin-bottom:12px}
 .crow label{display:block;font-size:12px;color:var(--dim)}
-.crow input{display:block;width:100%;margin-top:5px;padding:12px 10px;border:1px solid #cbd6e4;
-  border-radius:9px;font-size:17px;font-family:inherit;text-align:center;background:#fff;color:var(--ink)}
-.crow input:disabled{background:#eef1f5;color:#a8b0bd}
+.crow input{display:block;width:100%;margin-top:5px;padding:12px 10px;border:1px solid #2b3546;
+  border-radius:9px;font-size:17px;font-family:inherit;text-align:center;background:var(--pan);color:var(--ink)}
+.crow input:disabled{background:#1e2635;color:#4d5769}
 .cchk{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--mut);margin-bottom:16px}
-.calc button{width:100%;padding:14px;border:0;border-radius:10px;background:var(--acc);color:#fff;
+.calc button{width:100%;padding:14px;border:0;border-radius:10px;background:var(--acc);color:#08101c;
   font-size:16px;font-weight:700;font-family:inherit;cursor:pointer}
-.cout{margin-top:20px;padding-top:20px;border-top:1px solid #d9e5f3}
-.cerr{font-size:14px;color:#c0392b}
+.cout{margin-top:20px;padding-top:20px;border-top:1px solid #242d3d}
+.cerr{font-size:14px;color:#ff6b5e}
 .chead{font-size:17px;margin-bottom:14px}
 .cbig{display:flex;align-items:center;gap:12px;margin-bottom:18px}
 .cdir{font-size:26px;font-weight:800;color:#fff;padding:10px 22px;border-radius:12px;letter-spacing:-.01em}
 .cdd{font-size:13px;color:var(--dim)}
 .cgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
-.cgrid>div{background:#fff;border:1px solid #dce6f2;border-radius:10px;padding:11px 13px}
+.cgrid>div{background:var(--pan);border:1px solid #242d3d;border-radius:10px;padding:11px 13px}
 .cgrid .cwide{grid-column:1/-1}
 .cgrid .ck{display:block;font-size:12px;color:var(--dim);margin-bottom:4px}
 .cgrid .cv{font-size:15px;font-weight:600}
-.cbars{background:#fff;border:1px solid #dce6f2;border-radius:10px;padding:14px}
-.cad{margin-top:40px;padding-top:20px;border-top:1px dashed #cfdcec}
+.cbars{background:var(--pan);border:1px solid #242d3d;border-radius:10px;padding:14px}
+.cad{margin-top:40px;padding-top:20px;border-top:1px dashed #2b3546}
 .lgen{display:flex;gap:8px;margin-bottom:16px}
-.lgen button{flex:1;padding:11px;border:1px solid #cfdcec;border-radius:9px;background:#fff;
+.lgen button{flex:1;padding:11px;border:1px solid #2b3546;border-radius:9px;background:var(--pan);
   font:inherit;font-size:14px;font-weight:700;color:var(--mut);cursor:pointer}
-.lgen button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.lgen button.on{background:var(--acc);border-color:var(--acc);color:#08101c}
 .lrow{display:flex;gap:10px;margin-bottom:12px}
 .lrow label{flex:1;display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--mut)}
-.lrow input,.lrow select{width:100%;padding:11px 10px;border:1px solid #cfdcec;border-radius:9px;
-  font:inherit;font-size:15px;background:#fff;color:var(--ink)}
+.lrow input,.lrow select{width:100%;padding:11px 10px;border:1px solid #2b3546;border-radius:9px;
+  font:inherit;font-size:15px;background:var(--pan);color:var(--ink)}
 .ltbl{display:table;width:100%;border-collapse:collapse;margin:14px 0 4px;font-size:14px;
-  background:#fff;border:1px solid #dce6f2;border-radius:10px;overflow:hidden}
-.ltbl th{width:34%;background:#eef4fb;font-size:12.5px;color:var(--mut);font-weight:700;
+  background:var(--pan);border:1px solid #242d3d;border-radius:10px;overflow:hidden}
+.ltbl th{width:34%;background:#1b2230;font-size:12.5px;color:var(--mut);font-weight:700;
   padding:10px;text-align:left;border-bottom:0;white-space:nowrap}
-.ltbl td{padding:10px;border-top:1px solid #eef2f7;border-bottom:0;font-weight:700;white-space:normal}
+.ltbl td{padding:10px;border-top:1px solid #1e2635;border-bottom:0;font-weight:700;white-space:normal}
 .ltag{display:inline-block;margin-left:6px;font-size:11.5px;font-weight:700;color:var(--acc);
-  background:#eaf1fb;border-radius:5px;padding:2px 7px;vertical-align:1px}
+  background:#1b2740;border-radius:5px;padding:2px 7px;vertical-align:1px}
 .cadl{font-size:11px;letter-spacing:.06em;color:var(--dim);margin-bottom:8px}
 /* 광고가 안 채워지면 빈 상자가 남지 않게 통째로 접는다 */
 .cad:has(ins[data-ad-status="unfilled"]){display:none}
 .cad ins.adsbygoogle[data-ad-status="unfilled"]{display:none}
-.cadph{border:1px dashed #c3d3e6;border-radius:10px;background:#fbfdff;color:var(--dim);
+.cadph{border:1px dashed #2b3546;border-radius:10px;background:#131a26;color:var(--dim);
   text-align:center;padding:34px 16px;font-size:13.5px;line-height:1.7}
-.cadph span{font-size:12px;color:#a9b4c2}
-.ctie{display:table;width:100%;border-collapse:collapse;margin:14px 0 4px;font-size:13.5px;background:#fff;
-  border:1px solid #dce6f2;border-radius:10px;overflow:hidden}
-.ctie th{background:#eef4fb;font-size:12px;color:var(--mut);font-weight:700;padding:8px 10px;text-align:left}
-.ctie td{padding:9px 10px;border-top:1px solid #eef2f7;border-bottom:0;white-space:normal}
+.cadph span{font-size:12px;color:#6b7789}
+.ctie{display:table;width:100%;border-collapse:collapse;margin:14px 0 4px;font-size:13.5px;background:var(--pan);
+  border:1px solid #242d3d;border-radius:10px;overflow:hidden}
+.ctie th{background:#1b2230;font-size:12px;color:var(--mut);font-weight:700;padding:8px 10px;text-align:left}
+.ctie td{padding:9px 10px;border-top:1px solid #1e2635;border-bottom:0;white-space:normal}
 .ctie th{border-bottom:0}
 .cbig .cdir{margin-right:8px}
 .cbh{font-size:12px;color:var(--dim);margin-bottom:10px}
 .cb{display:flex;align-items:center;gap:10px;margin-bottom:7px}
 .cb:last-child{margin-bottom:0}
 .cbl{width:22px;font-size:14px;font-weight:700;color:var(--mut)}
-.cbt{flex:1;height:10px;background:#eef2f7;border-radius:5px;overflow:hidden}
+.cbt{flex:1;height:10px;background:#1e2635;border-radius:5px;overflow:hidden}
 .cbt i{display:block;height:100%;border-radius:5px}
 .cbv{width:42px;text-align:right;font-size:13.5px;color:var(--mut)}
 .cnote{margin-top:12px;font-size:13px;color:var(--dim)}
-.cgame{display:block;margin-top:16px;text-align:center;background:#1a1e24;color:#fff;
+.cgame{display:block;margin-top:16px;text-align:center;background:#1b2740;color:#e9eef6;
   text-decoration:none;font-weight:700;padding:13px;border-radius:10px;font-size:15px}
 @media(max-width:480px){.crow{grid-template-columns:1.3fr 1fr 1fr 1fr}.cgrid{grid-template-columns:1fr}}
 /* 목록 */
 .card{display:block;text-decoration:none;color:inherit;border:1px solid var(--line);
   border-radius:14px;overflow:hidden;margin-bottom:18px;transition:border-color .15s}
-.card:hover{border-color:#c3cede}
+.card:hover{border-color:#39455c}
 .card img{margin:0;border:0;border-radius:0;border-bottom:1px solid var(--line)}
 .card .bd{padding:18px 20px}
 .card .t{font-size:19px;font-weight:800;letter-spacing:-.015em;line-height:1.4;margin-bottom:8px}
@@ -344,7 +351,7 @@ footer.site{margin-top:56px;padding:26px 0 44px;border-top:1px solid var(--line)
   <a href="game.html" data-cta="end">내 사주 보기</a>
 </div>
 <p class="disc">이 글은 전통 오행 이론과 직접 계산한 통계를 정리한 것입니다. 운세는 검증된 과학이 아니며, 재미와 참고를 위한 콘텐츠입니다. 중요한 결정은 스스로 판단하세요.</p>
-<div class="related"><div class="h">같이 읽어 보세요</div><a href="buljokhan-ohaeng.html">사주에 부족한 오행, 나는 어느 방향일까 — 10명 중 7명은 하나가 비어 있습니다</a><a href="taeeonan-sigak.html">태어난 시간 확인하는 3가지 방법 — 모르면 사주가 72.6% 달라집니다</a></div>
+<div class="related"><div class="h">같이 읽어 보세요</div><a href="useh-ohaeng-to.html">가장 흔한 오행은 토(土) 35.9% — 2위와 두 배 차이</a><a href="buljokhan-ohaeng.html">사주에 부족한 오행, 나는 어느 방향일까 — 10명 중 7명은 하나가 비어 있습니다</a></div>
 </main><footer class="site"><div class="wrap">
   오행 이야기 · 사주 계산은 직접 만든 만세력 엔진을 씁니다.<br>
   글에 쓰인 숫자는 전부 재현 가능한 계산 결과입니다.

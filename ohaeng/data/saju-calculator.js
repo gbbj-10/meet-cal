@@ -152,10 +152,14 @@ function getMonthPillar(solarInfo, yearGanIndex) {
   return { gan: GAN[ganIndex], zhi: ZHI[zhiIndex], ganIndex, zhiIndex };
 }
 
-/** 일주(日柱) 계산 — 1900-01-31을 갑자일(index 0)로 두는 기준일법 */
+/** 일주(日柱) 계산 — 1900-01-31을 갑자일(index 0)로 두는 기준일법
+ *  달력 날짜만 UTC 로 환산해서 뺀다. `new Date(1900,0,31)` 을 그대로 쓰면
+ *  한국 표준시가 1908년 이전에 +08:27:52(지방평시)였던 탓에 32분이 모자라
+ *  Math.floor 가 하루를 깎아 일주가 하루씩 밀린다. (2026-09-19 확인) */
 function getDayPillar(date) {
-  const baseDate = new Date(1900, 0, 31);
-  const diffDays = Math.floor((date - baseDate) / 86400000);
+  const diffDays = Math.round(
+    (Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+     - Date.UTC(1900, 0, 31)) / 86400000);
   const ganIndex = mod(diffDays, 10);
   const zhiIndex = mod(diffDays, 12);
   return { gan: GAN[ganIndex], zhi: ZHI[zhiIndex], ganIndex, zhiIndex };
