@@ -24,7 +24,13 @@ LOVE      = SITE_ROOT + '/love/'            # 이성 조건 계산기 (루트에
 ILJIN_URL = SITE_ROOT + '/iljin/'
 # 사냥터 — 카카오/Supabase 키. 비워 두면 /hunt/ 는 데모 모드로 돈다.
 KAKAO_JS_KEY = '60b71fcf9ec72aad11e6f5d62358c8db'
-SUPABASE = ('', '')   # ('https://xxxx.supabase.co', 'anon public 키')           # 오늘의 일진 (매일 갱신)
+# 1) Project URL  : Supabase → 프로젝트 → Integrations → Data API 의 API URL 에서
+#                   뒤의 /rest/v1/ 을 뗀 것  (https://<프로젝트ref>.supabase.co)
+# 2) Publishable key: Supabase → Project Settings → API Keys →
+#                   'Publishable and secret API keys' 탭의 Publishable key
+#                   (sb_publishable_... 로 시작. 브라우저에 넣어도 되는 공개 키)
+#  ⚠️ Secret key(sb_secret_...) 는 절대 넣지 않습니다. RLS 를 무시합니다.
+SUPABASE = ('', '')
 
 OUT  = os.path.join(B.ROOT, 'deploy')
 SITE = os.path.join(OUT, 'ohaeng')
