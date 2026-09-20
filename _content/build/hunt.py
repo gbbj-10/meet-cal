@@ -161,6 +161,37 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 .card.best{border-color:#2d6b38;box-shadow:0 0 0 1px #2d6b38}
 .why{font-size:12.5px;color:var(--dim);margin-top:7px}
 
+/* 2. 단 고르기 — 계단(아래)에서 갑단(위)으로 올라가는 사다리 */
+.pouch{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--pan);
+  border:1px solid var(--line);border-radius:14px;padding:11px 14px;margin:14px 0 4px;font-size:13.5px}
+.pouch .st{width:15px;height:15px;border-radius:4px;transform:rotate(45deg);flex:none;
+  box-shadow:0 0 0 1px rgba(255,255,255,.14) inset}
+.pouch b{color:var(--ink)}
+.pouch .yg{color:#ffd93d;font-weight:700}
+.pouch .bo{margin-left:auto;color:var(--dim)}
+@media(max-width:430px){.pouch .bo{margin-left:0;width:100%}}
+
+.ladder{display:flex;flex-direction:column-reverse;gap:8px;margin:14px 0 6px}
+.rung{display:grid;grid-template-columns:48px 1fr auto;gap:13px;align-items:center;
+  background:var(--pan);border:1px solid var(--line);border-radius:14px;
+  padding:12px 15px;cursor:pointer;text-align:left;width:100%;font:inherit;color:inherit;
+  transition:border-color .15s,transform .15s}
+.rung:hover:not(:disabled){border-color:#31405c;transform:translateY(-1px)}
+.rung:disabled{cursor:not-allowed;opacity:.42}
+.rung:disabled .gz2{filter:grayscale(.65)}
+.rung .gz2{width:48px;height:48px;border-radius:13px;display:grid;place-items:center;
+  font-size:22px;font-weight:800;font-family:"Noto Serif KR",serif;color:#0a0f18;flex:none}
+.rung .tn{display:block;font-size:17px;font-weight:700;letter-spacing:-.01em}
+.rung .td{display:block;font-size:12.5px;color:var(--dim);margin-top:3px;line-height:1.45}
+.rung .rt2{font-size:12px;font-weight:700;border-radius:20px;padding:3px 10px;border:1px solid;white-space:nowrap}
+.rt2.done{color:#7fe08f;border-color:#2d6b38;background:#0f2415}
+.rt2.open{color:#ffd93d;border-color:#6b5a1a;background:#241f0f}
+.rt2.shut{color:#8494ab;border-color:#2b3a52;background:#121a29}
+.rung.now{border-color:#6b5a1a;box-shadow:0 0 0 1px #6b5a1a}
+.loot{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 2px;font-size:13.5px}
+.loot .st{width:14px;height:14px;border-radius:4px;transform:rotate(45deg);flex:none}
+.loot .bo{color:var(--dim)}
+
 /* 2. 파티 */
 .gh{display:flex;align-items:center;gap:13px;margin:22px 0 6px}
 .gh .orb{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;
@@ -313,9 +344,19 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
     <div class="demo" id="demo-note" hidden></div>
   </section>
 
-  <!-- 2. 파티 -->
+  <!-- 2. 단 고르기 -->
+  <section class="view" id="v-tier">
+    <button class="back" id="btn-back-t">← 사냥터 다시 고르기</button>
+    <div class="gh" id="th"></div>
+    <p class="sub" id="tsub"></p>
+    <div class="pouch" id="pouch"></div>
+    <div class="ladder" id="ladder"></div>
+    <p class="note" id="tnote"></p>
+  </section>
+
+  <!-- 3. 파티 -->
   <section class="view" id="v-party">
-    <button class="back" id="btn-back">← 사냥터 다시 고르기</button>
+    <button class="back" id="btn-back">← 단 다시 고르기</button>
     <div class="gh" id="gh"></div>
     <p class="sub" id="gsub"></p>
     <div class="slots" id="slots"></div>
@@ -324,7 +365,7 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
     <p class="note" id="note"></p>
   </section>
 
-  <!-- 3. 전투 -->
+  <!-- 4. 전투 -->
   <section class="view" id="v-battle">
     <div class="foe" id="foe"></div>
     <div class="hp"><i id="foe-hp" style="width:100%"></i></div>
@@ -520,6 +561,72 @@ function synergy(els){
 }
 
 
+
+/* ===================== 단(段) ===================== */
+/* 사냥터 하나에 열 단이 있다. 이름은 천간을 거꾸로 쓴다 —
+   계단(癸)이 가장 아래, 갑단(甲)이 꼭대기다. 사주를 모르는 사람도
+   "계단부터 갑단까지" 라고 하면 위아래가 잡힌다.
+
+   단이 올라가면 사냥감의 몸과 힘이 같이 커진다. 숫자는 지어낸 게 아니라
+   1인~5인 × 다섯 오행 관계로 3만 판을 돌려 맞췄다 (`_content/build/tier_sim.js`).
+   - 혼자서는 어느 사냥터든 계단을 깬다
+   - 혼자서 임단을 깨는 곳은 **내 오행이 누르는 사냥터 한 곳뿐**이다
+   - 그 위는 사람을 데려와야 열린다. 갑단은 다섯 오행을 다 채우고
+     용신석까지 모아야 문이 열린다 */
+var TIERS=[
+  {k:1, gan:'계', hj:'癸', nm:'계단'},
+  {k:2, gan:'임', hj:'壬', nm:'임단'},
+  {k:3, gan:'신', hj:'辛', nm:'신단'},
+  {k:4, gan:'경', hj:'庚', nm:'경단'},
+  {k:5, gan:'기', hj:'己', nm:'기단'},
+  {k:6, gan:'무', hj:'戊', nm:'무단'},
+  {k:7, gan:'정', hj:'丁', nm:'정단'},
+  {k:8, gan:'병', hj:'丙', nm:'병단'},
+  {k:9, gan:'을', hj:'乙', nm:'을단'},
+  {k:10,gan:'갑', hj:'甲', nm:'갑단'}
+];
+var THP =[0,0.34,0.78,1.05,1.34,1.64,1.94,2.24,2.54,2.84,3.14];  /* 사냥감 몸 배수 */
+var TATK=[0,0.40,1.25,1.55,1.62,1.68,1.74,1.80,1.86,1.92,1.98];  /* 사냥감 힘 배수 */
+
+function tOf(k){ return TIERS[Math.max(1,Math.min(10,k))-1]; }
+
+/* 이 사냥터에서 내가 깬 가장 높은 단 */
+function cleared(gid){ return LS.get('hunt.tier.'+gid, 0); }
+function markCleared(gid,k){ if(k>cleared(gid)) LS.set('hunt.tier.'+gid,k); }
+
+/* ---- 용신석 ----
+   용신은 나를 살려 주는 오행이다(수생목이면 목의 용신은 수).
+   사냥터에서는 그곳의 오행석이 떨어지므로, 내 용신석이 나오는 곳과
+   내가 잘 싸우는 곳은 서로 다르다. 한쪽에서 캐서 다른 쪽에서 쓴다. */
+function yongsin(el){ for(var a in DSAENG) if(DSAENG[a]===el) return a; return null; }
+function stones(){ return LS.get('hunt.stones', {목:0,화:0,토:0,금:0,수:0}); }
+function addStones(el,n){ var s=stones(); s[el]=(s[el]||0)+n; LS.set('hunt.stones',s); return s; }
+/* 모은 돌이 주는 기운. 용신석은 1.5%, 그 밖의 돌은 0.5%, 합쳐서 70% 까지. */
+function stoneBoost(myEl){
+  var s=stones(), y=yongsin(myEl), p=0;
+  for(var e in s) p += (s[e]||0) * (e===y ? 1.5 : 0.5);
+  return Math.min(70, Math.round(p*10)/10);
+}
+
+/* ---- 문이 열리는 단 ----
+   혼자면 계단까지, 내 오행이 누르는 사냥터에서만 임단까지.
+   사람이 늘면 올라가고, 오행을 다 채우면 한 단 더, 용신석 25%마다 한 단 더. */
+var SIZE_STEP=[0,0,1,2,3,5];
+function favGround(myEl){ return myEl ? DGEUK[myEl] : null; }   /* 내가 누르는 오행 */
+function tierCap(gEl, els){
+  var my=els[0];
+  var filled=els.filter(Boolean).length;
+  var base = (my && favGround(my)===gEl) ? 2 : 1;
+  /* 혼자면 여기가 끝이다. 용신석을 아무리 모아도 이 선은 넘지 못한다 —
+     돌은 기운을 밀어 올릴 뿐, 옆에서 같이 맞아 줄 사람을 대신하지는 못한다.
+     이 한 줄이 "혼자서는 계단까지, 유리한 곳 한 군데만 임단까지" 를 지킨다. */
+  if(filled<=1) return base;
+  var kinds={}; els.forEach(function(e){ if(e) kinds[e]=1; });
+  var full = Object.keys(kinds).length===5 ? 1 : 0;
+  var st = Math.floor(stoneBoost(my)/25);
+  return Math.max(1, Math.min(10, base + SIZE_STEP[Math.min(5,filled)] + full + st));
+}
+
 /* ===================== 전투 ===================== */
 /* 보는 전투다. 한 번 누르면 끝까지 굴러가고, 사람은 로그를 읽는다.
    규칙은 화면에 이미 써 놓은 추천 문구(mineRel)와 같은 오행 관계를 쓴다.
@@ -556,21 +663,29 @@ function buildFight(){
     t.down=false;
   });
 
-  /* 사냥감은 사람 수에 맞춰 커진다. 혼자 와도 이길 수 있고, 다섯이면 빨리 끝난다. */
-  var n=team.length;
-  var foe={nm:g.prey, el:gEl, hp:0, max:0, atk:13+n*2};
-  foe.max=foe.hp=110+n*95;
+  /* 사냥감은 사람 수에 맞춰 커지고, 단이 올라가면 한 번 더 커진다.
+     혼자 와도 계단은 이기고, 다섯이면 빨리 끝난다. */
+  var n=team.length, K=TIER;
+  var foe={nm:tOf(K).gan+'급 '+g.prey, el:gEl, hp:0, max:0,
+           atk:Math.round((13+n*2)*TATK[K])};
+  foe.max=foe.hp=Math.round((110+n*95)*THP[K]);
+  /* 모은 용신석만큼 팀 전체가 세진다 — 돌이 곧 성장이다. */
+  var boost=1+stoneBoost(MYEL)/100;
+  team.forEach(function(t){ t.atk=Math.round(t.atk*boost); });
+  /* 사람이 많으면 더 오래 버틴다. 혼자서는 긴 싸움을 끌고 갈 수 없다. */
+  var TC=22+(n-1)*4;
 
   /* L = 사람이 읽는 기록, A = 3D 가 연기할 대본. 둘은 같은 사건을 두 가지로 적은 것이다. */
   var L=[], A=[], turn=0, bonus=1+syn.bonus/200;
   function push(t,k){ L.push({t:t,k:k||''}); return L[L.length-1]; }
   function act(o){ A.push(o); }
 
-  push(g.nm+'에 들어섰습니다. '+jn(foe.nm,['이','가'])+' 기다리고 있습니다.','big');
+  push(g.nm+' '+tOf(K).nm+'에 들어섰습니다. '+jn(foe.nm,['이','가'])+' 기다리고 있습니다.','big');
   if(syn.pairs) push('파티의 기운이 서로를 살립니다. 상생 '+syn.pairs+'쌍.','hit');
+  if(boost>1.001) push('모아 둔 용신석이 기운을 밀어 올립니다. 공격 +'+Math.round((boost-1)*100)+'%.','hit');
   if(DAY.els.indexOf(gEl)>=0) push('오늘의 기운이 이 사냥터에 실려 있습니다. 상대가 셉니다.','bad');
 
-  while(foe.hp>0 && team.some(function(t){return !t.down}) && turn<24){
+  while(foe.hp>0 && team.some(function(t){return !t.down}) && turn<TC){
     turn++;
     push('— '+turn+'번째 겨룸','turn');
     act({t:'turn', text:'— '+turn+'번째 겨룸'});
@@ -609,6 +724,17 @@ function buildFight(){
   push(endLine, win?'big':'bad');
   act({t:'end', win:win, text:endLine});
 
+  /* 이기면 그 사냥터의 오행석이 떨어진다. 단이 높을수록, 서 있는 사람이 많을수록 많다. */
+  var loot=0;
+  if(win){
+    loot = K + (standing-1);
+    var isY = (yongsin(MYEL)===gEl);
+    var ltext = J(gEl,'eul')+' 머금은 오행석 '+loot+'개가 떨어집니다'+
+                (isY?' — 내 용신석입니다':'')+'.';
+    push(ltext, 'big');
+    act({t:'loot', el:gEl, n:loot, yong:isY, text:ltext});
+  }
+
   /* 왜 이렇게 됐는지 한 줄 — 관계가 결과를 갈랐다는 걸 읽히게 */
   var rel=mineRel(MYEL,gEl), why;
   if(win && rel && rel.k==='easy') why='내 '+J(MYEL,'i')+' '+J(gEl,'eul')+' 누르는 곳이라 수월했습니다.';
@@ -619,13 +745,13 @@ function buildFight(){
   else                            why='기운이 맞지 않았습니다. 다른 사냥터가 나을 수 있습니다.';
 
   return {log:L, acts:A, win:win, turns:turn, standing:standing, total:n, why:why,
-          foe:foe, team:team, syn:syn};
+          foe:foe, team:team, syn:syn, tier:K, loot:loot, lootEl:gEl};
 }
 
 function renderBattleHead(F){
   var g=CUR;
   $('foe').innerHTML='<span class="orb" style="background:'+g.col+'">'+HJEL[g.el]+'</span>'+
-    '<span><h1>'+esc(F.foe.nm)+'</h1><span class="wh">'+esc(g.nm)+' · '+g.el+'</span></span>';
+    '<span><h1>'+esc(F.foe.nm)+'</h1><span class="wh">'+esc(g.nm)+' '+tOf(F.tier).nm+' · '+g.el+'</span></span>';
   $('foe-hp').style.background=g.col;
   $('foe-hp').style.width='100%';
   paintTeam(F.team.map(function(t){return {hp:1,down:false}}), F.team);
@@ -681,6 +807,7 @@ function playBattle(){
       acts:F.acts,
       onProgress:function(p){ var l=$('load'); if(l) l.textContent='사냥터를 그리는 중… '+Math.round(p*100)+'%'; },
       onCaption:function(t){ $('cap').textContent=t; },
+      onLoot:function(got,all){ $('cap').textContent='오행석 '+got+' / '+all+' 개를 담았습니다'; },
       onFoeHp:function(r){ $('foe-hp').style.width=Math.round(r*100)+'%'; },
       onTeamHp:function(hp){ paintTeam(hp.map(function(h,i){
         return {hp:h, down:F.team[i].down&&h<=0}; }), F.team); },
@@ -723,22 +850,33 @@ function playLog(F){
 
 function endBattle(F){
   paintTeam(F.team.map(function(t){return {hp:t.hp/t.max, down:t.down}}), F.team);
+  if(F.win){ markCleared(CUR.id, F.tier); addStones(F.lootEl, F.loot); }
+  var tn=tOf(F.tier).nm;
+  var nx=F.tier+1, cap=tierCap(CUR.el,[MYEL].concat(PARTY.map(function(p){return p?p.el:null})));
+  var canNext = F.win && nx<=10 && nx<=cap;
   $('res').innerHTML=
     '<div class="res'+(F.win?' win':'')+'">'+
-      '<div class="rt">'+(F.win?'사냥 성공':'물러났습니다')+'</div>'+
+      '<div class="rt">'+(F.win?tn+' 돌파':tn+'에서 물러났습니다')+'</div>'+
       '<div class="rw">'+esc(F.why)+'</div>'+
+      (F.win&&F.loot ? '<div class="loot"><span class="st" style="background:'+colOf(F.lootEl)+'"></span>'+
+        '<b>'+F.lootEl+'석 '+F.loot+'개</b>'+
+        (yongsin(MYEL)===F.lootEl ? ' — <b style="color:#ffd93d">내 용신석</b>입니다. 기운이 두 배로 붙습니다'
+                                  : ' — 용신석은 아니지만 기운은 보탭니다')+
+        '<span class="bo">모은 기운 공격 +'+stoneBoost(MYEL)+'%</span></div>' : '')+
       '<div class="rn"><span><b>'+F.turns+'</b>번 겨룸</span>'+
         '<span>남은 사람 <b>'+F.standing+'</b> / '+F.total+'</span>'+
         '<span>파티 상생 <b>'+F.syn.pairs+'</b>쌍</span></div>'+
     '</div>'+
     '<div class="again">'+
-      '<button class="pri" id="b-again">다시 사냥</button>'+
-      '<button id="b-party">파티 고치기</button>'+
+      (canNext ? '<button class="pri" id="b-next">'+tOf(nx).nm+'으로 올라가기</button>' : '')+
+      '<button'+(canNext?'':' class="pri"')+' id="b-again">'+tn+' 다시</button>'+
+      '<button id="b-tier">단 고르기</button>'+
       '<button id="b-ground">사냥터 바꾸기</button>'+
     '</div>';
   LS.set('hunt.last.'+CUR.id, {win:F.win, turns:F.turns, standing:F.standing,
-                               total:F.total, at:Date.now()});
-  ev('hunt_result',{ground:CUR.nm, win:F.win?1:0, turns:F.turns, size:F.total});
+                               total:F.total, tier:F.tier, at:Date.now()});
+  ev('hunt_result',{ground:CUR.nm, tier:F.tier, win:F.win?1:0, turns:F.turns,
+                    size:F.total, loot:F.loot||0});
   $('lgtoggle').hidden=false;
   $('lgtoggle').onclick=function(){
     var on=$('log').hidden;
@@ -746,15 +884,16 @@ function endBattle(F){
     this.textContent = on ? '기록 접기' : '기록 보기';
   };
   $('b-again').onclick=playBattle;
-  $('b-party').onclick=function(){ stopBattle(); show('v-party'); };
+  if($('b-next')) $('b-next').onclick=function(){ stopBattle(); TIER=nx; renderParty(); };
+  $('b-tier').onclick=function(){ stopBattle(); renderTier(); };
   $('b-ground').onclick=function(){ stopBattle(); renderPick(); };
 }
 
 /* ===================== 화면 ===================== */
-var ME=null, MYEL=null, DAY=dayPillar(kstToday()), CUR=null, PARTY=[null,null,null,null];
+var ME=null, MYEL=null, DAY=dayPillar(kstToday()), CUR=null, TIER=1, PARTY=[null,null,null,null];
 
 function show(id){
-  ['v-lock','v-pick','v-party','v-battle'].forEach(function(v){ $(v).classList.toggle('on', v===id); });
+  ['v-lock','v-pick','v-tier','v-party','v-battle'].forEach(function(v){ $(v).classList.toggle('on', v===id); });
   window.scrollTo({top:0,behavior:'instant'});
 }
 
@@ -800,6 +939,9 @@ function renderPick(){
     else if(ts>0)          tags+='<span class="tag good">오늘 유리</span>';
     else if(ts<0)          tags+='<span class="tag warn">오늘 불리</span>';
     if(rel && rel.tag) tags+='<span class="tag '+(rel.k==='risk'?'warn':'mine')+'">'+rel.tag+'</span>';
+    var dn=cleared(g.id);
+    tags += '<span class="tag '+(dn?'mine':'')+'" style="'+(dn?'':'color:#8494ab;border-color:#2b3a52')+'">'+
+            (dn ? tOf(dn).nm+'까지 깸' : '아직 안 감')+'</span>';
     var why = (ts>0 ? '오늘 '+DAY.gan+DAY.zhi+'의 기운이 '+g.el+'에 실립니다. '
                     : ts<0 ? '오늘 기운이 '+J(g.el,'eul')+' 누릅니다. ' : '')
             + (rel ? rel.why : '');
@@ -829,14 +971,77 @@ function openGround(id){
   ev('hunt_enter',{ground:CUR.nm, element:CUR.el});
   Store.party(CUR.id).then(function(m){
     PARTY = (m && m.length===4) ? m : [null,null,null,null];
-    renderParty();
+    renderTier();
   });
+}
+
+/* ---- 단 고르기 ----
+   사다리는 아래에서 위로 읽는다(.ladder 는 column-reverse). 계단이 맨 아래,
+   갑단이 맨 위. 잠긴 칸도 숨기지 않고 왜 잠겼는지 한 줄로 적는다 —
+   무엇을 하면 열리는지 보이지 않으면 사람은 다시 오지 않는다. */
+function renderTier(){
+  var g=CUR, els=[MYEL].concat(PARTY.map(function(p){return p?p.el:null}));
+  var filled=els.filter(Boolean).length;
+  var done=cleared(g.id), cap=tierCap(g.el, els), open=Math.min(10, done+1);
+  var fav=(MYEL && favGround(MYEL)===g.el);
+
+  $('th').innerHTML='<span class="orb" style="background:'+g.col+'">'+g.elhj+'</span>'+
+    '<span><h1>'+g.nm+'</h1><span class="hj">'+g.prey+' · 계단부터 갑단까지 열 단</span></span>';
+  $('tsub').textContent = (done ? done+'단까지 깼습니다. ' : '아직 한 단도 깨지 않았습니다. ')+
+    (fav ? '내 '+MYEL+'이 이곳을 누릅니다 — 혼자서도 임단까지 갑니다.'
+         : '혼자서는 계단까지입니다. 그 위는 사람을 데려와야 열립니다.');
+
+  /* 주머니 */
+  var st=stones(), y=yongsin(MYEL), tot=0;
+  var cells=GROUNDS.map(function(x){
+    var n=st[x.el]||0; tot+=n;
+    return '<span class="st" style="background:'+x.col+'"></span>'+
+           '<b'+(x.el===y?' class="yg"':'')+'>'+x.el+' '+n+'</b>';
+  }).join('');
+  var ySpot=null; GROUNDS.forEach(function(x){ if(x.el===y) ySpot=x.nm; });
+  $('pouch').innerHTML = cells +
+    '<span class="bo">'+(y?'내 용신은 <b>'+y+'</b>'+(ySpot?' — <b>'+ySpot+'</b>에서 납니다':'')+' · ':'')+
+    '모은 기운 <b>공격 +'+stoneBoost(MYEL)+'%</b>'+(tot?'':' (아직 없음)')+'</span>';
+
+  var html='';
+  TIERS.forEach(function(t){
+    var isDone = t.k<=done, isOpen = t.k<=open && t.k<=cap;
+    var tag = isDone ? '<span class="rt2 done">깸</span>'
+            : isOpen ? '<span class="rt2 open">열림</span>'
+                     : '<span class="rt2 shut">잠김</span>';
+    var why;
+    if(isDone)        why='이미 넘었습니다. 다시 들어가도 돌은 나옵니다.';
+    else if(isOpen)   why='사냥감 '+t.gan+'급 — 몸 '+Math.round(THP[t.k]*100)+'% · 힘 '+Math.round(TATK[t.k]*100)+'%';
+    else if(t.k>open) why=tOf(t.k-1).nm+'을 먼저 깨야 합니다.';
+    else if(filled<5) why='지금 인원('+filled+'명)으로는 여기까지 오르지 못합니다. 친구를 부르세요.';
+    else              why='용신석을 더 모아야 열립니다. 25%마다 한 단씩 열립니다.';
+    html += '<button class="rung'+(t.k===open&&isOpen?' now':'')+'" data-k="'+t.k+'"'+
+      (isOpen?'':' disabled')+'>'+
+      '<span class="gz2" style="background:'+g.col+'">'+t.hj+'</span>'+
+      '<span><span class="tn">'+t.nm+'</span><span class="td">'+why+'</span></span>'+
+      tag+'</button>';
+  });
+  $('ladder').innerHTML=html;
+  [].forEach.call($('ladder').querySelectorAll('.rung'),function(b){
+    b.onclick=function(){ TIER=+b.dataset.k; renderParty(); };
+  });
+
+  $('tnote').innerHTML =
+    '<b>계단이 가장 아래, 갑단이 꼭대기입니다.</b> 한 단을 깨야 그 위가 열립니다.<br>'+
+    '혼자서는 어느 사냥터든 <b>계단</b>까지, '+
+    '<b>내 오행이 누르는 사냥터 한 곳</b>에서만 <b>임단</b>까지 갑니다. '+
+    '그 위는 사람 수·오행 구성·용신석이 열어 줍니다.<br>'+
+    '지금 열 수 있는 가장 높은 단은 <b>'+tOf(cap).nm+'</b>입니다'+
+    (filled<=1 ? ' — 용신석을 아무리 모아도 혼자서는 이 위가 열리지 않습니다.'
+     : filled<5 ? ' — 자리를 채우면 더 올라갑니다.' : '.');
+  ev('hunt_tier_view',{ground:g.nm, done:done, cap:cap});
+  show('v-tier');
 }
 
 function renderParty(){
   var g=CUR, ts=todayScore(g.el,DAY.els), rel=mineRel(MYEL,g.el);
   $('gh').innerHTML='<span class="orb" style="background:'+g.col+'">'+g.elhj+'</span>'+
-    '<span><h1>'+g.nm+'</h1><span class="hj">'+g.prey+'</span></span>';
+    '<span><h1>'+g.nm+' '+tOf(TIER).nm+'</h1><span class="hj">'+tOf(TIER).gan+'급 '+g.prey+'</span></span>';
   $('gsub').textContent = g.one + ' — ' +
     (ts>0?'오늘 기운이 이곳에 실립니다.':ts<0?'오늘 기운이 이곳을 누릅니다.':'오늘 기운은 이곳과 무관합니다.') +
     (rel? ' '+rel.why : '');
@@ -881,19 +1086,25 @@ function renderParty(){
     '<span class="bar2"><i style="width:'+Math.min(100,sy.bonus)+'%"></i></span>'+
     '시너지 +'+sy.bonus+'% · 자리 '+filled+'/5'+
     (filled<5 ? ' — <span style="color:#6f7d92">더 부르면 시너지가 올라갑니다</span>' : '');
-  /* 인원은 1~5 어디든 된다. 다섯을 채워야 열리는 게 아니라, 채우면 더 유리할 뿐이다. */
-  $('btn-go').disabled = false;
-  $('btn-go').textContent = (filled===1 ? '혼자 들어가기' : filled+'명으로 들어가기');
+  /* 인원은 1~5 어디든 된다. 다만 고른 단이 지금 인원으로 열리는 단이어야 한다.
+     친구를 빼서 상한이 내려가면 단을 조용히 내리지 않고 그 자리에서 말해 준다. */
+  var cap2=tierCap(g.el, els), tooHigh=TIER>cap2;
+  $('btn-go').disabled = tooHigh;
+  $('btn-go').textContent = tooHigh
+      ? tOf(TIER).nm+'은 지금 인원으로 열리지 않습니다'
+      : (filled===1 ? '혼자 '+tOf(TIER).nm+'으로' : filled+'명으로 '+tOf(TIER).nm+'으로');
 
-  var danger = (rel && rel.k==='risk' && filled<=2);
+  var danger = (rel && rel.k==='risk' && filled<=2 && TIER>1);
   $('note').innerHTML =
-    '<b>혼자서도 들어갈 수 있습니다.</b> 인원은 1명부터 5명까지 자유롭고, '+
-    '사람이 늘수록 상생 시너지가 붙습니다.<br>'+
+    '<b>'+tOf(TIER).nm+'으로 들어갑니다.</b> 지금 인원으로 열리는 가장 높은 단은 '+
+    '<b>'+tOf(cap2).nm+'</b>입니다. <a href="#" id="a-tier">단 다시 고르기</a><br>'+
+    (tooHigh ? '<span style="color:#f0a0a0">'+tOf(TIER).nm+'은 '+filled+'명으로는 열리지 않습니다. '+
+               '친구를 더 부르거나 단을 내리세요.</span><br>' : '')+
     (danger ? '<span style="color:#f0a0a0">이 사냥터는 내 기운을 누릅니다. '+
-              '혼자 들어가면 버티기 어렵습니다.</span><br>' : '')+
+              '적은 인원으로는 버티기 어렵습니다.</span><br>' : '')+
     '빈 자리는 <b>카카오톡으로 부르기</b>로 채웁니다. '+
-    '친구가 링크로 들어오면 <b>합류한 친구</b>에 뜨고, 눌러서 자리에 앉힙니다.<br>'+
-    '전투는 아직 준비 중입니다.';
+    '친구가 링크로 들어오면 <b>합류한 친구</b>에 뜨고, 눌러서 자리에 앉힙니다.';
+  if($('a-tier')) $('a-tier').onclick=function(e){ e.preventDefault(); renderTier(); };
   show('v-party');
 }
 
@@ -990,12 +1201,13 @@ function afterLogin(me){
     ev('hunt_login_try',{mode:MODE});
     Promise.resolve(Store.login()).then(function(me){ if(me) afterLogin(me); });
   };
-  $('btn-back').onclick=function(){ stopBattle(); renderPick(); };
+  $('btn-back').onclick=function(){ stopBattle(); renderTier(); };
+  $('btn-back-t').onclick=function(){ stopBattle(); renderPick(); };
   $('btn-close').onclick=function(){ $('mask').classList.remove('on'); };
   $('mask').onclick=function(e){ if(e.target===$('mask')) $('mask').classList.remove('on'); };
   $('btn-go').onclick=function(){
     var n=1+PARTY.filter(Boolean).length;
-    ev('hunt_start',{size:n, ground:CUR?CUR.nm:''});
+    ev('hunt_start',{size:n, ground:CUR?CUR.nm:'', tier:TIER});
     playBattle();
   };
 
