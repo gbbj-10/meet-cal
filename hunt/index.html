@@ -182,7 +182,7 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
     <div class="today" id="today"></div>
     <p class="mine" id="mine"></p>
     <div class="grid" id="grid"></div>
-    <noscript><ul class="flist"><li><i style="background:#4fb95f">木</i><b>청림곡</b><span>靑林谷</span><em>안개가 걷히지 않는 젊은 숲 · 목령(木靈)</em></li><li><i style="background:#e8483c">火</i><b>적염굴</b><span>赤炎窟</span><em>불씨가 꺼지지 않는 동굴 · 염수(炎獸)</em></li><li><i style="background:#c9a227">土</i><b>황사령</b><span>黃沙嶺</span><em>바람이 모래를 쌓아 만든 고개 · 사귀(沙鬼)</em></li><li><i style="background:#8e9bb0">金</i><b>백철갱</b><span>白鐵坑</span><em>버려진 광맥이 울리는 갱도 · 철갑충(鐵甲蟲)</em></li><li><i style="background:#3f8fe0">水</i><b>현해연</b><span>玄海淵</span><em>바닥이 보이지 않는 검은 못 · 수룡(水龍)</em></li></ul></noscript>
+    <noscript><ul class="flist"><li><i style="background:#4fb95f">木</i><b>녹빛 언덕</b><span>목령</span><em>풀이 무릎까지 자란 비탈</em></li><li><i style="background:#e8483c">火</i><b>붉은 마당</b><span>화령</span><em>불씨가 밤새 꺼지지 않는 마당</em></li><li><i style="background:#c9a227">土</i><b>황토 텃밭</b><span>토령</span><em>파도 파도 끝이 없는 붉은 흙</em></li><li><i style="background:#8e9bb0">金</i><b>하얀 골목</b><span>금령</span><em>쇠붙이가 발에 차이는 뒷골목</em></li><li><i style="background:#3f8fe0">水</i><b>청빛 호수</b><span>수령</span><em>바닥이 보이지 않는 깊은 물</em></li></ul></noscript>
     <div class="demo" id="demo-note" hidden></div>
   </section>
 
@@ -219,7 +219,7 @@ var CFG = {
   sbUrl:    '',
   sbKey:    ''
 };
-var GROUNDS = [{"el":"목","id":"cheongrim","nm":"청림곡","hj":"靑林谷","one":"안개가 걷히지 않는 젊은 숲","prey":"목령(木靈)","col":"#4fb95f","elhj":"木"},{"el":"화","id":"jeogyeom","nm":"적염굴","hj":"赤炎窟","one":"불씨가 꺼지지 않는 동굴","prey":"염수(炎獸)","col":"#e8483c","elhj":"火"},{"el":"토","id":"hwangsa","nm":"황사령","hj":"黃沙嶺","one":"바람이 모래를 쌓아 만든 고개","prey":"사귀(沙鬼)","col":"#c9a227","elhj":"土"},{"el":"금","id":"baekcheol","nm":"백철갱","hj":"白鐵坑","one":"버려진 광맥이 울리는 갱도","prey":"철갑충(鐵甲蟲)","col":"#8e9bb0","elhj":"金"},{"el":"수","id":"hyeonhae","nm":"현해연","hj":"玄海淵","one":"바닥이 보이지 않는 검은 못","prey":"수룡(水龍)","col":"#3f8fe0","elhj":"水"}];
+var GROUNDS = [{"el":"목","id":"nokbit","nm":"녹빛 언덕","one":"풀이 무릎까지 자란 비탈","prey":"목령","col":"#4fb95f","elhj":"木"},{"el":"화","id":"bulgeun","nm":"붉은 마당","one":"불씨가 밤새 꺼지지 않는 마당","prey":"화령","col":"#e8483c","elhj":"火"},{"el":"토","id":"hwangto","nm":"황토 텃밭","one":"파도 파도 끝이 없는 붉은 흙","prey":"토령","col":"#c9a227","elhj":"土"},{"el":"금","id":"hayan","nm":"하얀 골목","one":"쇠붙이가 발에 차이는 뒷골목","prey":"금령","col":"#8e9bb0","elhj":"金"},{"el":"수","id":"cheongbit","nm":"청빛 호수","one":"바닥이 보이지 않는 깊은 물","prey":"수령","col":"#3f8fe0","elhj":"水"}];
 var DSAENG = {목:'화',화:'토',토:'금',금:'수',수:'목'};   /* A가 B를 낳는다 */
 var DGEUK  = {목:'토',토:'수',수:'화',화:'금',금:'목'};   /* A가 B를 이긴다 */
 var DGAN='갑을병정무기경신임계', DZHI='자축인묘진사오미신유술해';
@@ -446,7 +446,7 @@ function renderPick(){
             + (rel ? rel.why : '');
     html += '<button class="card'+((ts>=2&&ts===best)?' best':'')+'" data-g="'+g.id+'">'+
       '<span class="orb" style="background:'+g.col+'">'+g.elhj+'</span>'+
-      '<span><span class="t"><b>'+g.nm+'</b><span>'+g.hj+' · '+g.prey+'</span></span>'+
+      '<span><span class="t"><b>'+g.nm+'</b><span>'+g.prey+'</span></span>'+
       '<span class="one">'+g.one+'</span>'+
       (tags?'<span class="tags">'+tags+'</span>':'')+
       (why?'<span class="why">'+why+'</span>':'')+'</span></button>';
@@ -477,7 +477,7 @@ function openGround(id){
 function renderParty(){
   var g=CUR, ts=todayScore(g.el,DAY.els), rel=mineRel(MYEL,g.el);
   $('gh').innerHTML='<span class="orb" style="background:'+g.col+'">'+g.elhj+'</span>'+
-    '<span><h1>'+g.nm+'</h1><span class="hj">'+g.hj+' · '+g.prey+'</span></span>';
+    '<span><h1>'+g.nm+'</h1><span class="hj">'+g.prey+'</span></span>';
   $('gsub').textContent = g.one + ' — ' +
     (ts>0?'오늘 기운이 이곳에 실립니다.':ts<0?'오늘 기운이 이곳을 누릅니다.':'오늘 기운은 이곳과 무관합니다.') +
     (rel? ' '+rel.why : '');
