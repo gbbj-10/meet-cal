@@ -571,15 +571,26 @@ function renderParty(){
 
   var els=[MYEL].concat(PARTY.map(function(p){return p?p.el:null}));
   var sy=synergy(els), filled=1+PARTY.filter(Boolean).length;
-  $('syn').innerHTML='<b>파티 시너지</b> — 상생으로 이어진 쌍 '+sy.pairs+'개'+
+  var SZ={1:'혼자 들어갑니다',2:'둘이 들어갑니다',3:'셋이 들어갑니다',
+          4:'넷이 들어갑니다',5:'다섯이 다 모였습니다'};
+  $('syn').innerHTML='<b>'+SZ[filled]+'</b> — 상생으로 이어진 쌍 '+sy.pairs+'개'+
     (sy.kinds===5?' · <b>오행 전부</b> 모였습니다':'')+
     '<span class="bar2"><i style="width:'+Math.min(100,sy.bonus)+'%"></i></span>'+
-    '보너스 +'+sy.bonus+'% · 자리 '+filled+'/5';
-  $('btn-go').disabled = filled<5;
-  $('btn-go').textContent = filled<5 ? ('사냥 시작 — '+(5-filled)+'자리 남음') : '사냥 시작';
-  $('note').innerHTML = '빈 자리는 <b>카카오톡으로 부르기</b>로 채웁니다. '+
+    '시너지 +'+sy.bonus+'% · 자리 '+filled+'/5'+
+    (filled<5 ? ' — <span style="color:#6f7d92">더 부르면 시너지가 올라갑니다</span>' : '');
+  /* 인원은 1~5 어디든 된다. 다섯을 채워야 열리는 게 아니라, 채우면 더 유리할 뿐이다. */
+  $('btn-go').disabled = false;
+  $('btn-go').textContent = (filled===1 ? '혼자 들어가기' : filled+'명으로 들어가기');
+
+  var danger = (rel && rel.k==='risk' && filled<=2);
+  $('note').innerHTML =
+    '<b>혼자서도 들어갈 수 있습니다.</b> 인원은 1명부터 5명까지 자유롭고, '+
+    '사람이 늘수록 상생 시너지가 붙습니다.<br>'+
+    (danger ? '<span style="color:#f0a0a0">이 사냥터는 내 기운을 누릅니다. '+
+              '혼자 들어가면 버티기 어렵습니다.</span><br>' : '')+
+    '빈 자리는 <b>카카오톡으로 부르기</b>로 채웁니다. '+
     '친구가 링크로 들어오면 <b>합류한 친구</b>에 뜨고, 눌러서 자리에 앉힙니다.<br>'+
-    '전투는 아직 준비 중입니다. 다섯 자리가 차면 시작 버튼이 열립니다.';
+    '전투는 아직 준비 중입니다.';
   show('v-party');
 }
 
@@ -674,7 +685,11 @@ function afterLogin(me){
   $('btn-back').onclick=function(){ renderPick(); };
   $('btn-close').onclick=function(){ $('mask').classList.remove('on'); };
   $('mask').onclick=function(e){ if(e.target===$('mask')) $('mask').classList.remove('on'); };
-  $('btn-go').onclick=function(){ alert('전투는 아직 준비 중입니다. 파티는 저장해 뒀습니다.'); ev('hunt_start',{}); };
+  $('btn-go').onclick=function(){
+    var n=1+PARTY.filter(Boolean).length;
+    ev('hunt_start',{size:n, ground:CUR?CUR.nm:''});
+    alert(n+'명으로 '+(CUR?CUR.nm:'사냥터')+'에 들어갑니다.\n전투는 아직 준비 중입니다. 파티는 저장해 뒀습니다.');
+  };
 
   Promise.resolve(Store.me()).then(function(me){
     if(me) afterLogin(me);
