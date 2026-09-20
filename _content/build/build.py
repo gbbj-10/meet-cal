@@ -62,7 +62,9 @@ a{color:var(--acc)}
 header.site{border-bottom:1px solid var(--line);padding:15px 0;margin-bottom:34px}
 header.site .wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 header.site .nm{font-weight:800;font-size:19px;color:var(--ink);text-decoration:none;letter-spacing:-.01em}
-header.site .tl{font-size:13px;color:var(--dim)}
+header.site .tl{font-size:12.5px;color:var(--dim);margin-left:-4px}
+header.site .tl a{color:var(--dim);text-decoration:none}
+header.site .tl a:hover{color:var(--mut)}
 header.site nav{margin-left:auto;display:flex;gap:14px;flex-wrap:wrap}
 header.site nav a{font-size:14px;font-weight:600;color:var(--mut);text-decoration:none}
 header.site nav a:hover{color:var(--ink)}
@@ -390,6 +392,7 @@ gtag('js',new Date());gtag('config','{SITE['ga']}');</script>"""
 <meta name="description" content="{html.escape(desc)}">
 <link rel="canonical" href="{canon}">
 <meta property="og:type" content="{'article' if article else 'website'}">
+<meta property="og:site_name" content="Four Paws">
 <meta property="og:title" content="{html.escape(title)}">
 <meta property="og:description" content="{html.escape(desc)}">
 <meta property="og:url" content="{canon}">
@@ -400,8 +403,8 @@ gtag('js',new Date());gtag('config','{SITE['ga']}');</script>"""
 <style>{CSS}</style>
 </head><body>
 <header class="site"><div class="wrap">
-  <a class="nm" href="blog.html">{SITE['name']}</a>
-  <span class="tl">{SITE['tagline']}</span>
+  <a class="nm" href="/">Four&nbsp;Paws</a>
+  <span class="tl"><a href="blog.html">{SITE['name']}</a></span>
   <nav>
     <a href="/" data-cta="nav_saju">계산기</a><a href="/iljin/" data-cta="nav_iljin">일진</a>
     <a href="/map/" data-cta="nav_map">지도</a><a class="hl" href="/hunt/" data-cta="nav_hunt">사냥터</a>
@@ -410,6 +413,7 @@ gtag('js',new Date());gtag('config','{SITE['ga']}');</script>"""
 </div></header>"""
 
 FOOT = f"""<footer class="site"><div class="wrap">
+  <b style="color:var(--mut)">Four&nbsp;Paws</b> · 오행 댕댕이 키우기<br>
   <nav>
     <a href="/">사주 계산기</a><a href="/iljin/">오늘의 일진</a><a href="/map/">지도</a>
     <a href="/hunt/">사냥터</a><a href="/love/">이성 조건 계산기</a><a href="blog.html">글 목록</a>

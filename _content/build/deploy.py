@@ -53,7 +53,7 @@ GAME = """<!DOCTYPE html>
 <html lang="ko"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex">
-<title>준비 중입니다 — 오행 이야기</title>
+<title>이제 열렸습니다 — Four Paws</title>
 <meta property="og:title" content="생년월일로 만드는 내 오행 캐릭터">
 <meta property="og:description" content="사주 여덟 글자가 정하는 다섯 가지 속성. 준비 중입니다.">
 <meta property="og:image" content="https://meetcal.co.kr/ohaeng/img/og-ohaeng.png">

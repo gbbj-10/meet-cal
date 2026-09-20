@@ -9,7 +9,7 @@
 import html
 
 SITE_ROOT = 'https://meetcal.co.kr'
-TITLE = '사주 오행 계산기 — 생년월일로 만드는 내 오행 캐릭터'
+TITLE = '사주 오행 계산기 — 생년월일로 만드는 내 오행 캐릭터 | Four Paws'
 DESC  = ('생년월일시를 넣으면 사주 여덟 글자와 오행 비율, 내 대표 속성과 '
          '부족한 오행을 계산해 보여 줍니다. 만세력을 직접 계산합니다.')
 
@@ -26,7 +26,7 @@ PAGE = r"""<!DOCTYPE html>
 <meta property="og:title" content="생년월일로 만드는 내 오행 캐릭터">
 <meta property="og:description" content="__DESC__">
 <meta property="og:url" content="__ROOT__/">
-<meta property="og:site_name" content="오행 이야기">
+<meta property="og:site_name" content="Four Paws">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:image" content="__ROOT__/ohaeng/img/og-ohaeng.png">
 <meta property="og:image:width" content="1200">
@@ -52,7 +52,8 @@ a{color:var(--acc)}
 .wrap{max-width:720px;margin:0 auto;padding:0 20px}
 header.site{border-bottom:1px solid var(--line);padding:16px 0}
 header.site .wrap{display:flex;align-items:center;gap:14px}
-header.site .nm{font-weight:800;font-size:19px;color:var(--ink);text-decoration:none;letter-spacing:-.01em}
+header.site .nm{font-weight:800;font-size:19px;color:var(--ink);text-decoration:none;letter-spacing:-.02em}
+header.site .tl{font-size:12.5px;color:var(--dim);margin-left:-4px}
 header.site nav{margin-left:auto;display:flex;gap:16px;flex-wrap:wrap}
 header.site nav a{font-size:14.5px;color:var(--mut);text-decoration:none}
 header.site nav a:hover{color:var(--acc)}
@@ -150,6 +151,7 @@ header.site nav a.hl{color:var(--to);font-weight:700}
 footer.site{margin-top:60px;border-top:1px solid var(--line);padding:24px 0 40px;
   font-size:13px;color:var(--dim)}
 footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
+@media(max-width:560px){header.site .tl{display:none}}
 @media(max-width:430px){
   .hero h1{font-size:26px}
   .cell .hj{font-size:23px}
@@ -160,7 +162,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 </head><body>
 
 <header class="site"><div class="wrap">
-  <a class="nm" href="/">오행 이야기</a>
+  <a class="nm" href="/">Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
   <nav><a href="/iljin/">일진</a><a href="/map/">지도</a>
        <a class="hl" href="/hunt/">사냥터</a><a href="/ohaeng/">글</a></nav>
 </div></header>
@@ -252,7 +254,8 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 </main>
 
 <footer class="site"><div class="wrap">
-  <a href="/iljin/">일진</a><a href="/map/">지도</a><a href="/ohaeng/">오행 이야기</a>
+  <a href="/iljin/">일진</a><a href="/map/">지도</a><a href="/hunt/">사냥터</a>
+  <a href="/ohaeng/">오행 이야기</a>
   <a href="/love/">이성 조건 계산기</a>
   <p style="margin:10px 0 0">사주 해석은 통계적 사실이 아니라 전통 해석입니다. 재미로 봐 주세요.</p>
 </div></footer>

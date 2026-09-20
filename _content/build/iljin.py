@@ -90,7 +90,7 @@ PAGE = r"""<!DOCTYPE html>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0d1119">
 <meta name="color-scheme" content="dark">
-<title>오늘의 일진 — 매일 계산해서 올립니다 | 오행 이야기</title>
+<title>오늘의 일진 — 매일 계산해서 올립니다 | Four Paws</title>
 <meta name="description" content="__DESC__">
 <link rel="canonical" href="__ROOT__/iljin/">
 <meta property="og:type" content="website">
@@ -119,7 +119,8 @@ a{color:var(--acc)}
 .wrap{max-width:720px;margin:0 auto;padding:0 20px}
 header.site{border-bottom:1px solid var(--line);padding:16px 0}
 header.site .wrap{display:flex;align-items:center;gap:14px}
-header.site .nm{font-weight:800;font-size:19px;color:var(--ink);text-decoration:none}
+header.site .nm{font-weight:800;font-size:19px;color:var(--ink);text-decoration:none;letter-spacing:-.02em}
+header.site .tl{font-size:12.5px;color:var(--dim);margin-left:-4px}
 header.site nav{margin-left:auto;display:flex;gap:15px;flex-wrap:wrap}
 header.site nav a{font-size:14.5px;color:var(--mut);text-decoration:none}
 header.site nav a[aria-current]{color:var(--ink);font-weight:700}
@@ -195,6 +196,7 @@ table.wk i{font-style:normal;display:inline-grid;place-items:center;width:22px;h
 footer.site{margin-top:44px;border-top:1px solid var(--line);padding:22px 0 40px;
   font-size:13px;color:var(--dim)}
 footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
+@media(max-width:560px){header.site .tl{display:none}}
 @media(max-width:430px){
   h1{font-size:24px} .gzc{width:calc(50% - 6px)} .gzc .hj{font-size:46px}
   .me img{width:68px;height:68px}
@@ -203,7 +205,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 </head><body>
 
 <header class="site"><div class="wrap">
-  <a class="nm" href="/">오행 이야기</a>
+  <a class="nm" href="/">Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
   <nav><a href="/">계산기</a><a href="/iljin/" aria-current="page">일진</a>
        <a href="/map/">지도</a><a class="hl" href="/hunt/">사냥터</a>
        <a href="/ohaeng/">글</a></nav>
