@@ -81,7 +81,7 @@ html,body{margin:0;background:#080c13;color:var(--ink);
 a{color:var(--acc)}
 .bar{display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--line)}
 .bar .nm{font-weight:800;font-size:17px;color:var(--ink);text-decoration:none}
-.bar nav{margin-left:auto;display:flex;gap:14px;align-items:center}
+.bar nav{margin-left:auto;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
 .bar nav a{font-size:14px;color:var(--mut);text-decoration:none}
 .bar .me{display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--mut)}
 .bar .me img{width:24px;height:24px;border-radius:50%;object-fit:cover}
@@ -210,7 +210,8 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 <header class="bar">
   <a class="nm" href="/">오행 이야기</a>
   <nav>
-    <a href="/map/">지도</a><a href="/iljin/">일진</a><a href="/ohaeng/">글</a>
+    <a href="/">계산기</a><a href="/iljin/">일진</a><a href="/map/">지도</a>
+    <a href="/ohaeng/">글</a>
     <span class="me" id="me" hidden></span>
   </nav>
 </header>

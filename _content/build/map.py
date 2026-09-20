@@ -131,7 +131,8 @@ html,body{margin:0;background:#080c13;color:var(--ink);
 a{color:var(--acc)}
 .bar{display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--line)}
 .bar .nm{font-weight:800;font-size:17px;color:var(--ink);text-decoration:none}
-.bar nav{margin-left:auto;display:flex;gap:14px}
+.bar nav{margin-left:auto;display:flex;gap:14px;flex-wrap:wrap}
+.bar nav a.hl{color:var(--to);font-weight:700}
 .bar nav a{font-size:14px;color:var(--mut);text-decoration:none}
 
 .mapwrap{max-width:1180px;margin:0 auto;position:relative}
@@ -211,8 +212,8 @@ svg.map{display:block;width:100%}
 
 <div class="bar">
   <a class="nm" href="/">오행 이야기</a>
-  <nav><a href="/iljin/">일진</a><a href="/">계산기</a><a href="/ohaeng/">글</a>
-       <a href="/love/">이성 계산기</a></nav>
+  <nav><a href="/">계산기</a><a href="/iljin/">일진</a>
+       <a class="hl" href="/hunt/">사냥터</a><a href="/ohaeng/">글</a></nav>
 </div>
 
 <div class="mapwrap" id="mapwrap">

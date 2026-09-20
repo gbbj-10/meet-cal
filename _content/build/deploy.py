@@ -7,7 +7,7 @@
 build.py 가 원본이고, 여기서는 경로만 배포용으로 바꿉니다.
   - 글 주소를  /ohaeng/posts/xxx.html  →  /ohaeng/xxx.html  로 평탄화
   - 목록 페이지를 blog.html → index.html 로 (그래야 /ohaeng/ 로 열립니다)
-  - 게임 CTA 는 아직 게임이 없으므로 game.html(준비 중)로 보냅니다
+  - 게임 CTA 는 사주각(/)으로 보냅니다. game.html 은 예전 공유 링크용으로만 남깁니다
 """
 import os, sys, json, html, shutil, datetime
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -30,7 +30,7 @@ KAKAO_JS_KEY = '60b71fcf9ec72aad11e6f5d62358c8db'
 #                   'Publishable and secret API keys' 탭의 Publishable key
 #                   (sb_publishable_... 로 시작. 브라우저에 넣어도 되는 공개 키)
 #  ⚠️ Secret key(sb_secret_...) 는 절대 넣지 않습니다. RLS 를 무시합니다.
-SUPABASE = ('https://femyilypnjebpkiysqxm.supabase.co', 'sb_publishable_1QqOc0LpTC0pPCpm3CjqPg_hCTuEQHq')
+SUPABASE = ('', '')
 
 OUT  = os.path.join(B.ROOT, 'deploy')
 SITE = os.path.join(OUT, 'ohaeng')
@@ -40,8 +40,11 @@ def flatten(s, depth):
     s = s.replace(BASE + '/posts/', BASE + '/')
     s = s.replace(BASE + '/blog.html', BASE + '/')
     s = s.replace('src="../img/', 'src="img/').replace('src="../data/', 'src="data/')
-    s = s.replace('href="../../UI_화면시안.html"', 'href="game.html"')
-    s = s.replace('href="../UI_화면시안.html"',   'href="game.html"')
+    # 2026-09-20 — 예전에는 게임이 없어서 CTA 를 game.html(준비 중)로 보냈다.
+    # 지금은 사주각(/)도 사냥터(/hunt/)도 열려 있으므로 진짜 계산기로 보낸다.
+    # 빌드 쪽에서 이미 '/' 로 쓰고 있고, 이 두 줄은 옛 원고가 섞여 들어올 때의 안전망이다.
+    s = s.replace('href="../../UI_화면시안.html"', 'href="/"')
+    s = s.replace('href="../UI_화면시안.html"',   'href="/"')
     s = s.replace('href="blog.html"', 'href="index.html"')
     s = s.replace('href="posts/', 'href="')
     return s
@@ -65,10 +68,16 @@ GAME = """<!DOCTYPE html>
 %s
 </head><body>
 <main class="pend">
-  <h1>사주 캐릭터, 준비 중입니다</h1>
-  <p>생년월일시로 오행 캐릭터를 만들어 주는 기능을 만들고 있습니다.<br>
-     지금은 글로 먼저 보여 드리고 있어요.</p>
-  <a class="back" href="index.html" data-cta="pending_back">오행 이야기 더 보기</a>
+  <h1>사주 캐릭터, 이제 열렸습니다</h1>
+  <p>예전에 준비 중이라고 안내하던 자리입니다.<br>
+     생년월일시를 넣으면 오행 캐릭터가 바로 나오고,<br>
+     그 캐릭터로 친구들과 사냥터에 들어갈 수 있습니다.</p>
+  <a class="back" href="/" data-cta="pending_go">내 캐릭터 만들기</a>
+  <p style="margin-top:20px;font-size:14px">
+    <a href="/hunt/" data-cta="pending_hunt">사냥터</a> ·
+    <a href="/iljin/" data-cta="pending_iljin">오늘의 일진</a> ·
+    <a href="/map/" data-cta="pending_map">지도</a> ·
+    <a href="index.html" data-cta="pending_back">오행 이야기</a></p>
 </main>
 <script>
 if(window.gtag) gtag('event','pending_view',{page:location.pathname,ref:document.referrer});

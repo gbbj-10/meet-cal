@@ -59,12 +59,14 @@ body{margin:0;background:var(--bg);color:var(--ink);line-height:1.75;
      font-size:17px;word-break:keep-all;overflow-wrap:break-word}
 a{color:var(--acc)}
 .wrap{max-width:720px;margin:0 auto;padding:0 20px}
-header.site{border-bottom:1px solid var(--line);padding:18px 0;margin-bottom:34px}
-header.site .wrap{display:flex;align-items:baseline;gap:12px}
+header.site{border-bottom:1px solid var(--line);padding:15px 0;margin-bottom:34px}
+header.site .wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 header.site .nm{font-weight:800;font-size:19px;color:var(--ink);text-decoration:none;letter-spacing:-.01em}
 header.site .tl{font-size:13px;color:var(--dim)}
-header.site .go{margin-left:auto;font-size:14px;font-weight:700;text-decoration:none;
-  background:var(--acc);color:#08101c;padding:8px 14px;border-radius:8px}
+header.site nav{margin-left:auto;display:flex;gap:14px;flex-wrap:wrap}
+header.site nav a{font-size:14px;font-weight:600;color:var(--mut);text-decoration:none}
+header.site nav a:hover{color:var(--ink)}
+header.site nav a.hl{color:var(--to)}
 h1{font-size:30px;line-height:1.35;letter-spacing:-.02em;margin:0 0 14px}
 h2{font-size:22px;letter-spacing:-.015em;margin:44px 0 12px;padding-top:6px}
 h3{font-size:18px;margin:28px 0 8px}
@@ -98,6 +100,8 @@ hr{border:0;border-top:1px solid var(--line);margin:40px 0}
 .related a:last-child{border-bottom:0}
 footer.site{margin-top:56px;padding:26px 0 44px;border-top:1px solid var(--line);
   color:var(--dim);font-size:13px}
+footer.site nav{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px}
+footer.site nav a{font-size:13.5px;font-weight:600;color:var(--mut);text-decoration:none}
 /* 글 안 계산기 */
 .calc{margin:32px 0;padding:24px 22px;border:1px solid #2c3d57;border-radius:16px;
   background:linear-gradient(135deg,#161e2e,#111722)}
@@ -174,7 +178,9 @@ footer.site{margin-top:56px;padding:26px 0 44px;border-top:1px solid var(--line)
 .card .m{font-size:12.5px;color:var(--dim)}
 .intro{margin-bottom:32px;padding:20px;background:var(--soft);border-radius:12px;font-size:15px;color:var(--mut)}
 @media(max-width:560px){h1{font-size:25px}h2{font-size:20px}body{font-size:16px}
-  header.site .tl{display:none}}
+  header.site .tl{display:none}
+  header.site nav{margin-left:0;width:100%;gap:13px;row-gap:6px}
+  header.site nav a{font-size:13.5px}}
 """
 
 CALC = """
@@ -253,7 +259,7 @@ CALC = """
       (tie.length&&nk?'<div class="cnote">시주 두 글자가 비어서 공동 최저가 나왔습니다. <a href="taeeonan-sigak.html">태어난 시각을 찾으면</a> 대개 하나로 좁혀집니다.</div>':
        tie.length?'<div class="cnote">여덟 글자를 다 채워도 공동 최저인 경우입니다. 위 후보 중 끌리는 쪽을 보셔도 됩니다.</div>':'')+
       (nk&&!tie.length?'<div class="cnote">시주를 뺀 여섯 글자로 계산했습니다. 시각을 알면 결과가 달라질 수 있어요.</div>':'')+
-      '<a class="cgame" href="../../UI_화면시안.html" data-cta="calc">이 오행으로 캐릭터 만들어 보기</a>';
+      '<a class="cgame" href="/" data-cta="calc">이 오행으로 캐릭터 만들어 보기</a>';
     var ad=$('cad');
     if(ad&&ad.hidden){
       ad.hidden=false;
@@ -396,10 +402,18 @@ gtag('js',new Date());gtag('config','{SITE['ga']}');</script>"""
 <header class="site"><div class="wrap">
   <a class="nm" href="blog.html">{SITE['name']}</a>
   <span class="tl">{SITE['tagline']}</span>
-  <a class="go" href="../UI_화면시안.html" data-cta="header">내 사주 보기</a>
+  <nav>
+    <a href="/" data-cta="nav_saju">계산기</a><a href="/iljin/" data-cta="nav_iljin">일진</a>
+    <a href="/map/" data-cta="nav_map">지도</a><a class="hl" href="/hunt/" data-cta="nav_hunt">사냥터</a>
+    <a href="blog.html" data-cta="nav_blog">글</a>
+  </nav>
 </div></header>"""
 
 FOOT = f"""<footer class="site"><div class="wrap">
+  <nav>
+    <a href="/">사주 계산기</a><a href="/iljin/">오늘의 일진</a><a href="/map/">지도</a>
+    <a href="/hunt/">사냥터</a><a href="/love/">이성 조건 계산기</a><a href="blog.html">글 목록</a>
+  </nav>
   {SITE['name']} · 사주 계산은 직접 만든 만세력 엔진을 씁니다.<br>
   글에 쓰인 숫자는 전부 재현 가능한 계산 결과입니다.
 </div></footer>
@@ -415,8 +429,9 @@ document.querySelectorAll('[data-cta]').forEach(function(a){{
 def cta(where):
     return f"""<div class="cta">
   <div class="t">내 사주는 어떤 오행일까</div>
-  <div class="s">생년월일시만 넣으면 1분 만에 나옵니다. 가입은 필요 없어요.</div>
-  <a href="../UI_화면시안.html" data-cta="{where}">내 사주 보기</a>
+  <div class="s">생년월일시만 넣으면 1분 만에 나옵니다. 가입은 필요 없어요.<br>
+     캐릭터가 나오면 그대로 사냥터에 들어갈 수 있습니다.</div>
+  <a href="/" data-cta="{where}">내 사주 보기</a>
 </div>"""
 
 def kst_today():
