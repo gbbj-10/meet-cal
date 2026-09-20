@@ -324,8 +324,12 @@ var Store = {
       var me={id:'demo-'+Math.random().toString(36).slice(2,9), nick:nick, pic:'', el:null};
       LS.set('hunt.me',me); return Promise.resolve(me);
     }
+    /* 스코프를 직접 지정한다. 지정하지 않으면 Supabase 가 account_email 까지 달라고 해서,
+       비즈 앱이 아닌 개인 개발자 앱에서는 KOE205 로 로그인이 막힌다.
+       우리는 닉네임과 프로필 사진만 있으면 된다. */
     return sb.auth.signInWithOAuth({provider:'kakao',
-      options:{redirectTo:location.origin+'/hunt/'+location.search}});
+      options:{redirectTo:location.origin+'/hunt/'+location.search,
+               scopes:'profile_nickname profile_image'}});
   },
   logout:function(){
     if(MODE==='demo'){ LS.set('hunt.me',null); return Promise.resolve(); }
