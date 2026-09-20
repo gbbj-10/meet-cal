@@ -72,6 +72,14 @@
     .top-bar{background:var(--bg);border-bottom:0.5px solid var(--border);padding:14px 1rem;display:flex;align-items:center;gap:10px;margin-bottom:1rem;}
     .top-bar .logo{font-size:15px;font-weight:600;color:var(--purple);}
     .top-bar .badge{font-size:10px;font-weight:500;background:var(--purple-light);color:var(--purple);padding:2px 8px;border-radius:20px;}
+    .top-bar nav{margin-left:auto;display:flex;gap:13px;flex-wrap:wrap;justify-content:flex-end;}
+    .top-bar nav a{font-size:13px;font-weight:600;color:var(--text2);text-decoration:none;}
+    .top-bar nav a.hl{color:var(--amber);}
+    .site-foot{margin-top:2.2rem;padding:22px 1rem 10px;border-top:0.5px solid var(--border);
+      color:var(--text3);font-size:12.5px;line-height:1.7;}
+    .site-foot nav{display:flex;gap:15px;flex-wrap:wrap;margin-bottom:10px;}
+    .site-foot nav a{font-size:13px;font-weight:600;color:var(--text2);text-decoration:none;}
+    @media(max-width:420px){.top-bar nav{gap:11px}.top-bar nav a{font-size:12px}}
     .hero{text-align:center;padding:1.5rem 1rem 1.25rem;}
     .hero h1{font-size:24px;font-weight:700;color:var(--text);line-height:1.3;margin-bottom:6px;}
     .hero p{font-size:13px;color:var(--text2);}
@@ -142,7 +150,7 @@
 
   <!-- 페이지 1: 입력 -->
   <div class="page active" id="page-input">
-    <div class="top-bar"><a class="logo" href="/" data-cta="home">&larr; 오행 이야기</a><span class="badge">BASIC</span></div>
+    <div class="top-bar"><a class="logo" href="/" data-cta="home">&larr; 오행 이야기</a><span class="badge">BASIC</span><nav><a href="/">계산기</a><a href="/iljin/">일진</a><a href="/map/">지도</a><a class="hl" href="/hunt/">사냥터</a><a href="/ohaeng/">글</a></nav></div>
     <div class="hero">
       <h1>나는 어떤 이성을<br>만날 수 있을까?</h1>
       <p>핵심 조건 6가지로 만날 수 있는 이성을 확인하세요</p>
@@ -250,7 +258,7 @@
 
   <!-- 페이지 3: 결과 -->
   <div class="page" id="page-result">
-    <div class="top-bar"><a class="logo" href="/" data-cta="home">&larr; 오행 이야기</a><span class="badge">결과</span></div>
+    <div class="top-bar"><a class="logo" href="/" data-cta="home">&larr; 오행 이야기</a><span class="badge">결과</span><nav><a href="/">계산기</a><a href="/iljin/">일진</a><a href="/map/">지도</a><a class="hl" href="/hunt/">사냥터</a><a href="/ohaeng/">글</a></nav></div>
     <div class="r-hero">
       <div class="lbl">만날 수 있는 이성 조건</div>
       <div class="desc">항목별 대한민국 통계 기반 1:1 대치 결과입니다</div>
@@ -284,6 +292,14 @@
       <span class="d">태어난 달·시각이 오행을 얼마나 바꾸는지, 내 방향은 어디인지 &rarr;</span>
     </a>
   </div>
+
+  <footer class="site-foot">
+    <nav>
+      <a href="/">사주 계산기</a><a href="/iljin/">오늘의 일진</a><a href="/map/">지도</a>
+      <a href="/hunt/">사냥터</a><a href="/ohaeng/">오행 이야기</a>
+    </nav>
+    오행 이야기 · 통계는 공개 자료를 직접 집계한 값입니다. 재미로 봐 주세요.
+  </footer>
 
 </div>
 <script>
