@@ -70,12 +70,26 @@ def to_file(u, root):
     return os.path.join(p, 'index.html') if (u.endswith('/') or os.path.isdir(p)) else p
 
 
+# 검색엔진 소유 확인 파일. 구글·네이버가 시키는 대로 올려 둔 한 줄짜리
+# 껍데기라 나가는 링크가 없는 게 정상이다. 사람이 보는 페이지가 아니다.
+VERIFY = ('google', 'naver', 'baidu', 'yandex', 'bingsiteauth', 'pinterest')
+
+
+def is_page(f):
+    """사람이 보는 페이지인가. 소유 확인 파일과 빈 껍데기는 검사 대상이 아니다."""
+    n = os.path.basename(f).lower()
+    if n.startswith(VERIFY):
+        return False
+    return os.path.getsize(f) >= 1024
+
+
 def walk_html(root):
     """`_content`, `.github` 처럼 배포되지 않는 폴더는 건너뛴다."""
     out = []
     for d, dirs, fs in os.walk(root):
         dirs[:] = [x for x in dirs if not x.startswith(('_', '.'))]
-        out += [os.path.join(d, f) for f in fs if f.endswith('.html')]
+        out += [os.path.join(d, f) for f in fs
+                if f.endswith('.html') and is_page(os.path.join(d, f))]
     return sorted(out)
 
 
