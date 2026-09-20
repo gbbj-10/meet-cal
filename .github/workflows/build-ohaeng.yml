@@ -48,6 +48,8 @@ jobs:
           cp -r _content/deploy/map map                  # 환영 화면과 지도
           rm -rf iljin
           cp -r _content/deploy/iljin iljin              # 오늘의 일진 (매일 갱신)
+          rm -rf hunt
+          cp -r _content/deploy/hunt hunt                # 사냥터 (카카오 로그인 뒤 열림)
           cp _content/deploy/sitemap.xml sitemap.xml
 
       - name: 확인 — 글이 실제로 생겼나
@@ -56,6 +58,12 @@ jobs:
           test -f index.html        || { echo "::error::루트 index.html 이 없습니다"; exit 1; }
           test -f map/index.html    || { echo "::error::map/index.html 이 없습니다"; exit 1; }
           test -f iljin/index.html  || { echo "::error::iljin/index.html 이 없습니다"; exit 1; }
+          test -f hunt/index.html   || { echo "::error::hunt/index.html 이 없습니다"; exit 1; }
+          grep -q 'noindex' hunt/index.html \
+            || { echo "::error::사냥터에 noindex 가 빠졌습니다"; exit 1; }
+          h=$(grep -o '"id":"' hunt/index.html | wc -l)
+          test "$h" -ge 5 || { echo "::error::사냥터가 모자랍니다 ($h)"; exit 1; }
+          echo "사냥터: $h 곳"
           # 일진 페이지에 오늘 날짜가 실제로 박혀 있는지 (한국 시간 기준)
           kd=$(TZ=Asia/Seoul date '+%Y년 %-m월 %-d일')
           grep -q "$kd" iljin/index.html \
@@ -84,7 +92,7 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add ohaeng map iljin index.html sitemap.xml
+          git add ohaeng map iljin hunt index.html sitemap.xml
           if git diff --staged --quiet; then
             echo "바뀐 것 없음 — 커밋 생략"
           else
