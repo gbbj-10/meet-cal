@@ -3,7 +3,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0d1119">
-<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20%3E%3Cpath%20fill%3D%22%23ffd93d%22%20d%3D%22M24%2025.6c7.6%200%2014%205.1%2014%2011.1%200%204.9-4.1%208.3-8.6%208.3-2.6%200-3.8-.9-5.4-.9s-2.8.9-5.4.9C14.1%2045%2010%2041.6%2010%2036.7c0-6%206.4-11.1%2014-11.1z%22%2F%3E%3Cellipse%20cx%3D%2211.06%22%20cy%3D%2221.75%22%20rx%3D%225.3%22%20ry%3D%226.5%22%20transform%3D%22rotate(-30%2011.06%2021.75)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2218.73%22%20cy%3D%2216.18%22%20rx%3D%225.8%22%20ry%3D%227.1%22%20transform%3D%22rotate(-9%2018.73%2016.18)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2229.27%22%20cy%3D%2216.18%22%20rx%3D%225.8%22%20ry%3D%227.1%22%20transform%3D%22rotate(9%2029.27%2016.18)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2236.94%22%20cy%3D%2221.75%22%20rx%3D%225.3%22%20ry%3D%226.5%22%20transform%3D%22rotate(30%2036.94%2021.75)%22%20fill%3D%22%23ffd93d%22%2F%3E%3C%2Fsvg%3E"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><script src="/me.js"></script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20%3E%3Cpath%20fill%3D%22%23ffd93d%22%20d%3D%22M24%2025.6c7.6%200%2014%205.1%2014%2011.1%200%204.9-4.1%208.3-8.6%208.3-2.6%200-3.8-.9-5.4-.9s-2.8.9-5.4.9C14.1%2045%2010%2041.6%2010%2036.7c0-6%206.4-11.1%2014-11.1z%22%2F%3E%3Cellipse%20cx%3D%2211.06%22%20cy%3D%2221.75%22%20rx%3D%225.3%22%20ry%3D%226.5%22%20transform%3D%22rotate(-30%2011.06%2021.75)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2218.73%22%20cy%3D%2216.18%22%20rx%3D%225.8%22%20ry%3D%227.1%22%20transform%3D%22rotate(-9%2018.73%2016.18)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2229.27%22%20cy%3D%2216.18%22%20rx%3D%225.8%22%20ry%3D%227.1%22%20transform%3D%22rotate(9%2029.27%2016.18)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2236.94%22%20cy%3D%2221.75%22%20rx%3D%225.3%22%20ry%3D%226.5%22%20transform%3D%22rotate(30%2036.94%2021.75)%22%20fill%3D%22%23ffd93d%22%2F%3E%3C%2Fsvg%3E"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><script>window.FPCFG={"sbUrl": "", "sbKey": ""}</script><script src="/me.js"></script>
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
             "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}
@@ -337,10 +337,12 @@ if(window.ResizeObserver) new ResizeObserver(redraw).observe(wrap);
     }); }
   var ds=p.querySelector('.ds');
   if(ds) ds.insertAdjacentHTML('afterend',
-    (window.FP&&FP.barsHTML ? FP.barsHTML() : '')+
+    (window.FP&&FP.barsHTML ? FP.barsHTML({}) : '')+
+    (window.FP&&FP.accountHTML ? FP.accountHTML() : '')+
     '<p class="ds" style="margin-top:4px"><a href="/?edit=1" data-cta="edit_el">오행 다시 계산하기</a></p>');
 })();
 
+if(window.FP&&FP.paintAccount) FP.paintAccount();
 var f=$('flist'); if(f) f.parentNode.removeChild(f);   // 지도가 그려지니 목록은 뺀다
 draw();
 })();

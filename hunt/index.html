@@ -3,7 +3,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0d1119">
-<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20%3E%3Cpath%20fill%3D%22%23ffd93d%22%20d%3D%22M24%2025.6c7.6%200%2014%205.1%2014%2011.1%200%204.9-4.1%208.3-8.6%208.3-2.6%200-3.8-.9-5.4-.9s-2.8.9-5.4.9C14.1%2045%2010%2041.6%2010%2036.7c0-6%206.4-11.1%2014-11.1z%22%2F%3E%3Cellipse%20cx%3D%2211.06%22%20cy%3D%2221.75%22%20rx%3D%225.3%22%20ry%3D%226.5%22%20transform%3D%22rotate(-30%2011.06%2021.75)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2218.73%22%20cy%3D%2216.18%22%20rx%3D%225.8%22%20ry%3D%227.1%22%20transform%3D%22rotate(-9%2018.73%2016.18)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2229.27%22%20cy%3D%2216.18%22%20rx%3D%225.8%22%20ry%3D%227.1%22%20transform%3D%22rotate(9%2029.27%2016.18)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2236.94%22%20cy%3D%2221.75%22%20rx%3D%225.3%22%20ry%3D%226.5%22%20transform%3D%22rotate(30%2036.94%2021.75)%22%20fill%3D%22%23ffd93d%22%2F%3E%3C%2Fsvg%3E"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><script src="/me.js"></script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20%3E%3Cpath%20fill%3D%22%23ffd93d%22%20d%3D%22M24%2025.6c7.6%200%2014%205.1%2014%2011.1%200%204.9-4.1%208.3-8.6%208.3-2.6%200-3.8-.9-5.4-.9s-2.8.9-5.4.9C14.1%2045%2010%2041.6%2010%2036.7c0-6%206.4-11.1%2014-11.1z%22%2F%3E%3Cellipse%20cx%3D%2211.06%22%20cy%3D%2221.75%22%20rx%3D%225.3%22%20ry%3D%226.5%22%20transform%3D%22rotate(-30%2011.06%2021.75)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2218.73%22%20cy%3D%2216.18%22%20rx%3D%225.8%22%20ry%3D%227.1%22%20transform%3D%22rotate(-9%2018.73%2016.18)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2229.27%22%20cy%3D%2216.18%22%20rx%3D%225.8%22%20ry%3D%227.1%22%20transform%3D%22rotate(9%2029.27%2016.18)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2236.94%22%20cy%3D%2221.75%22%20rx%3D%225.3%22%20ry%3D%226.5%22%20transform%3D%22rotate(30%2036.94%2021.75)%22%20fill%3D%22%23ffd93d%22%2F%3E%3C%2Fsvg%3E"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><script>window.FPCFG={"sbUrl": "", "sbKey": ""}</script><script src="/me.js"></script>
 <!-- 전투 화면(three.js)용. 모듈 스크립트보다 먼저 와야 한다. -->
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
@@ -86,6 +86,7 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 .tag{font-size:12px;font-weight:700;border-radius:20px;padding:3px 10px;border:1px solid;white-space:nowrap;flex:none;line-height:1.6}
 .tag.good{color:#7fe08f;border-color:#2d6b38;background:#0f2415}
 .tag.mine{color:#9cc3f7;border-color:#2c4a7a;background:#141d2b}
+.tag.edge{color:#ffe27a;border-color:#6b5a1a;background:#241f0f}
 .tag.warn{color:#f0a0a0;border-color:#5c241f;background:#1c100e}
 .card.best{border-color:#2d6b38;box-shadow:0 0 0 1px #2d6b38}
 .why{font-size:12.5px;color:var(--dim);margin-top:7px}
@@ -130,11 +131,32 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 .card .why{color:#c3ccd9;text-shadow:0 1px 2px rgba(0,0,0,.85)}
 .card .tag{backdrop-filter:blur(2px)}
 
+/* ── 맨 위: 내 캐릭터 + 오늘의 기운 | 속성 막대 ── */
+.hero2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:14px;margin:0 0 16px}
+@media(max-width:640px){.hero2{grid-template-columns:1fr}}
+.hcard,.hbars{background:var(--pan);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.hcard{display:grid;grid-template-columns:130px 1fr;gap:12px;align-items:center}
+.hdog{height:150px;border-radius:12px;background:radial-gradient(ellipse at 50% 80%,rgba(255,217,61,.10),transparent 65%)}
+.hdog canvas{display:block;width:100%!important;height:100%!important}
+.hinfo .gems{display:flex;gap:7px;align-items:center;margin-bottom:10px}
+.hinfo .gems .orb{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+  font:800 20px "Noto Serif KR",serif}
+.hinfo .gems b{width:36px;height:36px;display:grid;place-items:center;font:800 17px "Noto Serif KR",serif}
+.hinfo p{margin:3px 0;font-size:14px;color:var(--mut)}
+.hinfo p b{color:var(--ink);font-size:15.5px}
+.hinfo p.day{color:#ffd93d;font-weight:700}
+.hbars .fpbars{margin:0}
+
 /* ── 사냥터 안내 · 오행도 ── */
-.guide{display:grid;grid-template-columns:1fr 250px;gap:16px;align-items:center;
-  background:var(--pan);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin:0 0 18px}
-@media(max-width:560px){.guide{grid-template-columns:1fr}.guide svg{max-width:250px;margin:0 auto}}
-.guide h2{margin:0 0 8px;font-size:15.5px;color:#ffd93d}
+.guide{background:var(--pan);border:1px solid var(--line);border-radius:16px;margin:0 0 18px}
+.guide summary{cursor:pointer;list-style:none;padding:14px 18px;font-weight:700;font-size:15.5px;color:#ffd93d;
+  display:flex;align-items:center;justify-content:space-between}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary::after{content:'▼';font-size:12px;color:var(--dim);transition:transform .2s}
+.guide[open] summary::after{transform:rotate(180deg)}
+.guide .gbody{display:grid;grid-template-columns:1fr 250px;gap:16px;align-items:center;padding:0 18px 16px}
+@media(max-width:560px){.guide .gbody{grid-template-columns:1fr}.guide svg{max-width:250px;margin:0 auto}}
+.guide h2{display:none}
 .guide ul{margin:0;padding-left:18px;font-size:13.5px;color:var(--mut);line-height:1.7}
 .guide li b{color:var(--ink)}
 .guide svg{width:100%;height:auto;display:block}
@@ -317,9 +339,18 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
   <section class="view" id="v-pick">
     <h1>어느 사냥터로 갈까</h1>
     <p class="sub">다섯 곳 중 하나를 고르세요. 오늘의 기운과 내 사주로 유리한 곳을 표시해 뒀습니다.</p>
-    <div class="today" id="today"></div>
+    <div class="hero2">
+      <div class="hcard">
+        <div class="hdog" id="hdog"></div>
+        <div class="hinfo" id="today"></div>
+      </div>
+      <div class="hbars" id="hbars"></div>
+    </div>
     <p class="mine" id="mine"></p>
-    <div class="guide" id="guide"></div>
+    <details class="guide" id="guide-wrap">
+      <summary>사냥터에서 강해지는 법</summary>
+      <div class="gbody" id="guide"></div>
+    </details>
     <div class="grid" id="grid"></div>
     <noscript><ul class="flist"><li><i style="background:#4fb95f">木</i><b>녹빛 언덕</b><span>목령</span><em>풀이 무릎까지 자란 비탈</em></li><li><i style="background:#e8483c">火</i><b>붉은 마당</b><span>화령</span><em>불씨가 밤새 꺼지지 않는 마당</em></li><li><i style="background:#ffd93d">土</i><b>황토 텃밭</b><span>토령</span><em>파도 파도 끝이 없는 붉은 흙</em></li><li><i style="background:#8e9bb0">金</i><b>하얀 골목</b><span>금령</span><em>쇠붙이가 발에 차이는 뒷골목</em></li><li><i style="background:#3f8fe0">水</i><b>청빛 호수</b><span>수령</span><em>바닥이 보이지 않는 깊은 물</em></li></ul></noscript>
     <div class="demo" id="demo-note" hidden></div>
@@ -399,7 +430,8 @@ var ev=function(n,p){ if(window.gtag) gtag('event',n,p||{}); };
 /* 키가 비어 있으면 demo 로 돈다. 채워 넣으면 그대로 supabase 가 된다. */
 var MODE = (CFG.sbUrl && CFG.sbKey && CFG.sbUrl.indexOf('http')===0) ? 'supabase' : 'demo';
 var sb = null;
-if (MODE==='supabase' && window.supabase) sb = window.supabase.createClient(CFG.sbUrl, CFG.sbKey);
+/* me.js(FP) 가 만든 클라이언트를 같이 쓴다 — 한 페이지에 둘이면 로그인 상태가 엇갈린다 */
+if (MODE==='supabase' && window.supabase) sb = (window.FP && FP.client && FP.client()) || window.supabase.createClient(CFG.sbUrl, CFG.sbKey);
 
 var LS = {
   get:function(k,d){ try{ var v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } },
@@ -451,10 +483,10 @@ var Store = {
     if(MODE==='demo') return Promise.resolve(LS.get('hunt.friends.'+Store.myCode(ME),[]));
     return sb.auth.getUser().then(function(r){
       var u=r.data&&r.data.user; if(!u) return [];
-      return sb.from('hunt_invites').select('joined_id,joined_nick,joined_element')
-               .eq('host_id',u.id).then(function(q){
+      return sb.from('hunt_invites').select('joined_id,joined_nick,joined_element,joined_stats')
+               .eq('host_code',String(u.id).slice(0,8)).then(function(q){
         return (q.data||[]).map(function(x){
-          return {id:x.joined_id, nick:x.joined_nick, el:x.joined_element};
+          return {id:x.joined_id, nick:x.joined_nick, el:x.joined_element, stats:x.joined_stats||null};
         });
       });
     });
@@ -464,13 +496,13 @@ var Store = {
     if(MODE==='demo'){
       var f=LS.get('hunt.friends.'+hostCode,[]);
       var hit=false;
-      f=f.map(function(x){ if(x.id===me.id){ hit=true; return {id:me.id,nick:me.nick,el:me.el}; } return x; });
-      if(!hit) f.push({id:me.id,nick:me.nick,el:me.el});
+      f=f.map(function(x){ if(x.id===me.id){ hit=true; return {id:me.id,nick:me.nick,el:me.el,stats:myVals()}; } return x; });
+      if(!hit) f.push({id:me.id,nick:me.nick,el:me.el,stats:myVals()});
       LS.set('hunt.friends.'+hostCode,f);
       return Promise.resolve();
     }
     return sb.from('hunt_invites').upsert({host_code:hostCode, joined_id:me.id,
-      joined_nick:me.nick, joined_element:me.el});
+      joined_nick:me.nick, joined_element:me.el, joined_stats:myVals()});
   },
   /* 파티 구성 저장/불러오기 */
   party:function(gid){
@@ -558,7 +590,7 @@ var TIERS=[
   {k:7, gan:'정', hj:'丁', nm:'정단'}, {k:8, gan:'병', hj:'丙', nm:'병단'},
   {k:9, gan:'을', hj:'乙', nm:'을단'}, {k:10,gan:'갑', hj:'甲', nm:'갑단'}
 ];
-var TH = (window.FP && FP.TH) ? FP.TH : [50,55,65,85,120,175,255,365,520,730];
+var TH = FP.TH;   /* 전투력 문턱 — me.js 와 같은 표 */
 function tOf(k){ return TIERS[Math.max(1,Math.min(10,k))-1]; }
 function tierFor(v){ var t=0; for(var i=0;i<10;i++) if(v>=TH[i]) t=i+1; return t; }
 
@@ -571,32 +603,34 @@ function stones(){ return LS.get('hunt.stones', {목:0,화:0,토:0,금:0,수:0})
 function addStones(el,n){ var s=stones(); s[el]=(s[el]||0)+n; LS.set('hunt.stones',s); return s; }
 
 /* 땅 G 에서 싸울 때 쓰는 속성 = G 를 누르는 속성 */
-function keyOf(gEl){ for(var a in DGEUK) if(DGEUK[a]===gEl) return a; return gEl; }
+function keyOf(gEl){ return FP.edge(gEl); }
 
-/* 한 사람의 속성 수치. 나는 me.js 에서 정확히, 친구는 받은 값이 있으면 그것,
-   없으면 주 속성만 보고 어림한다(주 속성 70, 나머지 55).
-   친구 수치를 서버에 올리기 전까지의 임시 규칙이다. */
-function statOf(who, x){
-  if(who.me){
-    var st = window.FP && FP.stats ? FP.stats() : null;
-    return st ? st[x].val : 50;
-  }
-  if(who.stats && who.stats[x]!=null) return who.stats[x];
-  return who.el===x ? 70 : 55;
+/* 한 사람의 다섯 속성 수치 {목:…}. 나는 me.js 에서(오늘 몫 포함), 친구는 받은 값,
+   없으면 주 속성만 보고 어림한다(주 속성 70, 나머지 55). */
+function myVals(){
+  var st = window.FP && FP.stats ? FP.stats() : null, v={};
+  ['목','화','토','금','수'].forEach(function(x){ v[x] = st ? st[x].now : 50; });
+  return v;
+}
+function valsOf(who){
+  if(who.me) return myVals();
+  if(who.stats) return who.stats;
+  var v={}; ['목','화','토','금','수'].forEach(function(x){ v[x] = who.el===x ? 70 : 55; });
+  return v;
 }
 
-/* 파티 수치 — 전부 같은 규칙으로 계산한 한 숫자 */
+/* 전투력 — 다섯 속성을 땅과의 관계로 무게를 달아 더한다 (me.js FP.weight).
+     그 땅을 누르는 속성 ×1.5 · 같은 속성 ×1 · 서로 살리는 사이 ×0.8 · 그 땅에 눌리는 속성 ×0.5
+   파티는 가장 센 사람 + 나머지 합 × 0.2, 상생 한 쌍마다 +5%. */
 function powerAt(gEl){
-  var x=keyOf(gEl);
   var who=[{me:true, el:MYEL, nick:(ME&&ME.nick)||'나'}];
   PARTY.forEach(function(f){ if(f) who.push({el:f.el, nick:f.nick, stats:f.stats}); });
-  var vals=who.map(function(w){ return statOf(w,x); });
-  var top=Math.max.apply(null,vals), sum=vals.reduce(function(a,b){return a+b},0);
+  var pows=who.map(function(w){ return FP.powerOf(valsOf(w), gEl); });
+  var top=Math.max.apply(null,pows), sum=pows.reduce(function(a,b){return a+b},0);
   var syn=synergy(who.map(function(w){return w.el}));
-  var today=(DAY.els.indexOf(x)>=0);
-  var pow=(top + (sum-top)*0.2) * (1+0.05*syn.pairs) * (today?1.05:1);
-  return {key:x, pow:Math.round(pow), mine:vals[0], top:top, n:who.length,
-          pairs:syn.pairs, today:today, who:who, vals:vals};
+  var pow=(top + (sum-top)*0.2) * (1+0.05*syn.pairs);
+  return {edge:FP.edge(gEl), pow:Math.round(pow), mine:pows[0], n:who.length,
+          pairs:syn.pairs, who:who, vals:pows};
 }
 function tierCap(gEl){ return Math.max(1, tierFor(powerAt(gEl).pow)); }
 function dropFor(k,n){ return Math.round(k*(1+0.25*(n-1))); }
@@ -644,12 +678,12 @@ function buildFight(){
   function jit(){ return 0.85+Math.random()*0.3; }
 
   push(g.nm+' '+tOf(K).nm+'에 들어섰습니다. '+jn(foe.nm,['이','가'])+' 기다리고 있습니다.','big');
-  push(P.key+' 수치 '+P.pow+' — 문턱 '+need+(P.pow>=need*1.3?' 을 넉넉히 넘습니다.':' 을 넘습니다.'),'hit');
+  push('전투력 '+P.pow+' · 문턱 '+need+(P.pow>=need*1.3?' — 넉넉히 넘습니다.':' — 넘습니다.'),'hit');
   if(P.pairs) push('파티의 기운이 서로를 살립니다. 상생 '+P.pairs+'쌍 +'+(P.pairs*5)+'%.','hit');
-  if(P.today) push('오늘의 기운이 '+P.key+'에 실려 있습니다. +5%.','hit');
+  var TD=FP.today(); push('오늘의 기운 '+TD.ganHj+TD.zhiHj+' — '+TD.els[0]+(TD.els[1]!==TD.els[0]?'·'+TD.els[1]:'')+' 수치가 10% 오릅니다.','hit');
 
   /* 우리 쪽 공격 몫 — 각자의 수치와 상성으로 나누고, T 번에 걸쳐 정확히 다 깎는다 */
-  var share=team.map(function(t,i){ return P.vals[i]*strike(t.el,gEl).m; });
+  var share=team.map(function(t,i){ return P.vals[i]; });
   var shareSum=share.reduce(function(a,b){return a+b},0);
   var plan=[], tot=0;
   for(var r=0;r<T;r++) for(var i=0;i<n;i++){ var d=share[i]/shareSum*foe.max/T*jit(); plan.push(d); tot+=d; }
@@ -688,8 +722,8 @@ function buildFight(){
   var ltext=gEl+' 용신석 '+loot+'개가 떨어집니다'+(n>1?' — 한 사람에 '+loot+'개씩':'')+'.';
   push(ltext,'big'); act({t:'loot', el:gEl, n:loot, yong:true, text:ltext});
 
-  var why = margin>=1.3 ? P.key+' 수치 '+P.pow+'이 문턱 '+need+'을 넉넉히 넘었습니다.'
-          : margin>=1.1 ? P.key+' 수치 '+P.pow+'로 문턱 '+need+'을 넘었습니다.'
+  var why = margin>=1.3 ? '전투력 '+P.pow+' · 문턱 '+need+' — 넉넉히 넘었습니다.'
+          : margin>=1.1 ? '전투력 '+P.pow+' · 문턱 '+need+' — 넘었습니다.'
           : '문턱 '+need+'에 딱 걸쳤습니다. 한 번만 더 모으면 편해집니다.';
 
   return {log:L, acts:A, win:true, turns:T, standing:n, total:n, why:why,
@@ -799,10 +833,11 @@ function playLog(F){
 function endBattle(F){
   paintTeam(F.team.map(function(t){return {hp:t.hp/t.max, down:false}}), F.team);
   markCleared(CUR.id, F.tier); addStones(F.lootEl, F.loot);
+  if(window.FP) FP.push();              /* 로그인했으면 계정에 저장 */
   var tn=tOf(F.tier).nm, nx=F.tier+1, cap=tierCap(CUR.el);
   var canNext = nx<=10 && nx<=cap;
   var st = window.FP && FP.stats ? FP.stats() : null;
-  var mineNow = st ? st[F.lootEl].val : null;
+  var mineNow = st ? st[F.lootEl].val : null;   /* 오늘 몫 뺀 본 수치 */
   var nextNeed = nx<=10 ? TH[nx-1] : null;
   $('res').innerHTML=
     '<div class="res win">'+
@@ -813,7 +848,7 @@ function endBattle(F){
         (mineNow!=null ? '<span class="bo">내 '+F.lootEl+' 수치 '+mineNow+' ('+
           (st[F.lootEl].val-F.loot)+' → '+mineNow+')</span>' : '')+'</div>'+
       '<div class="rn"><span><b>'+F.turns+'</b>번 겨룸</span>'+
-        '<span>'+F.P.key+' 수치 <b>'+F.P.pow+'</b> / 문턱 '+F.need+'</span>'+
+        '<span>전투력 <b>'+F.P.pow+'</b> / 문턱 '+F.need+'</span>'+
         (nextNeed ? '<span>'+tOf(nx).nm+' 문턱 <b>'+nextNeed+'</b></span>' : '')+'</div>'+
     '</div>'+
     '<div class="again">'+
@@ -855,17 +890,31 @@ function myElement(){
 }
 
 function renderTop(){
-  var d=DAY, a=d.els[0], b=d.els[1];
+  var d=DAY, a=d.els[0], b=d.els[1], TD=FP.today();
+  var dayTxt = (a===b ? J(a,'i')+' 겹친 날' : J(a,'wa')+' '+b+'의 날');
   $('today').innerHTML =
-    '<span class="gz"><b class="gem sq" style="--c:'+colOf(a)+'" title="'+d.gan+'"><span class="h">'+GANHJ[d.gan]+'</span></b>'+
-    '<b class="gem sq" style="--c:'+colOf(b)+'" title="'+d.zhi+'"><span class="h">'+ZHIHJ[d.zhi]+'</span></b></span>'+
-    '<span class="tx">오늘의 기운 <b>'+d.gan+d.zhi+'</b> · '+
-    (a===b ? J(a,'i')+' 겹친 날' : J(a,'wa')+' '+b+'의 날')+'</span>';
+    '<div class="gems">'+(MYEL?gem(colOf(MYEL), HJEL[MYEL]):'')+
+      '<b class="gem sq" style="--c:'+colOf(a)+'" title="'+d.gan+'">'+TD.ganHj+'</b>'+
+      '<b class="gem sq" style="--c:'+colOf(b)+'" title="'+d.zhi+'">'+TD.zhiHj+'</b></div>'+
+    (MYEL?'<p>오행 속성 <b>'+MYEL+'</b></p>':'')+
+    '<p>오늘의 기운 <b>'+d.gan+d.zhi+'</b></p>'+
+    '<p class="day">'+dayTxt+' — '+a+(a!==b?'·'+b:'')+' 수치 +10%</p>';
+  $('hbars').innerHTML = MYEL ? FP.barsHTML({}) : '';
+  $('hbars').hidden = !MYEL;
 
-  if(MYEL){
-    /* 오행 수정은 홈과 지도의 사주각(프로필)에서만 한다 */
-    $('mine').innerHTML='내 오행 캐릭터는 <b>'+MYEL+' 속성</b>입니다.';
-  } else {
+  /* 3D 캐릭터는 한 번만 띄운다 */
+  var dg=$('hdog');
+  if(MYEL && dg && !dg.dataset.on){
+    dg.dataset.on='1';
+    import('/3d/profile3d.js').then(function(m){
+      return m.showDog({mount:dg, base:'/3d/', el:MYEL, height:150});
+    }).catch(function(){ dg.style.display='none'; });
+  }
+  if(!MYEL && dg) dg.style.display='none';
+
+  if(MYEL){ $('mine').innerHTML=''; $('mine').hidden=true; }
+  else {
+    $('mine').hidden=false;
     $('mine').innerHTML='아직 캐릭터가 없습니다. '+
       '<a href="/">생년월일로 캐릭터 만들기 &rarr;</a>';
   }
@@ -932,7 +981,7 @@ function renderPick(){
     else if(ts>0)          tags+='<span class="tag good">오늘 유리</span>';
     else if(ts<0)          tags+='<span class="tag warn">오늘 불리</span>';
     if(rel && rel.tag) tags+='<span class="tag '+(rel.k==='risk'?'warn':'mine')+'">'+rel.tag+'</span>';
-    tags += '<span class="tag mine">'+keyOf(g.el)+' 수치로 싸움</span>';
+    tags += '<span class="tag edge">'+keyOf(g.el)+' 우세</span>';
     var why = (ts>0 ? '오늘 '+DAY.gan+DAY.zhi+'의 기운이 '+g.el+'에 실립니다. '
                     : ts<0 ? '오늘 기운이 '+J(g.el,'eul')+' 누릅니다. ' : '')
             + (rel ? rel.why : '');
@@ -975,12 +1024,14 @@ function renderTier(){
   var g=CUR, P=powerAt(g.el), done=cleared(g.id), cap=Math.max(1,tierFor(P.pow));
   $('th').innerHTML=gem(g.col, g.elhj)+
     '<span><h1>'+g.nm+'</h1><span class="hj">'+g.prey+' · 계단부터 갑단까지 열 단</span></span>';
-  $('tsub').innerHTML='이 땅은 <b>'+P.key+'</b>이 누릅니다 — <b>'+P.key+' 수치</b>로 싸웁니다. '+
-    (P.n>1?P.n+'명 파티 수치 ':'내 수치 ')+'<b>'+P.pow+'</b>'+
-    (P.n>1&&P.pairs?' (상생 '+P.pairs+'쌍 포함)':'')+(P.today?' · 오늘의 기운 +5%':'')+'.';
+  var parts=FP.ORDER.map(function(x){ return x+'×'+FP.weight(x,g.el); }).join(' + ');
+  $('tsub').innerHTML='<b>'+P.edge+' 우세</b> — '+P.edge+'이 이 땅을 누릅니다. '+
+    '전투력은 다섯 속성을 모두 더해 냅니다: <span class="fx">'+parts+'</span><br>'+
+    (P.n>1?P.n+'명 파티 전투력 ':'내 전투력 ')+'<b class="pw">'+P.pow+'</b>'+
+    (P.n>1&&P.pairs?' (상생 '+P.pairs+'쌍 포함)':'')+'.';
 
-  /* 주머니 — 속성 막대 다섯 줄을 그대로 보여 준다 */
-  $('pouch').innerHTML = (window.FP && FP.barsHTML) ? FP.barsHTML(P.key) : '';
+  /* 속성 막대 다섯 줄 — 이 땅에서 각 속성이 받는 무게를 옆에 적는다 */
+  $('pouch').innerHTML = FP.barsHTML({hl:P.edge, w:g.el});
 
   var html='';
   TIERS.forEach(function(t){
@@ -990,8 +1041,8 @@ function renderTier(){
     var gap=need-P.pow;
     var why = isOpen
       ? '문턱 '+need+' · 이기면 한 사람에 '+g.el+' 용신석 '+dropFor(t.k,P.n)+'개'
-      : '문턱 '+need+' — '+P.key+' 수치 '+gap+' 더. '+P.key+' 용신석 '+gap+'개'+
-        ((window.FP&&FP.FROM)?'('+FP.FROM[P.key]+'에서 남)':'')+(P.n<5?' 또는 친구와 함께':'');
+      : '문턱 '+need+' — 전투력 '+gap+' 더. '+P.edge+' 용신석이 가장 잘 듣습니다(1개 +1.5, '+
+        FP.FROM[P.edge]+'에서 남)'+(P.n<5?'. 친구와 오면 더 빨리 열립니다':'');
     html += '<button class="rung'+(t.k===cap&&isOpen&&!isDone?' now':'')+'" data-k="'+t.k+'"'+(isOpen?'':' disabled')+'>'+
       gem(g.col, t.hj, 'gz2 sq')+
       '<span><span class="tn">'+t.nm+'</span><span class="td">'+why+'</span></span>'+tag+'</button>';
@@ -1002,9 +1053,8 @@ function renderTier(){
   });
 
   $('tnote').innerHTML =
-    '<b>수치가 문턱을 넘은 단은 반드시 깹니다.</b> 계단 50 · 임단 55 · 신단 65 · 경단 85 · 기단 120 · '+
-    '무단 175 · 정단 255 · 병단 365 · 을단 520 · 갑단 730.<br>'+
-    '<b>'+g.el+' 용신석</b>은 이곳에서 나고, '+g.el+' 수치는 <b>'+((window.FP&&FP.USE)?FP.USE[g.el]:'')+'</b>에서 쓰입니다. '+
+    '<b>전투력이 문턱을 넘은 단은 반드시 깹니다.</b> '+TIERS.map(function(t){return t.nm+' '+TH[t.k-1]}).join(' · ')+'.<br>'+
+    '<b>'+g.el+' 용신석</b>은 이곳에서 나고 '+g.el+' 수치를 올립니다. 모든 사냥터의 전투력에 조금씩 보탬이 됩니다. '+
     '친구와 오면 파티 수치가 오르고, 각자 받는 돌도 늘어납니다(다섯이면 두 배).';
   ev('hunt_tier_view',{ground:g.nm, done:done, cap:cap, pow:P.pow});
   show('v-tier');
@@ -1140,10 +1190,15 @@ function afterLogin(me){
   ME=me;
   if(!ME){ show('v-lock'); return; }
   $('me').hidden=false;
-  $('me').innerHTML=(ME.pic?'<img src="'+esc(ME.pic)+'" alt="">':'')+esc(ME.nick)+
-                    ' <a id="lo" style="cursor:pointer">나가기</a>';
-  var lo=$('lo'); if(lo) lo.onclick=function(){ Store.logout().then(function(){ location.href='/hunt/'; }); };
+  /* 로그아웃은 프로필(홈 카드 · 지도 사주각)에서만 한다 */
+  $('me').innerHTML=(ME.pic?'<img src="'+esc(ME.pic)+'" alt="">':'')+esc(ME.nick);
 
+  /* 계정에 저장된 캐릭터·용신석을 먼저 받아 온다(다른 기기에서 키운 것) */
+  if(MODE==='supabase' && window.FP && !FP.synced && !FP._tried){
+    FP._tried=true;
+    FP.sync().then(function(){ afterLogin(me); });
+    return;
+  }
   MYEL = myElement();
   if(MYEL) Store.saveEl(MYEL);
 
