@@ -1,81 +1,60 @@
-/* Four Paws — 단(段) 밸런스 검산기
+/* Four Paws — 단(段) 성장 검산기
  *
- * hunt.py 의 buildFight() 와 같은 규칙을 그대로 옮겨 놓고 수만 판을 돌린다.
- * THP / TATK 를 건드릴 때는 반드시 여기서 먼저 돌려 본다.
+ *   node _content/build/tier_sim.js
  *
- *   node tier_sim.js
+ * 규칙 (2026-09-21 결정 — hunt.py · me.js 와 같은 숫자를 쓴다)
+ *   속성 수치 = 50 + 사주 비율 × 0.4 + 그 속성 용신석 개수
+ *   땅 G 에서는 G 를 누르는 속성의 수치로 싸운다
+ *   파티 수치 = 가장 센 사람 + 나머지 합 × 0.2, 상생 한 쌍마다 +5%
+ *   문턱을 넘은 단은 반드시 이긴다
+ *   이기면 각자 용신석 = 단 × (1 + 0.25 × (인원 − 1))
  *
- * 지켜야 하는 두 줄 (2026-09-20 결정):
- *   1. 혼자서는 어느 사냥터든 계단을 깬다
- *   2. 혼자서 임단을 깨는 곳은 내 오행이 누르는 사냥터 한 곳뿐이다
+ * 목표: 혼자 갑단까지 약 240~340판(한 판 1분 → 4~6시간), 다섯이면 약 75판.
+ * 문턱(TH)을 바꿀 때는 이 표가 어떻게 움직이는지 먼저 본다.
  */
-
+const DGEUK={목:'토',토:'수',수:'화',화:'금',금:'목'};
 const DSAENG={목:'화',화:'토',토:'금',금:'수',수:'목'};
-const DGEUK ={목:'토',토:'수',수:'화',화:'금',금:'목'};
 const ELS=['목','화','토','금','수'];
-function strike(a,d){
-  if(DGEUK[a]===d) return 1.55;
-  if(DGEUK[d]===a) return 0.65;
-  if(DSAENG[a]===d) return 0.80;
-  if(DSAENG[d]===a) return 1.15;
-  if(a===d) return 1.10;
-  return 1.0;
-}
-function synergy(els){let p=0;for(let i=0;i<els.length;i++)for(let j=0;j<els.length;j++){if(i===j)continue;if(DSAENG[els[i]]===els[j])p++;}
-  const k=new Set(els).size; return {pairs:p,kinds:k,bonus:p*4+(k===5?20:0)};}
+const TH=[50,55,65,85,120,175,255,365,520,730];
+const NM=['계단','임단','신단','경단','기단','무단','정단','병단','을단','갑단'];
+const tierOf=v=>{let t=0;for(let i=0;i<10;i++) if(v>=TH[i]) t=i+1; return t;};
+const keyOf=G=>ELS.find(x=>DGEUK[x]===G);
+const drop=(k,n)=>Math.round(k*(1+0.25*(n-1)));
+function pairs(els){let p=0;for(let i=0;i<els.length;i++)for(let j=0;j<els.length;j++) if(i!==j&&DSAENG[els[i]]===els[j]) p++; return p;}
+/* 친구는 나와 같은 수치, 오행만 다르게 섞는다고 본다 */
+function pow(v,n,mates){ const vals=[v].concat(Array(n-1).fill(v)); const top=v, sum=v*n;
+  return (top+(sum-top)*0.2)*(1+0.05*pairs(mates)); }
 
-const HPK=[0,0.34,0.78,1.05,1.34,1.64,1.94,2.24,2.54,2.84,3.14];   /* 사냥감 몸 배수 */
-const ATK=[0,0.40,1.25,1.55,1.62,1.68,1.74,1.80,1.86,1.92,1.98];   /* 사냥감 힘 배수 */
-
-function fight(myEl, gEl, mates, k, dayEls, boost){
-  boost = boost||1;
-  const team=[{el:myEl}].concat(mates.map(e=>({el:e})));
-  const syn=synergy(team.map(t=>t.el));
-  team.forEach(t=>{t.hp=t.max=100;t.atk=(18+(dayEls.includes(t.el)?3:0))*boost;t.down=false;});
-  const n=team.length;
-  const foe={el:gEl,hp:0,max:0,atk:Math.round((13+n*2)*ATK[k])};
-  foe.max=foe.hp=Math.round((110+n*95)*HPK[k]);
-  const bonus=1+syn.bonus/200; let turn=0; const TC=22+(n-1)*4;
-  while(foe.hp>0 && team.some(t=>!t.down) && turn<TC){
-    turn++;
-    for(let i=0;i<team.length&&foe.hp>0;i++){
-      const t=team[i]; if(t.down) continue;
-      const m=strike(t.el,foe.el);
-      foe.hp=Math.max(0,foe.hp-Math.max(3,Math.round(t.atk*m*bonus*(0.88+Math.random()*0.24))));
-    }
-    if(foe.hp<=0) break;
-    const alive=team.filter(t=>!t.down);
-    const v=alive[Math.floor(Math.random()*alive.length)];
-    const m2=strike(foe.el,v.el);
-    v.hp=Math.max(0,v.hp-Math.max(2,Math.round(foe.atk*m2*(0.85+Math.random()*0.3))));
-    if(v.hp<=0) v.down=true;
+function run(ratio,n,mates){
+  const st={}; ELS.forEach(e=>st[e]=50+Math.round((ratio[e]||0)*0.4));
+  const main=Object.keys(ratio).sort((a,b)=>ratio[b]-ratio[a])[0];
+  const start=st[main]; let r=0; const hit={}; const rec=()=>{const t=tierOf(st[main]); if(hit[t]===undefined) hit[t]=r;};
+  rec();
+  while(tierOf(st[main])<10 && r<9000){
+    const need=keyOf(main);                 // 내 속성 돌이 나는 땅을 누르는 속성
+    const G = tierOf(pow(st[need],n,mates)) < tierOf(st[main])-2 ? need : main;
+    const k=Math.max(1,tierOf(pow(st[keyOf(G)],n,mates)));
+    st[G]+=drop(k,n); r++; rec();
   }
-  return foe.hp<=0;
-}
-function rate(myEl,gEl,mates,k,dayEls,N=3000,boost){let w=0;for(let i=0;i<N;i++) if(fight(myEl,gEl,mates,k,dayEls,boost)) w++; return w/N;}
-
-const rel=(my,g)=> my===g?'same': DGEUK[my]===g?'easy': DSAENG[g]===my?'gain': DGEUK[g]===my?'risk': DSAENG[my]===g?'give':'flat';
-
-
-/* ---- 검사 1. 혼자서 어디까지 가는가 ---- */
-const REL=(my,g)=> my===g?'같음': DGEUK[my]===g?'내가 누름': DSAENG[g]===my?'기운 얻음'
-                 : DGEUK[g]===my?'눌림': DSAENG[my]===g?'기운 줌':'무관';
-console.log('== 혼자 · 단별 승률 (내 오행 목, 돌 없음)');
-console.log('단\t' + ['내가 누름','기운 얻음','같음','기운 줌','눌림'].join('\t'));
-const G={'내가 누름':DGEUK['목'], '기운 얻음':'수', '같음':'목', '기운 줌':DSAENG['목'],
-         '눌림':Object.keys(DGEUK).find(x=>DGEUK[x]==='목')};
-for(let k=1;k<=4;k++){
-  console.log(k+'단\t'+['내가 누름','기운 얻음','같음','기운 줌','눌림']
-    .map(r=>(rate('목',G[r],[],k,[],4000)*100).toFixed(0)+'%').join('\t'));
+  return {main,start,hit,r};
 }
 
-/* ---- 검사 2. 인원과 용신석이 어디까지 밀어 올리는가 ---- */
-const SETS={1:[],2:['수'],3:['수','화'],4:['수','화','금'],5:['수','화','금','토']};
-for(const [lab,b] of [['돌 없음',1],['용신석 +35%',1.35],['용신석 +70%',1.70]]){
-  console.log('\n== '+lab+' — 황토 텃밭(내가 누르는 곳) 승률');
-  console.log('명\\단\t'+[1,2,3,4,5,6,7,8,9,10].join('\t'));
-  for(const n of [1,2,3,4,5]){
-    console.log(n+'\t'+Array.from({length:10},(_,i)=>
-      (rate('목','토',SETS[n],i+1,[],1200,b)*100).toFixed(0)).join('\t'));
-  }
+console.log('문턱  '+NM.map((x,i)=>x+' '+TH[i]).join(' · '));
+console.log('드롭  '+NM.map((x,i)=>x+' '+drop(i+1,1)).join(' · ')+'  (혼자)\n');
+
+const CH={
+  '금 50% 캐릭터':      {목:0,화:33,토:0,금:50,수:17},
+  '고르게 퍼진 사주':    {목:25,화:25,토:12.5,금:25,수:12.5},
+  '한 속성 몰림(목 75%)':{목:75,화:0,토:12.5,금:12.5,수:0},
+};
+for(const [nm,r] of Object.entries(CH)){
+  const o=run(r,1,[]);
+  console.log(`[${nm}] ${o.main} 시작 ${o.start} — 혼자`);
+  console.log('   '+NM.map((x,i)=>o.hit[i+1]!==undefined? x+' '+o.hit[i+1]:null).filter(Boolean).join(' → ')+'판');
+}
+console.log('\n인원별 (고르게 퍼진 사주, 오행을 섞은 파티)');
+const MIX=[['목'],['목','수'],['목','수','화'],['목','수','화','토'],['목','수','화','토','금']];
+for(let n=1;n<=5;n++){
+  const o=run(CH['고르게 퍼진 사주'],n,MIX[n-1]);
+  console.log(`  ${n}명  드롭 ×${1+0.25*(n-1)}  상생 ${pairs(MIX[n-1])}쌍  갑단까지 ${o.r}판`);
 }
