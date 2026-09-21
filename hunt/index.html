@@ -783,7 +783,7 @@ function playBattle(){
   import('/3d/battle3d.js').then(function(m){
     return m.runBattle({
       mount:$('stage'), base:'/3d/',
-      ground:{el:CUR.el, nm:CUR.nm},
+      ground:{el:CUR.el, nm:CUR.nm, id:CUR.id},
       team:F.team.map(function(t){ return {el:t.el, nick:t.nick}; }),
       foe:{el:F.foe.el, nm:F.foe.nm},
       acts:F.acts,
@@ -841,7 +841,7 @@ function endBattle(F){
   var nextNeed = nx<=10 ? TH[nx-1] : null;
   $('res').innerHTML=
     '<div class="res win">'+
-      '<div class="rt">'+tn+' 돌파</div>'+
+      '<div class="rt">'+tn+' 정복</div>'+
       '<div class="rw">'+esc(F.why)+'</div>'+
       '<div class="loot"><span class="st" style="background:'+colOf(F.lootEl)+'"></span>'+
         '<b>'+F.lootEl+' 용신석 '+F.loot+'개</b>'+
@@ -1036,7 +1036,7 @@ function renderTier(){
   var html='';
   TIERS.forEach(function(t){
     var need=TH[t.k-1], isOpen=P.pow>=need, isDone=t.k<=done;
-    var tag = isDone ? '<span class="rt2 done">깸</span>'
+    var tag = isDone ? '<span class="rt2 done">정복</span>'
             : isOpen ? '<span class="rt2 open">열림</span>' : '<span class="rt2 shut">잠김</span>';
     var gap=need-P.pow;
     var why = isOpen
