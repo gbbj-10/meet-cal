@@ -107,23 +107,22 @@
       var ticks = '';
       for (var k = 1; k < 10; k++) ticks += '<i style="left:' + (k * 10) + '%"></i>';
       return '<div class="fpbars">' + this.ORDER.map(function (e) {
-        var x = s[e], t = me.tierOf(x.val);
+        var x = s[e];
         var p0 = me.pos(x.base), p1 = me.pos(x.val);
-        var nx = t < 10 ? me.TH[t] - x.val : 0;
         return '<div class="fb' + (e === main ? ' fpme' : '') + (e === hl ? ' fphl' : '') + '">' +
-          '<span class="fh" style="background:' + COL[e] + '">' + HJ[e] + '</span>' +
+          '<span class="fh fpgem" style="--c:' + COL[e] + '">' + HJ[e] + '</span>' +
           '<span class="fw">' +
             '<span class="ft"><b>' + e + ' ' + x.val + '</b>' +
               (x.stone ? '<em>용신석 +' + x.stone + '</em>' : '') +
-              '<span>' + me.USE[e] + ' · ' + me.TIERS[t - 1] + (nx ? ' · 다음 단까지 ' + nx : '') + '</span></span>' +
+              '<span>' + me.USE[e] + '에서 씀</span></span>' +
             '<span class="fr">' + ticks +
               '<u style="width:' + p0 + '%;background:' + COL[e] + '"></u>' +
               (p1 > p0 ? '<s style="left:' + p0 + '%;width:' + (p1 - p0) + '%;background:' + COL[e] + '"></s>' : '') +
             '</span>' +
           '</span></div>';
       }).join('') +
-      '<p class="fnote">막대 한 칸이 한 단입니다 (계단 50 · 갑단 730). 진한 부분은 타고난 몫, ' +
-      '빗금은 용신석으로 올린 몫. 각 수치는 그 속성이 누르는 사냥터에서 쓰입니다.</p></div>';
+      '<p class="fnote">진한 부분은 타고난 몫, 빗금은 용신석으로 올린 몫입니다. ' +
+      '각 수치는 그 속성이 누르는 사냥터에서 쓰입니다.</p></div>';
     },
 
     paint: function () {
@@ -142,6 +141,11 @@
       '.fpbars .fb{display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:center}' +
       '.fpbars .fh{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;' +
         'font:800 15px "Noto Serif KR",serif;color:#0a0f18}' +
+      '.fpgem{color:#fff!important;text-shadow:0 1px 2px rgba(0,0,0,.7);' +
+        'background:radial-gradient(circle at 30% 24%,rgba(255,255,255,.9) 0 6%,rgba(255,255,255,.3) 13%,transparent 26%),' +
+        'linear-gradient(135deg,color-mix(in srgb,var(--c) 55%,#fff),var(--c) 45%,color-mix(in srgb,var(--c) 60%,#000))!important;' +
+        'box-shadow:inset 0 -4px 7px rgba(0,0,0,.4),inset 0 2px 4px rgba(255,255,255,.35),' +
+        '0 0 0 1.5px color-mix(in srgb,var(--c) 45%,#1a2230),0 3px 10px color-mix(in srgb,var(--c) 40%,transparent)}' +
       '.fpbars .ft{display:flex;align-items:baseline;gap:7px;font-size:13px;margin-bottom:5px}' +
       '.fpbars .ft b{font-size:14.5px;color:var(--ink,#e8edf5)}' +
       '.fpbars .ft em{font-style:normal;font-size:11.5px;color:#ffd93d}' +
