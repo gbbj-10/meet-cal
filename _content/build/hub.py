@@ -206,6 +206,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
   <div class="m2dog" id="m2-dog"></div>
   <div id="m2-bars"></div>
   <a class="mgo" href="/map/?new=1" data-cta="mine_map">지도로 들어가기</a>
+  <div id="m2-acc"></div>
   <button class="medit" id="m2-edit">오행 다시 계산</button>
 </section>
 
@@ -214,6 +215,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
   <p>사주 여덟 글자를 직접 계산해서, 내 오행이 어디에 몰려 있고 무엇이 비어 있는지 보여 드립니다.</p>
 </section>
 
+<div id="m2-login" style="margin:0 0 14px"></div>
 <section class="tool" id="tool">
   <div class="lab">태어난 날</div>
   <div class="frow">
@@ -411,13 +413,18 @@ $('go').addEventListener('click', function(){
     if(!window.FP) return;
     var me=FP.get();
     var edit=/[?&]edit=1/.test(location.search);
+    /* 캐릭터가 없는 기기 — 이미 만든 사람이 계정으로 불러올 수 있게 로그인 줄을 계산기 위에 둔다 */
+    var nl=$('m2-login');
+    if(nl){ nl.innerHTML = (!me && FP.online && FP.online()) ? FP.accountHTML() : ''; if(!me) FP.paintAccount(); }
     if(!me || edit){ $('mine2').hidden=true; return; }
+    shownEl=me.el;
     $('m2-orb').textContent=FP.HJ[me.el]||'?';
     $('m2-orb').classList.add('fpgem');
     $('m2-orb').style.setProperty('--c', FP.COL[me.el]||'#8e9bb0');
     $('m2-t').textContent=me.el+' 속성'+(me.top?' ('+me.top+'%)':'');
     $('m2-d').textContent=(SAY2[me.el]||'')+' 지도·사냥터·기운이 이 캐릭터로 이어집니다.';
-    if(FP.barsHTML) $('m2-bars').innerHTML=FP.barsHTML();
+    if(FP.barsHTML) $('m2-bars').innerHTML=FP.barsHTML({});
+    if(FP.accountHTML){ $('m2-acc').innerHTML=FP.accountHTML(); FP.paintAccount(); }
     $('mine2').hidden=false;
     /* 프로필 한가운데에 내 오행 캐릭터 — 지도에서 본 그 개다.
        WebGL 이 없거나 모델을 못 받으면 칸만 조용히 접는다. */
@@ -431,6 +438,14 @@ $('go').addEventListener('click', function(){
     $('hero').hidden=true;
     $('tool').hidden=true;
   }
+  /* 계정에서 캐릭터를 받아 오면 다시 그린다. 속성이 바뀌었을 때만 3D 를 새로 띄운다. */
+  var shownEl=null;
+  document.addEventListener('fp:sync', function(){
+    var me=FP.get();
+    if(me && me.el!==shownEl){ var d=$('m2-dog'); if(d){ d.dataset.on=''; d.innerHTML=''; } }
+    showMine();
+  });
+
   $('m2-edit').addEventListener('click', function(){
     $('mine2').hidden=true; $('hero').hidden=false; $('tool').hidden=false;
     $('tool').scrollIntoView({behavior:'smooth', block:'start'});

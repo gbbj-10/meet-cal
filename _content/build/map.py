@@ -444,10 +444,12 @@ if(window.ResizeObserver) new ResizeObserver(redraw).observe(wrap);
     }); }
   var ds=p.querySelector('.ds');
   if(ds) ds.insertAdjacentHTML('afterend',
-    (window.FP&&FP.barsHTML ? FP.barsHTML() : '')+
+    (window.FP&&FP.barsHTML ? FP.barsHTML({}) : '')+
+    (window.FP&&FP.accountHTML ? FP.accountHTML() : '')+
     '<p class="ds" style="margin-top:4px"><a href="/?edit=1" data-cta="edit_el">오행 다시 계산하기</a></p>');
 })();
 
+if(window.FP&&FP.paintAccount) FP.paintAccount();
 var f=$('flist'); if(f) f.parentNode.removeChild(f);   // 지도가 그려지니 목록은 뺀다
 draw();
 })();

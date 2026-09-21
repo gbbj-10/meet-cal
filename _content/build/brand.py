@@ -65,4 +65,14 @@ HEAD = ('<link rel="icon" href="%s">'
         # defer 를 붙이면 안 된다. 본문 끝의 일반 <script> 가 defer 보다 먼저
         # 돌아서, 지도처럼 바로 FP 를 읽는 페이지에서 window.FP 가 없다.
         # 2.7KB 라 동기로 받아도 체감되지 않는다. (2026-09-20)
+        # 계정 설정 — deploy.py 가 SUPABASE 값으로 채운다(비어 있으면 로그인 없이 돈다).
+        '<script>window.FPCFG={}</script>'
         '<script src="/me.js"></script>' % FAVICON)
+
+
+def set_config(sb_url, sb_key):
+    """deploy.py 에서 한 번 부른다. 모든 페이지 머리에 같은 계정 설정이 박힌다."""
+    import json
+    global HEAD
+    cfg = json.dumps({'sbUrl': sb_url or '', 'sbKey': sb_key or ''})
+    HEAD = HEAD.replace('window.FPCFG={}', 'window.FPCFG=' + cfg)

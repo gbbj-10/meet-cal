@@ -32,6 +32,9 @@ KAKAO_JS_KEY = '60b71fcf9ec72aad11e6f5d62358c8db'
 #  ⚠️ Secret key(sb_secret_...) 는 절대 넣지 않습니다. RLS 를 무시합니다.
 SUPABASE = ('', '')
 
+import brand as BRAND
+BRAND.set_config(*SUPABASE)          # 모든 페이지의 me.js 가 같은 계정 설정을 읽는다
+
 OUT  = os.path.join(B.ROOT, 'deploy')
 SITE = os.path.join(OUT, 'ohaeng')
 
