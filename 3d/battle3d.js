@@ -89,15 +89,16 @@ function buildArena(sc, el, base) {
     t.colorSpace = THREE.SRGBColorSpace; t.offset.set(0, 0.30); t.repeat.set(1, 0.70); t.needsUpdate = true;
   });
   const back = new THREE.Mesh(new THREE.PlaneGeometry(46, 16),
-    new THREE.MeshBasicMaterial({ map: tex, fog: false, color: TH.tint, depthWrite: false }));
+    new THREE.MeshBasicMaterial({ map: tex, fog: false, depthWrite: false,
+      color: new THREE.Color(TH.tint).multiplyScalar(0.5) }));   /* 원경은 반쯤 눌러 개가 떠 보이게 */
   back.position.set(0.5, 5.2, -21); back.renderOrder = -1; sc.add(back);
 
   const gnd = new THREE.Mesh(new THREE.PlaneGeometry(60, 60),
-    new THREE.MeshStandardMaterial({ map: groundTexture(TH), roughness: 0.97 }));
+    new THREE.MeshStandardMaterial({ map: groundTexture(TH), roughness: 0.97, color: 0xa8a8a8 }));
   gnd.rotation.x = -Math.PI / 2; sc.add(gnd);
 
   /* 바위 — 전투 뒤쪽과 양옆에만 */
-  const rockMat = new THREE.MeshStandardMaterial({ color: TH.rock, roughness: 1, flatShading: true });
+  const rockMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(TH.rock).multiplyScalar(0.8), roughness: 1, flatShading: true });
   for (let i = 0; i < 22; i++) {
     const s = 0.15 + Math.random() * 0.55;
     const r = new THREE.Mesh(new THREE.IcosahedronGeometry(s, 0), rockMat);
@@ -110,7 +111,7 @@ function buildArena(sc, el, base) {
     : M.kind === 'spire' ? new THREE.ConeGeometry(0.6, 1, 5)
     : M.kind === 'pillar' ? new THREE.CylinderGeometry(0.45, 0.55, 1, 8)
     : new THREE.ConeGeometry(0.5, 1, 7);
-  const midMat = new THREE.MeshStandardMaterial({ color: M.c, roughness: 1, flatShading: true });
+  const midMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(M.c).multiplyScalar(0.75), roughness: 1, flatShading: true });
   const inst = new THREE.InstancedMesh(geo, midMat, M.n), dm = new THREE.Object3D();
   for (let i = 0; i < M.n; i++) {
     const x = (Math.random() - 0.5) * 26, z = -6 - Math.random() * 9;
@@ -274,8 +275,10 @@ export async function runBattle(o) {
   cam.position.copy(camBase); cam.lookAt(camAim);
 
   sc.add(new THREE.HemisphereLight(TH.hemiSky, TH.hemiGnd, TH.hemiI));
-  const key = new THREE.DirectionalLight(TH.sun, TH.sunI); key.position.set(-3, 6, 4); sc.add(key);
-  const rim = new THREE.DirectionalLight(TH.rim, 0.7); rim.position.set(4, 2.5, -5); sc.add(rim);
+  const key = new THREE.DirectionalLight(TH.sun, TH.sunI * 1.35); key.position.set(-3, 6, 4); sc.add(key);
+  /* 정면광 — 카메라 쪽에서 비춘다. 개의 얼굴과 몸 앞쪽이 어두운 배경에 묻히지 않게 */
+  const fill = new THREE.DirectionalLight(0xffffff, 1.25); fill.position.set(0.6, 2.2, 7); sc.add(fill);
+  const rim = new THREE.DirectionalLight(TH.rim, 1.6); rim.position.set(3, 3, -5); sc.add(rim);   /* 뒤에서 윤곽을 따 준다 */
 
   /* 전투 자리 표시 — 오행 색 고리 하나 */
   const ring = new THREE.Mesh(new THREE.RingGeometry(3.4, 3.52, 64),
@@ -315,6 +318,32 @@ export async function runBattle(o) {
       meshes.push(m);
     });
 
+    /* 오행 색 외곽선 — 뒷면만 그리는 껍데기를 법선 방향으로 조금 부풀린다(인버티드 헐).
+       어두운 던전 바닥 위에서도 실루엣이 끊기지 않고, 누가 무슨 속성인지 색으로 읽힌다. */
+    const lineCol = new THREE.Color(COL[el] || 0xffffff).lerp(new THREE.Color(0xffffff), 0.25);
+    const outlines = [];
+    meshes.slice().forEach(m => {
+      if (!m.isSkinnedMesh) return;
+      const om = new THREE.MeshBasicMaterial({ color: lineCol, side: THREE.BackSide });
+      om.onBeforeCompile = sh => {
+        sh.vertexShader = sh.vertexShader.replace('#include <skinning_vertex>',
+          '#include <skinning_vertex>\n  transformed += normalize(objectNormal) * 0.018;');
+      };
+      const o = new THREE.SkinnedMesh(m.geometry, om);
+      o.bind(m.skeleton, m.bindMatrix); o.frustumCulled = false;
+      m.parent.add(o); o.position.copy(m.position); o.quaternion.copy(m.quaternion); o.scale.copy(m.scale);
+      outlines.push(o);
+    });
+    /* 발밑 빛 — 오행 색 원판. 바닥과 개를 떼어 놓는다 */
+    const glowTex = canvasTex(64, 64, (c, S) => {
+      const g = c.createRadialGradient(S/2, S/2, 0, S/2, S/2, S/2);
+      g.addColorStop(0, 'rgba(255,255,255,.9)'); g.addColorStop(0.55, 'rgba(255,255,255,.35)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+      c.fillStyle = g; c.fillRect(0, 0, S, S);
+    });
+    const glow = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 1.3), new THREE.MeshBasicMaterial({ map: glowTex,
+      color: COL[el] || 0xffffff, transparent: true, opacity: 0.55, depthWrite: false, blending: THREE.AdditiveBlending }));
+    glow.rotation.x = -Math.PI / 2; glow.position.y = 0.015; holder.add(glow);
+
     /* 발밑 그림자 — 바닥에 붙어 있어야 공중에 뜬 것처럼 안 보인다 */
     const sh = new THREE.Mesh(new THREE.CircleGeometry(0.42, 24),
       new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.34 }));
@@ -322,7 +351,7 @@ export async function runBattle(o) {
 
     /* 몸 반길이 — 코끝이 맞닿는 거리를 재는 데 쓴다. 모델은 +z 를 보고 있다 */
     const half = (sz.z * (0.92 / sz.y)) / 2;
-    const u = { el, holder, wob, mx, clip, meshes, alive: true, pose: null, one: null, flash: 0,
+    const u = { el, holder, wob, mx, clip, meshes, outlines, glow, alive: true, pose: null, one: null, flash: 0,
                 half, home: holder.position.clone() };
     pose(u, 'idle');
     return u;
@@ -589,6 +618,13 @@ export async function runBattle(o) {
     });
   }
 
+  /* 쓰러질 때 몸은 서서히 흐려지고, 외곽선·발밑 빛은 먼저 꺼진다 */
+  function fade(u, p, k) {
+    u.meshes.forEach(m => eachMat(m, x => { x.transparent = true; x.opacity = 1 - p * k; }));
+    u.outlines.forEach(o => { o.visible = p < 0.15; });
+    u.glow.material.opacity = 0.55 * (1 - p);
+  }
+
   let ai = 0;
   function next() {
     if (dead) return;
@@ -624,9 +660,7 @@ export async function runBattle(o) {
       const v = mates[a.i]; if (!v) return next();
       if (onCaption) onCaption(a.text);
       v.alive = false; once(v, 'death', 0.95, true);
-      TW.add(0, 1, 1.2, 'in', p => v.meshes.forEach(m => eachMat(m, x => {
-        x.transparent = true; x.opacity = 1 - p * 0.92;
-      })));
+      TW.add(0, 1, 1.2, 'in', p => fade(v, p, 0.92));
       wait = 900;
     }
     else if (a.t === 'loot') {
@@ -638,9 +672,7 @@ export async function runBattle(o) {
       if (onCaption) onCaption(a.text);
       if (a.win) {
         boss.alive = false; once(boss, 'death', 1.1, true);
-        TW.add(0, 1, 1.3, 'in', p => boss.meshes.forEach(m => eachMat(m, x => {
-          x.transparent = true; x.opacity = 1 - p * 0.95;
-        })));
+        TW.add(0, 1, 1.3, 'in', p => fade(boss, p, 0.95));
       }
       wait = 1500;
     }
