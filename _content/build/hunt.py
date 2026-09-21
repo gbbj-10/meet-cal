@@ -132,7 +132,7 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 .today{display:flex;align-items:center;gap:12px;background:var(--pan);
   border:1px solid var(--line);border-radius:14px;padding:13px 16px;margin-bottom:8px}
 .today .gz{display:flex;gap:6px}
-.today .gz b{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;
+.today .gz b{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-family:"Noto Serif KR",serif;font-size:18px;
   font-size:19px;font-weight:800;color:#0a0f18;font-family:"Noto Serif KR",serif}
 .today .tx{font-size:14px;color:var(--mut)}
 .today .tx b{color:var(--ink)}
@@ -153,13 +153,64 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 .card .t b{font-size:18.5px;letter-spacing:-.01em}
 .card .t span{font-size:12.5px;color:var(--dim)}
 .card .one{font-size:13.5px;color:var(--mut);margin-top:2px}
-.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
-.tag{font-size:12px;font-weight:700;border-radius:20px;padding:3px 10px;border:1px solid}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;align-items:flex-start;align-content:flex-start}
+.tag{font-size:12px;font-weight:700;border-radius:20px;padding:3px 10px;border:1px solid;white-space:nowrap;flex:none;line-height:1.6}
 .tag.good{color:#7fe08f;border-color:#2d6b38;background:#0f2415}
 .tag.mine{color:#9cc3f7;border-color:#2c4a7a;background:#141d2b}
 .tag.warn{color:#f0a0a0;border-color:#5c241f;background:#1c100e}
 .card.best{border-color:#2d6b38;box-shadow:0 0 0 1px #2d6b38}
 .why{font-size:12.5px;color:var(--dim);margin-top:7px}
+
+/* ── 보석 ──
+   속성 구슬은 단색 동그라미가 아니라 깎은 보석처럼 보이게 한다.
+   색 하나(--c)만 받아서 밝은 면·어두운 면·면 경계·반사광을 겹쳐 그린다.
+   .gem 은 둥근 보석, .gem.sq 는 모서리를 둥글린 네모 보석(쿠션 컷). */
+.gem{position:relative;color:#fff!important;border-radius:50%;
+  text-shadow:0 1px 2px rgba(0,0,0,.7),0 0 6px rgba(0,0,0,.35);
+  background:
+    radial-gradient(circle at 32% 24%,rgba(255,255,255,.95) 0 5%,rgba(255,255,255,.45) 10%,transparent 22%),
+    radial-gradient(circle at 70% 80%,rgba(255,255,255,.28) 0,transparent 26%),
+    conic-gradient(from 18deg,
+      color-mix(in srgb,var(--c) 55%,#fff) 0 36deg,  color-mix(in srgb,var(--c) 85%,#000) 36deg 72deg,
+      color-mix(in srgb,var(--c) 75%,#fff) 72deg 108deg,color-mix(in srgb,var(--c) 70%,#000) 108deg 144deg,
+      var(--c) 144deg 180deg,                         color-mix(in srgb,var(--c) 55%,#000) 180deg 216deg,
+      color-mix(in srgb,var(--c) 80%,#fff) 216deg 252deg,color-mix(in srgb,var(--c) 75%,#000) 252deg 288deg,
+      color-mix(in srgb,var(--c) 65%,#fff) 288deg 324deg,color-mix(in srgb,var(--c) 90%,#000) 324deg 360deg)
+    !important;
+  box-shadow:
+    inset 0 -7px 12px rgba(0,0,0,.42), inset 0 4px 7px rgba(255,255,255,.38),
+    0 0 0 2px color-mix(in srgb,var(--c) 45%,#1a2230), 0 0 0 3px rgba(255,255,255,.14),
+    0 6px 18px color-mix(in srgb,var(--c) 45%,transparent)!important}
+/* 가운데 테이블(윗면) — 보석을 위에서 본 평평한 면 */
+.gem::after{content:'';position:absolute;inset:22%;border-radius:inherit;pointer-events:none;z-index:-1;
+  background:radial-gradient(circle at 40% 35%,color-mix(in srgb,var(--c) 45%,#fff),var(--c) 70%);
+  opacity:.55;box-shadow:0 0 0 1px rgba(255,255,255,.22)}
+.gem{z-index:0}
+.gem.sq{border-radius:11px}
+.gem.sq::after{border-radius:6px}
+
+/* ── 던전 카드 — 뒤에 옅게 던전 그림 ── */
+.card{position:relative;overflow:hidden;isolation:isolate}
+.card::before{content:'';position:absolute;inset:0;z-index:-2;
+  background:var(--bg) center/cover no-repeat;opacity:.34;transition:opacity .2s}
+.card::after{content:'';position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(90deg,rgba(10,14,22,.94) 0%,rgba(10,14,22,.78) 45%,rgba(10,14,22,.45) 100%)}
+.card:hover::before{opacity:.48}
+.card .t b{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.card .t span,.card .one{color:#d7dfeb;text-shadow:0 1px 2px rgba(0,0,0,.85)}
+.card .why{color:#c3ccd9;text-shadow:0 1px 2px rgba(0,0,0,.85)}
+.card .tag{backdrop-filter:blur(2px)}
+
+/* ── 사냥터 안내 · 오행도 ── */
+.guide{display:grid;grid-template-columns:1fr 250px;gap:16px;align-items:center;
+  background:var(--pan);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin:0 0 18px}
+@media(max-width:560px){.guide{grid-template-columns:1fr}.guide svg{max-width:250px;margin:0 auto}}
+.guide h2{margin:0 0 8px;font-size:15.5px;color:#ffd93d}
+.guide ul{margin:0;padding-left:18px;font-size:13.5px;color:var(--mut);line-height:1.7}
+.guide li b{color:var(--ink)}
+.guide svg{width:100%;height:auto;display:block}
+.guide .lg{display:flex;gap:14px;justify-content:center;font-size:12px;color:var(--dim);margin-top:4px}
+.guide .lg i{display:inline-block;width:18px;height:0;border-top:2px solid;vertical-align:middle;margin-right:5px}
 
 /* 2. 단 고르기 — 계단(아래)에서 갑단(위)으로 올라가는 사다리 */
 .pouch{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--pan);
@@ -309,7 +360,7 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 <header class="bar">
   <a class="nm" href="/">__MARK__Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
   <nav>
-    <a href="/">계산기</a><a href="/iljin/">일진</a><a href="/map/">지도</a>
+    <a href="/">계산기</a><a href="/iljin/">기운</a><a href="/map/">지도</a>
     <a href="/ohaeng/">글</a><span data-fp-chip></span>
     <span class="me" id="me" hidden></span>
   </nav>
@@ -339,6 +390,7 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
     <p class="sub">다섯 곳 중 하나를 고르세요. 오늘의 기운과 내 사주로 유리한 곳을 표시해 뒀습니다.</p>
     <div class="today" id="today"></div>
     <p class="mine" id="mine"></p>
+    <div class="guide" id="guide"></div>
     <div class="grid" id="grid"></div>
     <noscript>__FALLBACK__</noscript>
     <div class="demo" id="demo-note" hidden></div>
@@ -408,6 +460,8 @@ var GROUNDS = __GROUNDS__;
 var DSAENG = {목:'화',화:'토',토:'금',금:'수',수:'목'};   /* A가 B를 낳는다 */
 var DGEUK  = {목:'토',토:'수',수:'화',화:'금',금:'목'};   /* A가 B를 이긴다 */
 var DGAN='갑을병정무기경신임계', DZHI='자축인묘진사오미신유술해';
+var GANHJ={갑:'甲',을:'乙',병:'丙',정:'丁',무:'戊',기:'己',경:'庚',신:'辛',임:'壬',계:'癸'};
+var ZHIHJ={자:'子',축:'丑',인:'寅',묘:'卯',진:'辰',사:'巳',오:'午',미:'未',신:'申',유:'酉',술:'戌',해:'亥'};
 var DGANEL={갑:'목',을:'목',병:'화',정:'화',무:'토',기:'토',경:'금',신:'금',임:'수',계:'수'};
 var DZHIEL={자:'수',축:'토',인:'목',묘:'목',진:'토',사:'화',오:'화',미:'토',신:'금',유:'금',술:'토',해:'수'};
 var JOSA={목:{i:'이',eul:'을',eun:'은',wa:'과'},화:{i:'가',eul:'를',eun:'는',wa:'와'},
@@ -720,7 +774,7 @@ function buildFight(){
 
 function renderBattleHead(F){
   var g=CUR;
-  $('foe').innerHTML='<span class="orb" style="background:'+g.col+'">'+HJEL[g.el]+'</span>'+
+  $('foe').innerHTML=gem(g.col, HJEL[g.el])+
     '<span><h1>'+esc(F.foe.nm)+'</h1><span class="wh">'+esc(g.nm)+' '+tOf(F.tier).nm+' · '+g.el+'</span></span>';
   $('foe-hp').style.background=g.col;
   $('foe-hp').style.width='100%';
@@ -730,7 +784,7 @@ function paintTeam(st, team){
   $('team').innerHTML=team.map(function(t,i){
     var s=st[i]||{hp:1,down:false};
     return '<div class="mate'+(s.down?' down':'')+'">'+
-      '<div class="av2" style="background:'+colOf(t.el)+'">'+HJEL[t.el]+'</div>'+
+      '<div class="av2 gem" style="--c:'+colOf(t.el)+'"><span class="h">'+HJEL[t.el]+'</span></div>'+
       '<div class="n2">'+esc(t.nick)+'</div>'+
       '<div class="hp"><i style="width:'+Math.round(s.hp*100)+'%;background:'+colOf(t.el)+'"></i></div>'+
     '</div>';
@@ -879,18 +933,64 @@ function myElement(){
 function renderTop(){
   var d=DAY, a=d.els[0], b=d.els[1];
   $('today').innerHTML =
-    '<span class="gz"><b style="background:'+colOf(a)+'">'+d.gan+'</b>'+
-    '<b style="background:'+colOf(b)+'">'+d.zhi+'</b></span>'+
+    '<span class="gz"><b class="gem sq" style="--c:'+colOf(a)+'" title="'+d.gan+'"><span class="h">'+GANHJ[d.gan]+'</span></b>'+
+    '<b class="gem sq" style="--c:'+colOf(b)+'" title="'+d.zhi+'"><span class="h">'+ZHIHJ[d.zhi]+'</span></b></span>'+
     '<span class="tx">오늘의 기운 <b>'+d.gan+d.zhi+'</b> · '+
     (a===b ? J(a,'i')+' 겹친 날' : J(a,'wa')+' '+b+'의 날')+'</span>';
 
   if(MYEL){
-    $('mine').innerHTML='내 오행은 <b>'+MYEL+'</b>입니다. '+
-      '<a href="/?edit=1">오행 수정</a>';
+    /* 오행 수정은 홈과 지도의 사주각(프로필)에서만 한다 */
+    $('mine').innerHTML='내 오행 캐릭터는 <b>'+MYEL+' 속성</b>입니다.';
   } else {
     $('mine').innerHTML='아직 캐릭터가 없습니다. '+
       '<a href="/">생년월일로 캐릭터 만들기 &rarr;</a>';
   }
+}
+
+/* 보석 한 알. sq 면 네모 보석 */
+function gem(col, txt, cls){ return '<span class="'+(cls||'orb')+' gem" style="--c:'+col+'"><span class="h">'+txt+'</span></span>'; }
+
+/* 오행도 — 상생(살림)은 바깥 고리, 상극(누름)은 안쪽 별.
+   사냥터 규칙이 전부 이 그림 하나에서 나온다: 그 땅을 누르는 속성으로 싸운다. */
+function wuxingSVG(){
+  var R=92, cx=125, cy=118, order=['화','토','금','수','목'];   /* 화가 꼭대기, 시계 방향 */
+  var P={}; order.forEach(function(e,i){ var a=-Math.PI/2+i*2*Math.PI/5; P[e]={x:cx+R*Math.cos(a), y:cy+R*Math.sin(a)}; });
+  var HJ={목:'木',화:'火',토:'土',금:'金',수:'水'};
+  function trim(a,b,d){ var dx=b.x-a.x, dy=b.y-a.y, L=Math.sqrt(dx*dx+dy*dy);
+    return {x1:a.x+dx/L*d, y1:a.y+dy/L*d, x2:b.x-dx/L*d, y2:b.y-dy/L*d}; }
+  var o='<svg viewBox="0 0 250 250" role="img" aria-label="오행 상생 상극도">'+
+    '<defs><marker id="ms" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7fe08f"/></marker>'+
+    '<marker id="mk" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#f08c8c"/></marker>';
+  order.forEach(function(e){ var c=colOf(e);
+    o+='<radialGradient id="g'+e+'" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#fff" stop-opacity=".95"/>'+
+       '<stop offset=".18" stop-color="'+c+'"/><stop offset=".75" stop-color="'+c+'"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></radialGradient>'; });
+  o+='</defs>';
+  /* 상생 — 이웃끼리, 바깥 호 */
+  order.forEach(function(e,i){ var n=order[(i+1)%5], a=P[e], b=P[n];
+    var t=trim(a,b,25), mx=(a.x+b.x)/2, my=(a.y+b.y)/2, ox=(mx-cx)*0.28, oy=(my-cy)*0.28;
+    o+='<path d="M'+t.x1.toFixed(1)+','+t.y1.toFixed(1)+' Q'+(mx+ox).toFixed(1)+','+(my+oy).toFixed(1)+' '+t.x2.toFixed(1)+','+t.y2.toFixed(1)+'" '+
+       'fill="none" stroke="#7fe08f" stroke-width="2" marker-end="url(#ms)" opacity=".85"/>'; });
+  /* 상극 — 하나 건너, 안쪽 별 */
+  order.forEach(function(e,i){ var n=order[(i+2)%5], t=trim(P[e],P[n],25);
+    o+='<line x1="'+t.x1.toFixed(1)+'" y1="'+t.y1.toFixed(1)+'" x2="'+t.x2.toFixed(1)+'" y2="'+t.y2.toFixed(1)+'" '+
+       'stroke="#f08c8c" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#mk)" opacity=".8"/>'; });
+  order.forEach(function(e){ var q=P[e], mine=(e===MYEL);
+    o+='<circle cx="'+q.x.toFixed(1)+'" cy="'+q.y.toFixed(1)+'" r="21" fill="url(#g'+e+')" stroke="'+(mine?'#ffd93d':'rgba(255,255,255,.25)')+'" stroke-width="'+(mine?3:1.5)+'"/>'+
+       '<circle cx="'+q.x.toFixed(1)+'" cy="'+q.y.toFixed(1)+'" r="11" fill="'+colOf(e)+'" opacity=".45"/>'+
+       '<text x="'+q.x.toFixed(1)+'" y="'+(q.y+6.5).toFixed(1)+'" text-anchor="middle" font-size="18" font-weight="800" fill="#fff" '+
+       'style="font-family:\'Noto Serif KR\',serif;paint-order:stroke" stroke="rgba(0,0,0,.55)" stroke-width="2.5">'+HJ[e]+'</text>'; });
+  return o+'</svg><div class="lg"><span><i style="border-color:#7fe08f"></i>상생 · 살린다</span>'+
+         '<span><i style="border-color:#f08c8c;border-top-style:dashed"></i>상극 · 누른다</span></div>';
+}
+
+function renderGuide(){
+  $('guide').innerHTML =
+    '<div><h2>사냥터에서 강해지는 법</h2><ul>'+
+    '<li>사냥터마다 <b>그 땅을 누르는 속성</b>의 수치로 싸웁니다. 목은 토를, 토는 수를 누릅니다.</li>'+
+    '<li>이기면 그 땅의 <b>용신석</b>이 떨어집니다. 용신석을 모으면 그 속성 수치가 올라 <b>더 높은 단</b>으로 갈 수 있습니다.</li>'+
+    '<li><b>친구와 파티를 하면 더 높은 단을 깰 수 있고</b>, 한 사람이 받는 용신석도 늘어납니다.</li>'+
+    '<li>높은 단일수록 용신석이 많이 나옵니다.</li>'+
+    '</ul></div>'+ wuxingSVG();
 }
 
 function colOf(el){ for(var i=0;i<GROUNDS.length;i++) if(GROUNDS[i].el===el) return GROUNDS[i].col; return '#8e9bb0'; }
@@ -908,19 +1008,19 @@ function renderPick(){
     else if(ts>0)          tags+='<span class="tag good">오늘 유리</span>';
     else if(ts<0)          tags+='<span class="tag warn">오늘 불리</span>';
     if(rel && rel.tag) tags+='<span class="tag '+(rel.k==='risk'?'warn':'mine')+'">'+rel.tag+'</span>';
-    var P0=powerAt(g.el), c0=Math.max(1,tierFor(P0.pow));
-    tags += '<span class="tag mine">'+P0.key+' 수치 '+P0.pow+' · '+tOf(c0).nm+'까지</span>';
+    tags += '<span class="tag mine">'+keyOf(g.el)+' 수치로 싸움</span>';
     var why = (ts>0 ? '오늘 '+DAY.gan+DAY.zhi+'의 기운이 '+g.el+'에 실립니다. '
                     : ts<0 ? '오늘 기운이 '+J(g.el,'eul')+' 누릅니다. ' : '')
             + (rel ? rel.why : '');
-    html += '<button class="card'+((ts>=2&&ts===best)?' best':'')+'" data-g="'+g.id+'">'+
-      '<span class="orb" style="background:'+g.col+'">'+g.elhj+'</span>'+
+    html += '<button class="card'+((ts>=2&&ts===best)?' best':'')+'" data-g="'+g.id+'" '+
+      'style="--bg:url(/img/dungeon/'+g.id+'.webp)">'+ gem(g.col, g.elhj) +
       '<span><span class="t"><b>'+g.nm+'</b><span>'+g.prey+'</span></span>'+
       '<span class="one">'+g.one+'</span>'+
       (tags?'<span class="tags">'+tags+'</span>':'')+
       (why?'<span class="why">'+why+'</span>':'')+'</span></button>';
   });
   $('grid').innerHTML=html;
+  renderGuide();
   [].forEach.call($('grid').querySelectorAll('.card'),function(b){
     b.onclick=function(){ openGround(b.dataset.g); };
   });
@@ -949,7 +1049,7 @@ function openGround(id){
    무엇을 하면 열리는지 보이지 않으면 사람은 다시 오지 않는다. */
 function renderTier(){
   var g=CUR, P=powerAt(g.el), done=cleared(g.id), cap=Math.max(1,tierFor(P.pow));
-  $('th').innerHTML='<span class="orb" style="background:'+g.col+'">'+g.elhj+'</span>'+
+  $('th').innerHTML=gem(g.col, g.elhj)+
     '<span><h1>'+g.nm+'</h1><span class="hj">'+g.prey+' · 계단부터 갑단까지 열 단</span></span>';
   $('tsub').innerHTML='이 땅은 <b>'+P.key+'</b>이 누릅니다 — <b>'+P.key+' 수치</b>로 싸웁니다. '+
     (P.n>1?P.n+'명 파티 수치 ':'내 수치 ')+'<b>'+P.pow+'</b>'+
@@ -969,7 +1069,7 @@ function renderTier(){
       : '문턱 '+need+' — '+P.key+' 수치 '+gap+' 더. '+P.key+' 용신석 '+gap+'개'+
         ((window.FP&&FP.FROM)?'('+FP.FROM[P.key]+'에서 남)':'')+(P.n<5?' 또는 친구와 함께':'');
     html += '<button class="rung'+(t.k===cap&&isOpen&&!isDone?' now':'')+'" data-k="'+t.k+'"'+(isOpen?'':' disabled')+'>'+
-      '<span class="gz2" style="background:'+g.col+'">'+t.hj+'</span>'+
+      gem(g.col, t.hj, 'gz2 sq')+
       '<span><span class="tn">'+t.nm+'</span><span class="td">'+why+'</span></span>'+tag+'</button>';
   });
   $('ladder').innerHTML=html;
@@ -988,7 +1088,7 @@ function renderTier(){
 
 function renderParty(){
   var g=CUR, ts=todayScore(g.el,DAY.els), rel=mineRel(MYEL,g.el);
-  $('gh').innerHTML='<span class="orb" style="background:'+g.col+'">'+g.elhj+'</span>'+
+  $('gh').innerHTML=gem(g.col, g.elhj)+
     '<span><h1>'+g.nm+' '+tOf(TIER).nm+'</h1><span class="hj">'+tOf(TIER).gan+'급 '+g.prey+'</span></span>';
   $('gsub').textContent = g.one + ' — ' +
     (ts>0?'오늘 기운이 이곳에 실립니다.':ts<0?'오늘 기운이 이곳을 누릅니다.':'오늘 기운은 이곳과 무관합니다.') +
@@ -996,7 +1096,7 @@ function renderParty(){
 
   var html='';
   /* 내 자리 */
-  html += '<div class="slot me"><span class="av" style="background:'+(MYEL?colOf(MYEL):'#8e9bb0')+'">'+
+  html += '<div class="slot me"><span class="av gem" style="--c:'+(MYEL?colOf(MYEL):'#8e9bb0')+'">'+
           (MYEL?({목:'木',화:'火',토:'土',금:'金',수:'水'})[MYEL]:'?')+'</span>'+
           '<span class="nm2">'+(ME?esc(ME.nick):'나')+'</span>'+
           '<span class="rl">나 · '+(MYEL||'오행 미정')+'</span></div>';
@@ -1004,7 +1104,7 @@ function renderParty(){
   for(var i=0;i<4;i++){
     var p=PARTY[i];
     if(p){
-      html += '<div class="slot"><span class="av" style="background:'+colOf(p.el)+'">'+
+      html += '<div class="slot"><span class="av gem" style="--c:'+colOf(p.el)+'">'+
               (({목:'木',화:'火',토:'土',금:'金',수:'水'})[p.el]||'?')+'</span>'+
               '<span class="nm2">'+esc(p.nick)+'</span>'+
               '<span class="rl">'+(p.el||'?')+'</span>'+
@@ -1044,8 +1144,8 @@ function renderParty(){
 
   var danger = (rel && rel.k==='risk' && filled<=2 && TIER>1);
   $('note').innerHTML =
-    '<b>'+tOf(TIER).nm+'으로 들어갑니다.</b> 지금 인원으로 열리는 가장 높은 단은 '+
-    '<b>'+tOf(cap2).nm+'</b>입니다. <a href="#" id="a-tier">단 다시 고르기</a><br>'+
+    '<b>'+tOf(TIER).nm+'으로 들어갑니다.</b> <a href="#" id="a-tier">단 다시 고르기</a><br>'+
+    '<b>친구와 파티를 하면 더 높은 단을 깰 수 있습니다.</b> 한 사람이 받는 용신석도 늘어납니다.<br>'+
     (tooHigh ? '<span style="color:#f0a0a0">'+tOf(TIER).nm+'은 '+filled+'명으로는 열리지 않습니다. '+
                '친구를 더 부르거나 단을 내리세요.</span><br>' : '')+
     (danger ? '<span style="color:#f0a0a0">이 사냥터는 내 기운을 누릅니다. '+
@@ -1094,7 +1194,7 @@ function openFriends(slot){
     var used={}; PARTY.forEach(function(p){ if(p) used[p.id]=1; });
     var free=list.filter(function(f){ return !used[f.id]; });
     $('friends').innerHTML = free.length ? free.map(function(f){
-      return '<li><span class="av" style="background:'+colOf(f.el)+'">'+
+      return '<li><span class="av gem" style="--c:'+colOf(f.el)+'">'+
         (({목:'木',화:'火',토:'土',금:'金',수:'水'})[f.el]||'?')+'</span>'+
         '<b>'+esc(f.nick)+'</b><button data-id="'+esc(f.id)+'">앉히기</button></li>';
     }).join('') : '<li class="none">아직 합류한 친구가 없습니다. 먼저 카카오톡으로 불러 보세요.</li>';

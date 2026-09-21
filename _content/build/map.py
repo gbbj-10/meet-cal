@@ -232,7 +232,7 @@ svg.map{display:block;width:100%}
 
 <div class="bar">
   <a class="nm" href="/">__MARK__Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
-  <nav><a href="/">계산기</a><a href="/iljin/">일진</a>
+  <nav><a href="/">계산기</a><a href="/iljin/">기운</a>
        <a class="hl" href="/hunt/">사냥터</a><a href="/ohaeng/">글</a><span data-fp-chip></span></nav>
 </div>
 
@@ -268,8 +268,8 @@ if(MYEL){
   $('hello-img').hidden=true;
   $('dog').hidden=false;
   $('hello-h').innerHTML='<span class="el"><i style="background:'+COLOF(MYEL)+'">'+
-    HJ[MYEL]+'</i>'+MYEL+' 속성</span><br>내 캐릭터가 준비됐습니다';
-  $('hello-p').textContent=SAY[MYEL]+' 지도에서 사냥터·일진·글로 갑니다.';
+    HJ[MYEL]+'</i>'+MYEL+' 속성</span><br>오행 캐릭터가 준비됐습니다';
+  $('hello-p').textContent=SAY[MYEL]+' 지도에서 사냥터·기운·글로 갑니다.';
   $('start').textContent='지도 보기';
   $('skip').hidden=true;
   import('/3d/profile3d.js').then(function(m){
@@ -435,7 +435,13 @@ if(window.ResizeObserver) new ResizeObserver(redraw).observe(wrap);
   var p=$('p-sajugak'); if(!p) return;
   var one=p.querySelector('.one'), a=p.querySelector('.enter');
   if(one) one.innerHTML='내 캐릭터는 <b>'+MYEL+' 속성</b>입니다';
-  if(a){ a.textContent='내 캐릭터 보기 →'; a.setAttribute('href','/'); }
+  /* 홈으로 보내지 않는다 — 지도에 들어설 때 봤던 그 화면(가운데 3D 개)을 다시 띄운다 */
+  if(a){ a.textContent='오행 캐릭터 보기'; a.setAttribute('href','#me');
+    a.addEventListener('click',function(e){
+      e.preventDefault(); hide();
+      $('hello').hidden=false; window.scrollTo(0,0);
+      if(window.gtag) gtag('event','cta_click',{cta:'saju_show_dog'});
+    }); }
   var ds=p.querySelector('.ds');
   if(ds) ds.insertAdjacentHTML('afterend',
     (window.FP&&FP.barsHTML ? FP.barsHTML() : '')+

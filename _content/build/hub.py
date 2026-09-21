@@ -20,6 +20,10 @@ PAGE = r"""<!DOCTYPE html>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0d1119">
 __HEAD__
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+            "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}
+</script>
 <meta name="color-scheme" content="dark">
 <title>__TITLE__</title>
 <meta name="description" content="__DESC__">
@@ -159,6 +163,9 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 .mine2{margin:26px 0 8px;padding:20px 20px 18px;border-radius:16px;
   border:1px solid rgba(255,217,61,.4);background:rgba(255,217,61,.07)}
 .mine2 .mw{display:flex;align-items:center;gap:16px}
+.mine2 .m2dog{height:230px;margin:10px -8px 0;border-radius:14px;
+  background:radial-gradient(ellipse at 50% 78%,rgba(255,217,61,.10),transparent 62%)}
+.mine2 .m2dog canvas{display:block;width:100%!important;height:100%!important}
 .mine2 .orb2{width:62px;height:62px;border-radius:50%;flex:none;display:grid;place-items:center;
   font-size:27px;font-weight:800;color:#0a0f18;font-family:"Noto Serif KR",serif}
 .mine2 .k{font-size:12px;font-weight:700;color:var(--to);letter-spacing:.2px}
@@ -179,7 +186,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 
 <header class="site"><div class="wrap">
   <a class="nm" href="/">__MARK__Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
-  <nav><a href="/iljin/">일진</a><a href="/map/">지도</a>
+  <nav><a href="/iljin/">기운</a><a href="/map/">지도</a>
        <a class="hl" href="/hunt/">사냥터</a><a href="/ohaeng/">글</a><span data-fp-chip></span></nav>
 </div></header>
 
@@ -196,6 +203,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
       <div class="d" id="m2-d"></div>
     </div>
   </div>
+  <div class="m2dog" id="m2-dog"></div>
   <div id="m2-bars"></div>
   <a class="mgo" href="/map/?new=1" data-cta="mine_map">지도로 들어가기</a>
   <button class="medit" id="m2-edit">오행 다시 계산</button>
@@ -241,7 +249,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
     <a class="hcta" href="/map/?new=1" data-cta="result_map">
       <span class="k">캐릭터가 만들어졌습니다</span>
       <span class="t">지도로 들어가기</span>
-      <span class="d">사냥터·일진·글은 전부 지도에서 갑니다. 이 캐릭터가 그대로 따라갑니다.</span>
+      <span class="d">사냥터·기운·글은 전부 지도에서 갑니다. 이 캐릭터가 그대로 따라갑니다.</span>
     </a>
 
     <div class="cad">
@@ -262,7 +270,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 </main>
 
 <footer class="site"><div class="wrap">
-  <a href="/iljin/">일진</a><a href="/map/">지도</a><a href="/hunt/">사냥터</a>
+  <a href="/iljin/">기운</a><a href="/map/">지도</a><a href="/hunt/">사냥터</a>
   <a href="/ohaeng/">오행 이야기</a>
   <a href="/love/">이성 조건 계산기</a>
   <p style="margin:10px 0 0">사주 해석은 통계적 사실이 아니라 전통 해석입니다. 재미로 봐 주세요.</p>
@@ -405,11 +413,21 @@ $('go').addEventListener('click', function(){
     var edit=/[?&]edit=1/.test(location.search);
     if(!me || edit){ $('mine2').hidden=true; return; }
     $('m2-orb').textContent=FP.HJ[me.el]||'?';
-    $('m2-orb').style.background=FP.COL[me.el]||'#8e9bb0';
+    $('m2-orb').classList.add('fpgem');
+    $('m2-orb').style.setProperty('--c', FP.COL[me.el]||'#8e9bb0');
     $('m2-t').textContent=me.el+' 속성'+(me.top?' ('+me.top+'%)':'');
-    $('m2-d').textContent=(SAY2[me.el]||'')+' 지도·사냥터·일진이 이 캐릭터로 이어집니다.';
+    $('m2-d').textContent=(SAY2[me.el]||'')+' 지도·사냥터·기운이 이 캐릭터로 이어집니다.';
     if(FP.barsHTML) $('m2-bars').innerHTML=FP.barsHTML();
     $('mine2').hidden=false;
+    /* 프로필 한가운데에 내 오행 캐릭터 — 지도에서 본 그 개다.
+       WebGL 이 없거나 모델을 못 받으면 칸만 조용히 접는다. */
+    var dg=$('m2-dog');
+    if(dg && !dg.dataset.on){
+      dg.dataset.on='1';
+      import('/3d/profile3d.js').then(function(m){
+        return m.showDog({mount:dg, base:'/3d/', el:me.el, height:230});
+      }).catch(function(){ dg.style.display='none'; });
+    }
     $('hero').hidden=true;
     $('tool').hidden=true;
   }

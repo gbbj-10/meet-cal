@@ -93,11 +93,11 @@ PAGE = r"""<!DOCTYPE html>
 <meta name="theme-color" content="#0d1119">
 __HEAD__
 <meta name="color-scheme" content="dark">
-<title>오늘의 일진 — 매일 계산해서 올립니다 | Four Paws</title>
+<title>오늘의 기운 — 오늘의 일진을 매일 계산해 올립니다 | Four Paws</title>
 <meta name="description" content="__DESC__">
 <link rel="canonical" href="__ROOT__/iljin/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="오늘의 일진">
+<meta property="og:title" content="오늘의 기운">
 <meta property="og:description" content="__DESC__">
 <meta property="og:url" content="__ROOT__/iljin/">
 <meta property="og:image" content="__ROOT__/ohaeng/img/og-ohaeng.png">
@@ -211,14 +211,14 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 
 <header class="site"><div class="wrap">
   <a class="nm" href="/">__MARK__Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
-  <nav><a href="/">계산기</a><a href="/iljin/" aria-current="page">일진</a>
+  <nav><a href="/">계산기</a><a href="/iljin/" aria-current="page">기운</a>
        <a href="/map/">지도</a><a class="hl" href="/hunt/">사냥터</a>
        <a href="/ohaeng/">글</a><span data-fp-chip></span></nav>
 </div></header>
 
 <main class="wrap">
   <p class="dt" id="dt">__DATE__</p>
-  <h1>오늘의 일진</h1>
+  <h1>오늘의 기운</h1>
 
   <div class="card">
     <div class="gzrow">
@@ -264,7 +264,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 
   <h2>앞으로 7일</h2>
   <p class="lead">같은 방식으로 미리 계산해 둔 것입니다.</p>
-  <table class="wk"><thead><tr><th>날짜</th><th>일진</th><th>읽기</th><th>오행</th></tr></thead>
+  <table class="wk"><thead><tr><th>날짜</th><th>기운</th><th>읽기</th><th>오행</th></tr></thead>
   <tbody id="wk">__ROWS__</tbody></table>
 
   <h2>어떻게 계산했나</h2>

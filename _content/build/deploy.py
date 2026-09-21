@@ -75,7 +75,7 @@ GAME = """<!DOCTYPE html>
   <a class="back" href="/" data-cta="pending_go">내 캐릭터 만들기</a>
   <p style="margin-top:20px;font-size:14px">
     <a href="/hunt/" data-cta="pending_hunt">사냥터</a> ·
-    <a href="/iljin/" data-cta="pending_iljin">오늘의 일진</a> ·
+    <a href="/iljin/" data-cta="pending_iljin">오늘의 기운</a> ·
     <a href="/map/" data-cta="pending_map">지도</a> ·
     <a href="index.html" data-cta="pending_back">오행 이야기</a></p>
 </main>
