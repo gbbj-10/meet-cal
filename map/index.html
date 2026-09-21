@@ -331,7 +331,8 @@ if(window.ResizeObserver) new ResizeObserver(redraw).observe(wrap);
   if(a){ a.textContent='내 캐릭터 보기 →'; a.setAttribute('href','/'); }
   var ds=p.querySelector('.ds');
   if(ds) ds.insertAdjacentHTML('afterend',
-    '<p class="ds" style="margin-top:-8px"><a href="/?edit=1" data-cta="edit_el">오행 다시 계산하기</a></p>');
+    (window.FP&&FP.barsHTML ? FP.barsHTML() : '')+
+    '<p class="ds" style="margin-top:4px"><a href="/?edit=1" data-cta="edit_el">오행 다시 계산하기</a></p>');
 })();
 
 var f=$('flist'); if(f) f.parentNode.removeChild(f);   // 지도가 그려지니 목록은 뺀다

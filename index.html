@@ -180,6 +180,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
       <div class="d" id="m2-d"></div>
     </div>
   </div>
+  <div id="m2-bars"></div>
   <a class="mgo" href="/map/?new=1" data-cta="mine_map">지도로 들어가기</a>
   <button class="medit" id="m2-edit">오행 다시 계산</button>
 </section>
@@ -391,6 +392,7 @@ $('go').addEventListener('click', function(){
     $('m2-orb').style.background=FP.COL[me.el]||'#8e9bb0';
     $('m2-t').textContent=me.el+' 속성'+(me.top?' ('+me.top+'%)':'');
     $('m2-d').textContent=(SAY2[me.el]||'')+' 지도·사냥터·일진이 이 캐릭터로 이어집니다.';
+    if(FP.barsHTML) $('m2-bars').innerHTML=FP.barsHTML();
     $('mine2').hidden=false;
     $('hero').hidden=true;
     $('tool').hidden=true;

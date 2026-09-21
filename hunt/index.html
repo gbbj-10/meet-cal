@@ -487,69 +487,65 @@ function synergy(els){
 
 
 /* ===================== 단(段) ===================== */
-/* 사냥터 하나에 열 단이 있다. 이름은 천간을 거꾸로 쓴다 —
-   계단(癸)이 가장 아래, 갑단(甲)이 꼭대기다. 사주를 모르는 사람도
-   "계단부터 갑단까지" 라고 하면 위아래가 잡힌다.
+/* 사냥터 하나에 열 단. 천간을 거꾸로 써서 계단(癸)이 맨 아래, 갑단(甲)이 꼭대기.
 
-   단이 올라가면 사냥감의 몸과 힘이 같이 커진다. 숫자는 지어낸 게 아니라
-   1인~5인 × 다섯 오행 관계로 3만 판을 돌려 맞췄다 (`_content/build/tier_sim.js`).
-   - 혼자서는 어느 사냥터든 계단을 깬다
-   - 혼자서 임단을 깨는 곳은 **내 오행이 누르는 사냥터 한 곳뿐**이다
-   - 그 위는 사람을 데려와야 열린다. 갑단은 다섯 오행을 다 채우고
-     용신석까지 모아야 문이 열린다 */
+   2026-09-21 규칙을 바꿨다 — 이제 **수치가 문턱을 넘으면 깬다.**
+   - 속성 수치 = 50 + 사주 비율 × 0.4 + 그 속성 용신석 개수   (me.js FP.stats)
+   - 사냥터마다 **그 땅을 누르는 속성**의 수치로 싸운다 (목극토 → 황토 텃밭은 목)
+   - 파티 수치 = 가장 센 사람 + 나머지 합 × 0.2, 상생 한 쌍마다 +5%
+   - 오늘의 기운을 탄 속성이면 +5%
+   - 문턱을 넘은 단은 **반드시 이긴다.** 난수는 몇 번 겨루는지·누가 맞는지에만 쓴다
+   - 이기면 각자 용신석 = 단 × (1 + 0.25 × (인원 − 1))
+   문턱 곡선과 판 수는 `_content/build/tier_sim.js` 로 검산한다. */
 var TIERS=[
-  {k:1, gan:'계', hj:'癸', nm:'계단'},
-  {k:2, gan:'임', hj:'壬', nm:'임단'},
-  {k:3, gan:'신', hj:'辛', nm:'신단'},
-  {k:4, gan:'경', hj:'庚', nm:'경단'},
-  {k:5, gan:'기', hj:'己', nm:'기단'},
-  {k:6, gan:'무', hj:'戊', nm:'무단'},
-  {k:7, gan:'정', hj:'丁', nm:'정단'},
-  {k:8, gan:'병', hj:'丙', nm:'병단'},
-  {k:9, gan:'을', hj:'乙', nm:'을단'},
-  {k:10,gan:'갑', hj:'甲', nm:'갑단'}
+  {k:1, gan:'계', hj:'癸', nm:'계단'}, {k:2, gan:'임', hj:'壬', nm:'임단'},
+  {k:3, gan:'신', hj:'辛', nm:'신단'}, {k:4, gan:'경', hj:'庚', nm:'경단'},
+  {k:5, gan:'기', hj:'己', nm:'기단'}, {k:6, gan:'무', hj:'戊', nm:'무단'},
+  {k:7, gan:'정', hj:'丁', nm:'정단'}, {k:8, gan:'병', hj:'丙', nm:'병단'},
+  {k:9, gan:'을', hj:'乙', nm:'을단'}, {k:10,gan:'갑', hj:'甲', nm:'갑단'}
 ];
-var THP =[0,0.34,0.78,1.05,1.34,1.64,1.94,2.24,2.54,2.84,3.14];  /* 사냥감 몸 배수 */
-var TATK=[0,0.40,1.25,1.55,1.62,1.68,1.74,1.80,1.86,1.92,1.98];  /* 사냥감 힘 배수 */
-
+var TH = (window.FP && FP.TH) ? FP.TH : [50,55,65,85,120,175,255,365,520,730];
 function tOf(k){ return TIERS[Math.max(1,Math.min(10,k))-1]; }
+function tierFor(v){ var t=0; for(var i=0;i<10;i++) if(v>=TH[i]) t=i+1; return t; }
 
-/* 이 사냥터에서 내가 깬 가장 높은 단 */
+/* 이 사냥터에서 깬 가장 높은 단 — 표시용. 문을 여는 건 수치다. */
 function cleared(gid){ return LS.get('hunt.tier.'+gid, 0); }
 function markCleared(gid,k){ if(k>cleared(gid)) LS.set('hunt.tier.'+gid,k); }
 
-/* ---- 용신석 ----
-   용신은 나를 살려 주는 오행이다(수생목이면 목의 용신은 수).
-   사냥터에서는 그곳의 오행석이 떨어지므로, 내 용신석이 나오는 곳과
-   내가 잘 싸우는 곳은 서로 다르다. 한쪽에서 캐서 다른 쪽에서 쓴다. */
-function yongsin(el){ for(var a in DSAENG) if(DSAENG[a]===el) return a; return null; }
+/* 용신석 — 속성마다 따로 쌓인다. me.js 도 같은 키를 읽어 막대를 그린다. */
 function stones(){ return LS.get('hunt.stones', {목:0,화:0,토:0,금:0,수:0}); }
 function addStones(el,n){ var s=stones(); s[el]=(s[el]||0)+n; LS.set('hunt.stones',s); return s; }
-/* 모은 돌이 주는 기운. 용신석은 1.5%, 그 밖의 돌은 0.5%, 합쳐서 70% 까지. */
-function stoneBoost(myEl){
-  var s=stones(), y=yongsin(myEl), p=0;
-  for(var e in s) p += (s[e]||0) * (e===y ? 1.5 : 0.5);
-  return Math.min(70, Math.round(p*10)/10);
+
+/* 땅 G 에서 싸울 때 쓰는 속성 = G 를 누르는 속성 */
+function keyOf(gEl){ for(var a in DGEUK) if(DGEUK[a]===gEl) return a; return gEl; }
+
+/* 한 사람의 속성 수치. 나는 me.js 에서 정확히, 친구는 받은 값이 있으면 그것,
+   없으면 주 속성만 보고 어림한다(주 속성 70, 나머지 55).
+   친구 수치를 서버에 올리기 전까지의 임시 규칙이다. */
+function statOf(who, x){
+  if(who.me){
+    var st = window.FP && FP.stats ? FP.stats() : null;
+    return st ? st[x].val : 50;
+  }
+  if(who.stats && who.stats[x]!=null) return who.stats[x];
+  return who.el===x ? 70 : 55;
 }
 
-/* ---- 문이 열리는 단 ----
-   혼자면 계단까지, 내 오행이 누르는 사냥터에서만 임단까지.
-   사람이 늘면 올라가고, 오행을 다 채우면 한 단 더, 용신석 25%마다 한 단 더. */
-var SIZE_STEP=[0,0,1,2,3,5];
-function favGround(myEl){ return myEl ? DGEUK[myEl] : null; }   /* 내가 누르는 오행 */
-function tierCap(gEl, els){
-  var my=els[0];
-  var filled=els.filter(Boolean).length;
-  var base = (my && favGround(my)===gEl) ? 2 : 1;
-  /* 혼자면 여기가 끝이다. 용신석을 아무리 모아도 이 선은 넘지 못한다 —
-     돌은 기운을 밀어 올릴 뿐, 옆에서 같이 맞아 줄 사람을 대신하지는 못한다.
-     이 한 줄이 "혼자서는 계단까지, 유리한 곳 한 군데만 임단까지" 를 지킨다. */
-  if(filled<=1) return base;
-  var kinds={}; els.forEach(function(e){ if(e) kinds[e]=1; });
-  var full = Object.keys(kinds).length===5 ? 1 : 0;
-  var st = Math.floor(stoneBoost(my)/25);
-  return Math.max(1, Math.min(10, base + SIZE_STEP[Math.min(5,filled)] + full + st));
+/* 파티 수치 — 전부 같은 규칙으로 계산한 한 숫자 */
+function powerAt(gEl){
+  var x=keyOf(gEl);
+  var who=[{me:true, el:MYEL, nick:(ME&&ME.nick)||'나'}];
+  PARTY.forEach(function(f){ if(f) who.push({el:f.el, nick:f.nick, stats:f.stats}); });
+  var vals=who.map(function(w){ return statOf(w,x); });
+  var top=Math.max.apply(null,vals), sum=vals.reduce(function(a,b){return a+b},0);
+  var syn=synergy(who.map(function(w){return w.el}));
+  var today=(DAY.els.indexOf(x)>=0);
+  var pow=(top + (sum-top)*0.2) * (1+0.05*syn.pairs) * (today?1.05:1);
+  return {key:x, pow:Math.round(pow), mine:vals[0], top:top, n:who.length,
+          pairs:syn.pairs, today:today, who:who, vals:vals};
 }
+function tierCap(gEl){ return Math.max(1, tierFor(powerAt(gEl).pow)); }
+function dropFor(k,n){ return Math.round(k*(1+0.25*(n-1))); }
 
 /* ===================== 전투 ===================== */
 /* 보는 전투다. 한 번 누르면 끝까지 굴러가고, 사람은 로그를 읽는다.
@@ -576,100 +572,74 @@ function strike(att, def){
 }
 
 function buildFight(){
-  var g=CUR, gEl=g.el;
-  var team=[{nick:(ME.nick||'나'), el:MYEL, me:true}];
-  PARTY.forEach(function(f){ if(f) team.push({nick:f.nick, el:f.el, me:false}); });
+  var g=CUR, gEl=g.el, K=TIER;
+  var P=powerAt(gEl), need=TH[K-1];
+  var margin=Math.max(1, P.pow/need);           /* 문턱을 얼마나 넘었나 */
+  var team=P.who.map(function(w){ return {nick:w.nick, el:w.el, me:!!w.me, hp:100, max:100, down:false}; });
+  var n=team.length;
 
-  var syn=synergy(team.map(function(t){return t.el}));
-  team.forEach(function(t){
-    t.hp=t.max=100;
-    t.atk=18 + (DAY.els.indexOf(t.el)>=0 ? 3 : 0);   /* 오늘의 기운을 탄 사람은 조금 세다 */
-    t.down=false;
-  });
+  /* 여유가 클수록 빨리 끝나고 덜 맞는다. 문턱에 딱 걸치면 아슬아슬하다. */
+  var T    = Math.max(3, Math.min(7, Math.round(7-(margin-1)*8)));
+  var left = Math.max(0.16, Math.min(0.92, 0.16+(margin-1)*1.6));
+  var foe  = {nm:tOf(K).gan+'급 '+g.prey, el:gEl, max:Math.round(need*(1+0.6*(n-1))), hp:0};
+  foe.hp=foe.max;
 
-  /* 사냥감은 사람 수에 맞춰 커지고, 단이 올라가면 한 번 더 커진다.
-     혼자 와도 계단은 이기고, 다섯이면 빨리 끝난다. */
-  var n=team.length, K=TIER;
-  var foe={nm:tOf(K).gan+'급 '+g.prey, el:gEl, hp:0, max:0,
-           atk:Math.round((13+n*2)*TATK[K])};
-  foe.max=foe.hp=Math.round((110+n*95)*THP[K]);
-  /* 모은 용신석만큼 팀 전체가 세진다 — 돌이 곧 성장이다. */
-  var boost=1+stoneBoost(MYEL)/100;
-  team.forEach(function(t){ t.atk=Math.round(t.atk*boost); });
-  /* 사람이 많으면 더 오래 버틴다. 혼자서는 긴 싸움을 끌고 갈 수 없다. */
-  var TC=22+(n-1)*4;
-
-  /* L = 사람이 읽는 기록, A = 3D 가 연기할 대본. 둘은 같은 사건을 두 가지로 적은 것이다. */
-  var L=[], A=[], turn=0, bonus=1+syn.bonus/200;
+  var L=[], A=[];
   function push(t,k){ L.push({t:t,k:k||''}); return L[L.length-1]; }
   function act(o){ A.push(o); }
+  function jit(){ return 0.85+Math.random()*0.3; }
 
   push(g.nm+' '+tOf(K).nm+'에 들어섰습니다. '+jn(foe.nm,['이','가'])+' 기다리고 있습니다.','big');
-  if(syn.pairs) push('파티의 기운이 서로를 살립니다. 상생 '+syn.pairs+'쌍.','hit');
-  if(boost>1.001) push('모아 둔 용신석이 기운을 밀어 올립니다. 공격 +'+Math.round((boost-1)*100)+'%.','hit');
-  if(DAY.els.indexOf(gEl)>=0) push('오늘의 기운이 이 사냥터에 실려 있습니다. 상대가 셉니다.','bad');
+  push(P.key+' 수치 '+P.pow+' — 문턱 '+need+(P.pow>=need*1.3?' 을 넉넉히 넘습니다.':' 을 넘습니다.'),'hit');
+  if(P.pairs) push('파티의 기운이 서로를 살립니다. 상생 '+P.pairs+'쌍 +'+(P.pairs*5)+'%.','hit');
+  if(P.today) push('오늘의 기운이 '+P.key+'에 실려 있습니다. +5%.','hit');
 
-  while(foe.hp>0 && team.some(function(t){return !t.down}) && turn<TC){
-    turn++;
-    push('— '+turn+'번째 겨룸','turn');
-    act({t:'turn', text:'— '+turn+'번째 겨룸'});
-    for(var i=0;i<team.length && foe.hp>0;i++){
-      var t=team[i]; if(t.down) continue;
-      var r=strike(t.el, foe.el);
-      var dmg=Math.max(3, Math.round(t.atk*r.m*bonus*(0.88+Math.random()*0.24)));
-      foe.hp=Math.max(0, foe.hp-dmg);
-      var line=t.nick+'의 '+J(t.el,'i')+' '+jn(foe.nm,['을','를'])+' 칩니다'+(r.s?' — '+r.s:'');
-      push(line+' (−'+dmg+')', r.k);
-      L[L.length-1].foe=foe.hp/foe.max;
-      act({t:'hit', by:i, dmg:dmg, kind:(r.m>=1.5?'big':''), foeHp:foe.hp/foe.max, text:line});
+  /* 우리 쪽 공격 몫 — 각자의 수치와 상성으로 나누고, T 번에 걸쳐 정확히 다 깎는다 */
+  var share=team.map(function(t,i){ return P.vals[i]*strike(t.el,gEl).m; });
+  var shareSum=share.reduce(function(a,b){return a+b},0);
+  var plan=[], tot=0;
+  for(var r=0;r<T;r++) for(var i=0;i<n;i++){ var d=share[i]/shareSum*foe.max/T*jit(); plan.push(d); tot+=d; }
+  plan=plan.map(function(d){ return Math.max(1,Math.round(d*foe.max/tot)); });
+  var fix=foe.max-plan.reduce(function(a,b){return a+b},0); plan[plan.length-1]+=fix;
+
+  /* 상대 쪽 공격 몫 — 끝났을 때 각자 left 만큼 남게. 쓰러지는 사람은 없다. */
+  var hurt=Math.round((1-left)*100*n), hits=T-1, per=hits?hurt/hits:0;
+
+  var pi=0;
+  for(var turn=1; turn<=T; turn++){
+    push('— '+turn+'번째 겨룸','turn'); act({t:'turn', text:'— '+turn+'번째 겨룸'});
+    for(var i=0;i<n;i++){
+      var t=team[i], sk=strike(t.el,gEl), dmg=plan[pi++];
+      foe.hp=Math.max(0,foe.hp-dmg);
+      var line=t.nick+'의 '+J(t.el,'i')+' '+jn(foe.nm,['을','를'])+' 칩니다'+(sk.s?' — '+sk.s:'');
+      push(line+' (−'+dmg+')', sk.k); L[L.length-1].foe=foe.hp/foe.max;
+      act({t:'hit', by:i, dmg:dmg, kind:(sk.m>=1.5?'big':''), foeHp:foe.hp/foe.max, text:line});
+      if(foe.hp<=0) break;
     }
     if(foe.hp<=0) break;
-    var alive=team.filter(function(t){return !t.down});
-    var v=alive[Math.floor(Math.random()*alive.length)];
-    var r2=strike(foe.el, v.el);
-    var d2=Math.max(2, Math.round(foe.atk*r2.m*(0.85+Math.random()*0.3)));
-    v.hp=Math.max(0, v.hp-d2);
-    var line2=jn(foe.nm,['이','가'])+' '+jn(v.nick,['을','를'])+' 덮칩니다'+
-              (r2.m>1.3?' — 눌립니다':'');
-    push(line2+' (−'+d2+')', r2.m>1.3?'bad':'');
-    L[L.length-1].team=team.map(function(t){return {hp:t.hp/t.max, down:t.down}});
-    act({t:'foehit', to:team.indexOf(v), dmg:d2, kind:(r2.m>1.3?'big':''),
-         hp:team.map(function(t){return t.hp/t.max}), text:line2});
-    if(v.hp<=0){ v.down=true;
-      var line3=jn(v.nick,['이','가'])+' 쓰러졌습니다.';
-      push(line3,'bad');
-      L[L.length-1].team=team.map(function(t){return {hp:t.hp/t.max, down:t.down}});
-      act({t:'down', i:team.indexOf(v), text:line3}); }
+    /* 가장 성한 사람을 노린다 — 한 명만 몰려 쓰러지는 일이 없게 */
+    var v=team.slice().sort(function(a,b){return b.hp-a.hp})[0];
+    var d2=Math.max(1,Math.round(per*jit()));
+    d2=Math.min(d2, Math.max(0, v.hp-Math.round(left*100*0.9)));
+    v.hp-=d2;
+    var line2=jn(foe.nm,['이','가'])+' '+jn(v.nick,['을','를'])+' 덮칩니다';
+    push(line2+' (−'+d2+')', ''); L[L.length-1].team=team.map(function(x){return {hp:x.hp/x.max,down:false}});
+    act({t:'foehit', to:team.indexOf(v), dmg:d2, kind:'', hp:team.map(function(x){return x.hp/x.max}), text:line2});
   }
 
-  var win=foe.hp<=0;
-  var standing=team.filter(function(t){return !t.down}).length;
-  var endLine = win ? jn(foe.nm,['이','가'])+' 물러갑니다.' : '더는 버틸 수 없습니다. 물러납니다.';
-  push(endLine, win?'big':'bad');
-  act({t:'end', win:win, text:endLine});
+  var endLine=jn(foe.nm,['이','가'])+' 물러갑니다.';
+  push(endLine,'big'); act({t:'end', win:true, text:endLine});
 
-  /* 이기면 그 사냥터의 오행석이 떨어진다. 단이 높을수록, 서 있는 사람이 많을수록 많다. */
-  var loot=0;
-  if(win){
-    loot = K + (standing-1);
-    var isY = (yongsin(MYEL)===gEl);
-    var ltext = J(gEl,'eul')+' 머금은 오행석 '+loot+'개가 떨어집니다'+
-                (isY?' — 내 용신석입니다':'')+'.';
-    push(ltext, 'big');
-    act({t:'loot', el:gEl, n:loot, yong:isY, text:ltext});
-  }
+  var loot=dropFor(K,n);
+  var ltext=gEl+' 용신석 '+loot+'개가 떨어집니다'+(n>1?' — 한 사람에 '+loot+'개씩':'')+'.';
+  push(ltext,'big'); act({t:'loot', el:gEl, n:loot, yong:true, text:ltext});
 
-  /* 왜 이렇게 됐는지 한 줄 — 관계가 결과를 갈랐다는 걸 읽히게 */
-  var rel=mineRel(MYEL,gEl), why;
-  if(win && rel && rel.k==='easy') why='내 '+J(MYEL,'i')+' '+J(gEl,'eul')+' 누르는 곳이라 수월했습니다.';
-  else if(win && n>=3)            why='머릿수가 갈랐습니다. '+n+'명이 번갈아 치니 버티지 못했습니다.';
-  else if(win)                    why='아슬아슬했습니다. 한 명만 더 있었으면 편했을 겁니다.';
-  else if(rel && rel.k==='risk')  why=J(gEl,'i')+' 내 '+J(MYEL,'eul')+' 누르는 곳입니다. 나를 살려 줄 기운을 데려오세요.';
-  else if(n===1)                  why='혼자서는 무리였습니다. 친구를 부르면 달라집니다.';
-  else                            why='기운이 맞지 않았습니다. 다른 사냥터가 나을 수 있습니다.';
+  var why = margin>=1.3 ? P.key+' 수치 '+P.pow+'이 문턱 '+need+'을 넉넉히 넘었습니다.'
+          : margin>=1.1 ? P.key+' 수치 '+P.pow+'로 문턱 '+need+'을 넘었습니다.'
+          : '문턱 '+need+'에 딱 걸쳤습니다. 한 번만 더 모으면 편해집니다.';
 
-  return {log:L, acts:A, win:win, turns:turn, standing:standing, total:n, why:why,
-          foe:foe, team:team, syn:syn, tier:K, loot:loot, lootEl:gEl};
+  return {log:L, acts:A, win:true, turns:T, standing:n, total:n, why:why,
+          foe:foe, team:team, syn:{pairs:P.pairs}, tier:K, loot:loot, lootEl:gEl, P:P, need:need};
 }
 
 function renderBattleHead(F){
@@ -773,23 +743,24 @@ function playLog(F){
 }
 
 function endBattle(F){
-  paintTeam(F.team.map(function(t){return {hp:t.hp/t.max, down:t.down}}), F.team);
-  if(F.win){ markCleared(CUR.id, F.tier); addStones(F.lootEl, F.loot); }
-  var tn=tOf(F.tier).nm;
-  var nx=F.tier+1, cap=tierCap(CUR.el,[MYEL].concat(PARTY.map(function(p){return p?p.el:null})));
-  var canNext = F.win && nx<=10 && nx<=cap;
+  paintTeam(F.team.map(function(t){return {hp:t.hp/t.max, down:false}}), F.team);
+  markCleared(CUR.id, F.tier); addStones(F.lootEl, F.loot);
+  var tn=tOf(F.tier).nm, nx=F.tier+1, cap=tierCap(CUR.el);
+  var canNext = nx<=10 && nx<=cap;
+  var st = window.FP && FP.stats ? FP.stats() : null;
+  var mineNow = st ? st[F.lootEl].val : null;
+  var nextNeed = nx<=10 ? TH[nx-1] : null;
   $('res').innerHTML=
-    '<div class="res'+(F.win?' win':'')+'">'+
-      '<div class="rt">'+(F.win?tn+' 돌파':tn+'에서 물러났습니다')+'</div>'+
+    '<div class="res win">'+
+      '<div class="rt">'+tn+' 돌파</div>'+
       '<div class="rw">'+esc(F.why)+'</div>'+
-      (F.win&&F.loot ? '<div class="loot"><span class="st" style="background:'+colOf(F.lootEl)+'"></span>'+
-        '<b>'+F.lootEl+'석 '+F.loot+'개</b>'+
-        (yongsin(MYEL)===F.lootEl ? ' — <b style="color:#ffd93d">내 용신석</b>입니다. 기운이 두 배로 붙습니다'
-                                  : ' — 용신석은 아니지만 기운은 보탭니다')+
-        '<span class="bo">모은 기운 공격 +'+stoneBoost(MYEL)+'%</span></div>' : '')+
+      '<div class="loot"><span class="st" style="background:'+colOf(F.lootEl)+'"></span>'+
+        '<b>'+F.lootEl+' 용신석 '+F.loot+'개</b>'+
+        (mineNow!=null ? '<span class="bo">내 '+F.lootEl+' 수치 '+mineNow+' ('+
+          (st[F.lootEl].val-F.loot)+' → '+mineNow+')</span>' : '')+'</div>'+
       '<div class="rn"><span><b>'+F.turns+'</b>번 겨룸</span>'+
-        '<span>남은 사람 <b>'+F.standing+'</b> / '+F.total+'</span>'+
-        '<span>파티 상생 <b>'+F.syn.pairs+'</b>쌍</span></div>'+
+        '<span>'+F.P.key+' 수치 <b>'+F.P.pow+'</b> / 문턱 '+F.need+'</span>'+
+        (nextNeed ? '<span>'+tOf(nx).nm+' 문턱 <b>'+nextNeed+'</b></span>' : '')+'</div>'+
     '</div>'+
     '<div class="again">'+
       (canNext ? '<button class="pri" id="b-next">'+tOf(nx).nm+'으로 올라가기</button>' : '')+
@@ -797,14 +768,12 @@ function endBattle(F){
       '<button id="b-tier">단 고르기</button>'+
       '<button id="b-ground">사냥터 바꾸기</button>'+
     '</div>';
-  LS.set('hunt.last.'+CUR.id, {win:F.win, turns:F.turns, standing:F.standing,
-                               total:F.total, tier:F.tier, at:Date.now()});
-  ev('hunt_result',{ground:CUR.nm, tier:F.tier, win:F.win?1:0, turns:F.turns,
-                    size:F.total, loot:F.loot||0});
+  LS.set('hunt.last.'+CUR.id, {win:true, turns:F.turns, total:F.total, tier:F.tier, at:Date.now()});
+  ev('hunt_result',{ground:CUR.nm, tier:F.tier, win:1, turns:F.turns, size:F.total, loot:F.loot, pow:F.P.pow});
+  if(window.FP) FP.paint();
   $('lgtoggle').hidden=false;
   $('lgtoggle').onclick=function(){
-    var on=$('log').hidden;
-    $('log').hidden=!on;
+    var on=$('log').hidden; $('log').hidden=!on;
     this.textContent = on ? '기록 접기' : '기록 보기';
   };
   $('b-again').onclick=playBattle;
@@ -863,9 +832,8 @@ function renderPick(){
     else if(ts>0)          tags+='<span class="tag good">오늘 유리</span>';
     else if(ts<0)          tags+='<span class="tag warn">오늘 불리</span>';
     if(rel && rel.tag) tags+='<span class="tag '+(rel.k==='risk'?'warn':'mine')+'">'+rel.tag+'</span>';
-    var dn=cleared(g.id);
-    tags += '<span class="tag '+(dn?'mine':'')+'" style="'+(dn?'':'color:#8494ab;border-color:#2b3a52')+'">'+
-            (dn ? tOf(dn).nm+'까지 깸' : '아직 안 감')+'</span>';
+    var P0=powerAt(g.el), c0=Math.max(1,tierFor(P0.pow));
+    tags += '<span class="tag mine">'+P0.key+' 수치 '+P0.pow+' · '+tOf(c0).nm+'까지</span>';
     var why = (ts>0 ? '오늘 '+DAY.gan+DAY.zhi+'의 기운이 '+g.el+'에 실립니다. '
                     : ts<0 ? '오늘 기운이 '+J(g.el,'eul')+' 누릅니다. ' : '')
             + (rel ? rel.why : '');
@@ -904,46 +872,29 @@ function openGround(id){
    갑단이 맨 위. 잠긴 칸도 숨기지 않고 왜 잠겼는지 한 줄로 적는다 —
    무엇을 하면 열리는지 보이지 않으면 사람은 다시 오지 않는다. */
 function renderTier(){
-  var g=CUR, els=[MYEL].concat(PARTY.map(function(p){return p?p.el:null}));
-  var filled=els.filter(Boolean).length;
-  var done=cleared(g.id), cap=tierCap(g.el, els), open=Math.min(10, done+1);
-  var fav=(MYEL && favGround(MYEL)===g.el);
-
+  var g=CUR, P=powerAt(g.el), done=cleared(g.id), cap=Math.max(1,tierFor(P.pow));
   $('th').innerHTML='<span class="orb" style="background:'+g.col+'">'+g.elhj+'</span>'+
     '<span><h1>'+g.nm+'</h1><span class="hj">'+g.prey+' · 계단부터 갑단까지 열 단</span></span>';
-  $('tsub').textContent = (done ? done+'단까지 깼습니다. ' : '아직 한 단도 깨지 않았습니다. ')+
-    (fav ? '내 '+MYEL+'이 이곳을 누릅니다 — 혼자서도 임단까지 갑니다.'
-         : '혼자서는 계단까지입니다. 그 위는 사람을 데려와야 열립니다.');
+  $('tsub').innerHTML='이 땅은 <b>'+P.key+'</b>이 누릅니다 — <b>'+P.key+' 수치</b>로 싸웁니다. '+
+    (P.n>1?P.n+'명 파티 수치 ':'내 수치 ')+'<b>'+P.pow+'</b>'+
+    (P.n>1&&P.pairs?' (상생 '+P.pairs+'쌍 포함)':'')+(P.today?' · 오늘의 기운 +5%':'')+'.';
 
-  /* 주머니 */
-  var st=stones(), y=yongsin(MYEL), tot=0;
-  var cells=GROUNDS.map(function(x){
-    var n=st[x.el]||0; tot+=n;
-    return '<span class="st" style="background:'+x.col+'"></span>'+
-           '<b'+(x.el===y?' class="yg"':'')+'>'+x.el+' '+n+'</b>';
-  }).join('');
-  var ySpot=null; GROUNDS.forEach(function(x){ if(x.el===y) ySpot=x.nm; });
-  $('pouch').innerHTML = cells +
-    '<span class="bo">'+(y?'내 용신은 <b>'+y+'</b>'+(ySpot?' — <b>'+ySpot+'</b>에서 납니다':'')+' · ':'')+
-    '모은 기운 <b>공격 +'+stoneBoost(MYEL)+'%</b>'+(tot?'':' (아직 없음)')+'</span>';
+  /* 주머니 — 속성 막대 다섯 줄을 그대로 보여 준다 */
+  $('pouch').innerHTML = (window.FP && FP.barsHTML) ? FP.barsHTML(P.key) : '';
 
   var html='';
   TIERS.forEach(function(t){
-    var isDone = t.k<=done, isOpen = t.k<=open && t.k<=cap;
+    var need=TH[t.k-1], isOpen=P.pow>=need, isDone=t.k<=done;
     var tag = isDone ? '<span class="rt2 done">깸</span>'
-            : isOpen ? '<span class="rt2 open">열림</span>'
-                     : '<span class="rt2 shut">잠김</span>';
-    var why;
-    if(isDone)        why='이미 넘었습니다. 다시 들어가도 돌은 나옵니다.';
-    else if(isOpen)   why='사냥감 '+t.gan+'급 — 몸 '+Math.round(THP[t.k]*100)+'% · 힘 '+Math.round(TATK[t.k]*100)+'%';
-    else if(t.k>open) why=tOf(t.k-1).nm+'을 먼저 깨야 합니다.';
-    else if(filled<5) why='지금 인원('+filled+'명)으로는 여기까지 오르지 못합니다. 친구를 부르세요.';
-    else              why='용신석을 더 모아야 열립니다. 25%마다 한 단씩 열립니다.';
-    html += '<button class="rung'+(t.k===open&&isOpen?' now':'')+'" data-k="'+t.k+'"'+
-      (isOpen?'':' disabled')+'>'+
+            : isOpen ? '<span class="rt2 open">열림</span>' : '<span class="rt2 shut">잠김</span>';
+    var gap=need-P.pow;
+    var why = isOpen
+      ? '문턱 '+need+' · 이기면 한 사람에 '+g.el+' 용신석 '+dropFor(t.k,P.n)+'개'
+      : '문턱 '+need+' — '+P.key+' 수치 '+gap+' 더. '+P.key+' 용신석 '+gap+'개'+
+        ((window.FP&&FP.FROM)?'('+FP.FROM[P.key]+'에서 남)':'')+(P.n<5?' 또는 친구와 함께':'');
+    html += '<button class="rung'+(t.k===cap&&isOpen&&!isDone?' now':'')+'" data-k="'+t.k+'"'+(isOpen?'':' disabled')+'>'+
       '<span class="gz2" style="background:'+g.col+'">'+t.hj+'</span>'+
-      '<span><span class="tn">'+t.nm+'</span><span class="td">'+why+'</span></span>'+
-      tag+'</button>';
+      '<span><span class="tn">'+t.nm+'</span><span class="td">'+why+'</span></span>'+tag+'</button>';
   });
   $('ladder').innerHTML=html;
   [].forEach.call($('ladder').querySelectorAll('.rung'),function(b){
@@ -951,14 +902,11 @@ function renderTier(){
   });
 
   $('tnote').innerHTML =
-    '<b>계단이 가장 아래, 갑단이 꼭대기입니다.</b> 한 단을 깨야 그 위가 열립니다.<br>'+
-    '혼자서는 어느 사냥터든 <b>계단</b>까지, '+
-    '<b>내 오행이 누르는 사냥터 한 곳</b>에서만 <b>임단</b>까지 갑니다. '+
-    '그 위는 사람 수·오행 구성·용신석이 열어 줍니다.<br>'+
-    '지금 열 수 있는 가장 높은 단은 <b>'+tOf(cap).nm+'</b>입니다'+
-    (filled<=1 ? ' — 용신석을 아무리 모아도 혼자서는 이 위가 열리지 않습니다.'
-     : filled<5 ? ' — 자리를 채우면 더 올라갑니다.' : '.');
-  ev('hunt_tier_view',{ground:g.nm, done:done, cap:cap});
+    '<b>수치가 문턱을 넘은 단은 반드시 깹니다.</b> 계단 50 · 임단 55 · 신단 65 · 경단 85 · 기단 120 · '+
+    '무단 175 · 정단 255 · 병단 365 · 을단 520 · 갑단 730.<br>'+
+    '<b>'+g.el+' 용신석</b>은 이곳에서 나고, '+g.el+' 수치는 <b>'+((window.FP&&FP.USE)?FP.USE[g.el]:'')+'</b>에서 쓰입니다. '+
+    '친구와 오면 파티 수치가 오르고, 각자 받는 돌도 늘어납니다(다섯이면 두 배).';
+  ev('hunt_tier_view',{ground:g.nm, done:done, cap:cap, pow:P.pow});
   show('v-tier');
 }
 
@@ -1012,7 +960,7 @@ function renderParty(){
     (filled<5 ? ' — <span style="color:#6f7d92">더 부르면 시너지가 올라갑니다</span>' : '');
   /* 인원은 1~5 어디든 된다. 다만 고른 단이 지금 인원으로 열리는 단이어야 한다.
      친구를 빼서 상한이 내려가면 단을 조용히 내리지 않고 그 자리에서 말해 준다. */
-  var cap2=tierCap(g.el, els), tooHigh=TIER>cap2;
+  var cap2=tierCap(g.el), tooHigh=TIER>cap2;
   $('btn-go').disabled = tooHigh;
   $('btn-go').textContent = tooHigh
       ? tOf(TIER).nm+'은 지금 인원으로 열리지 않습니다'
