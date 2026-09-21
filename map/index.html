@@ -125,7 +125,7 @@ svg.map{display:block;width:100%}
 
 <div class="bar">
   <a class="nm" href="/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="mk" aria-hidden="true"><path fill="#ffd93d" d="M24 25.6c7.6 0 14 5.1 14 11.1 0 4.9-4.1 8.3-8.6 8.3-2.6 0-3.8-.9-5.4-.9s-2.8.9-5.4.9C14.1 45 10 41.6 10 36.7c0-6 6.4-11.1 14-11.1z"/><ellipse cx="11.06" cy="21.75" rx="5.3" ry="6.5" transform="rotate(-30 11.06 21.75)" fill="#4fb95f"/><ellipse cx="18.73" cy="16.18" rx="5.8" ry="7.1" transform="rotate(-9 18.73 16.18)" fill="#e8483c"/><ellipse cx="29.27" cy="16.18" rx="5.8" ry="7.1" transform="rotate(9 29.27 16.18)" fill="#8e9bb0"/><ellipse cx="36.94" cy="21.75" rx="5.3" ry="6.5" transform="rotate(30 36.94 21.75)" fill="#3f8fe0"/></svg>Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
-  <nav><a href="/">계산기</a><a href="/iljin/">일진</a>
+  <nav><a href="/">계산기</a><a href="/iljin/">기운</a>
        <a class="hl" href="/hunt/">사냥터</a><a href="/ohaeng/">글</a><span data-fp-chip></span></nav>
 </div>
 
@@ -161,8 +161,8 @@ if(MYEL){
   $('hello-img').hidden=true;
   $('dog').hidden=false;
   $('hello-h').innerHTML='<span class="el"><i style="background:'+COLOF(MYEL)+'">'+
-    HJ[MYEL]+'</i>'+MYEL+' 속성</span><br>내 캐릭터가 준비됐습니다';
-  $('hello-p').textContent=SAY[MYEL]+' 지도에서 사냥터·일진·글로 갑니다.';
+    HJ[MYEL]+'</i>'+MYEL+' 속성</span><br>오행 캐릭터가 준비됐습니다';
+  $('hello-p').textContent=SAY[MYEL]+' 지도에서 사냥터·기운·글로 갑니다.';
   $('start').textContent='지도 보기';
   $('skip').hidden=true;
   import('/3d/profile3d.js').then(function(m){
@@ -328,7 +328,13 @@ if(window.ResizeObserver) new ResizeObserver(redraw).observe(wrap);
   var p=$('p-sajugak'); if(!p) return;
   var one=p.querySelector('.one'), a=p.querySelector('.enter');
   if(one) one.innerHTML='내 캐릭터는 <b>'+MYEL+' 속성</b>입니다';
-  if(a){ a.textContent='내 캐릭터 보기 →'; a.setAttribute('href','/'); }
+  /* 홈으로 보내지 않는다 — 지도에 들어설 때 봤던 그 화면(가운데 3D 개)을 다시 띄운다 */
+  if(a){ a.textContent='오행 캐릭터 보기'; a.setAttribute('href','#me');
+    a.addEventListener('click',function(e){
+      e.preventDefault(); hide();
+      $('hello').hidden=false; window.scrollTo(0,0);
+      if(window.gtag) gtag('event','cta_click',{cta:'saju_show_dog'});
+    }); }
   var ds=p.querySelector('.ds');
   if(ds) ds.insertAdjacentHTML('afterend',
     (window.FP&&FP.barsHTML ? FP.barsHTML() : '')+
