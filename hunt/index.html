@@ -382,7 +382,7 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
       <div class="gbody" id="guide"></div>
     </details>
     <div class="grid" id="grid"></div>
-    <noscript><ul class="flist"><li><i style="background:#4fb95f">木</i><b>녹빛 언덕</b><span>목령</span><em>풀이 무릎까지 자란 비탈</em></li><li><i style="background:#e8483c">火</i><b>붉은 마당</b><span>화령</span><em>불씨가 밤새 꺼지지 않는 마당</em></li><li><i style="background:#ffd93d">土</i><b>황토 텃밭</b><span>토령</span><em>파도 파도 끝이 없는 붉은 흙</em></li><li><i style="background:#8e9bb0">金</i><b>하얀 골목</b><span>금령</span><em>쇠붙이가 발에 차이는 뒷골목</em></li><li><i style="background:#3f8fe0">水</i><b>청빛 호수</b><span>수령</span><em>바닥이 보이지 않는 깊은 물</em></li></ul></noscript>
+    <noscript><ul class="flist"><li><i style="background:#4fb95f">木</i><b>녹빛 언덕</b><span>목령 사슴</span><em>풀이 무릎까지 자란 비탈</em></li><li><i style="background:#e8483c">火</i><b>붉은 마당</b><span>화령 해태</span><em>불씨가 밤새 꺼지지 않는 마당</em></li><li><i style="background:#ffd93d">土</i><b>황토 텃밭</b><span>토령 멧돼지</span><em>파도 파도 끝이 없는 붉은 흙</em></li><li><i style="background:#8e9bb0">金</i><b>하얀 골목</b><span>금령 백호</span><em>쇠붙이가 발에 차이는 뒷골목</em></li><li><i style="background:#3f8fe0">水</i><b>청빛 호수</b><span>수령 늑대</span><em>바닥이 보이지 않는 깊은 물</em></li></ul></noscript>
     <div class="demo" id="demo-note" hidden></div>
   </section>
 
@@ -443,7 +443,7 @@ var CFG = {
   sbUrl:    '',
   sbKey:    ''
 };
-var GROUNDS = [{"el":"목","id":"nokbit","nm":"녹빛 언덕","one":"풀이 무릎까지 자란 비탈","prey":"목령","col":"#4fb95f","elhj":"木"},{"el":"화","id":"bulgeun","nm":"붉은 마당","one":"불씨가 밤새 꺼지지 않는 마당","prey":"화령","col":"#e8483c","elhj":"火"},{"el":"토","id":"hwangto","nm":"황토 텃밭","one":"파도 파도 끝이 없는 붉은 흙","prey":"토령","col":"#ffd93d","elhj":"土"},{"el":"금","id":"hayan","nm":"하얀 골목","one":"쇠붙이가 발에 차이는 뒷골목","prey":"금령","col":"#8e9bb0","elhj":"金"},{"el":"수","id":"cheongbit","nm":"청빛 호수","one":"바닥이 보이지 않는 깊은 물","prey":"수령","col":"#3f8fe0","elhj":"水"}];
+var GROUNDS = [{"el":"목","id":"nokbit","nm":"녹빛 언덕","one":"풀이 무릎까지 자란 비탈","prey":"목령","beast":"사슴","col":"#4fb95f","elhj":"木"},{"el":"화","id":"bulgeun","nm":"붉은 마당","one":"불씨가 밤새 꺼지지 않는 마당","prey":"화령","beast":"해태","col":"#e8483c","elhj":"火"},{"el":"토","id":"hwangto","nm":"황토 텃밭","one":"파도 파도 끝이 없는 붉은 흙","prey":"토령","beast":"멧돼지","col":"#ffd93d","elhj":"土"},{"el":"금","id":"hayan","nm":"하얀 골목","one":"쇠붙이가 발에 차이는 뒷골목","prey":"금령","beast":"백호","col":"#8e9bb0","elhj":"金"},{"el":"수","id":"cheongbit","nm":"청빛 호수","one":"바닥이 보이지 않는 깊은 물","prey":"수령","beast":"늑대","col":"#3f8fe0","elhj":"水"}];
 var DSAENG = {목:'화',화:'토',토:'금',금:'수',수:'목'};   /* A가 B를 낳는다 */
 var DGEUK  = {목:'토',토:'수',수:'화',화:'금',금:'목'};   /* A가 B를 이긴다 */
 var DGAN='갑을병정무기경신임계', DZHI='자축인묘진사오미신유술해';
@@ -671,9 +671,9 @@ function powerAt(gEl){
           pairs:syn.pairs, who:who, vals:pows, res:res};
 }
 function myCombo(){ return (window.FP && FP.combo) ? FP.combo() : null; }
-/* 단이 오르면 사냥감이 바뀐다 — battle3d FOE_MDL 과 같은 구간 */
-function beastOf(K){ return K>=10?'해태':K>=8?'범':K>=5?'멧돼지':'늑대'; }
-function preyOf(g,K){ return K>=10 ? g.el+'령 해태' : K>=8 ? g.el+'령 범' : K>=5 ? g.el+'령 멧돼지' : g.prey; }
+/* 던전마다 사냥감이 다르다(수 늑대·토 멧돼지·목 사슴·화 해태·금 백호). 갑단은 우두머리 '왕' */
+function beastOf(g,K){ return g.beast+(K>=10?'왕':''); }
+function preyOf(g,K){ return g.prey+' '+beastOf(g,K); }
 function tierCap(gEl){ return Math.max(1, tierFor(powerAt(gEl).pow)); }
 function dropFor(k,n){ return Math.round(k*(1+0.25*(n-1))); }
 /* 내 조합이 누르는 두 땅(공명) — 용신석 ×1.2. 사주마다 자주 가는 땅이 갈라진다 */
@@ -1094,7 +1094,7 @@ function renderPick(){
             (dn ? ' · '+tOf(dn).nm+' 정복' : '');
     html += '<button class="card'+(isTodayG(g.el)?' best':'')+'" data-g="'+g.id+'" '+
       'style="--bg:url(/img/dungeon/'+g.id+'.webp)">'+ gem(g.col, g.elhj) +
-      '<span><span class="t"><b>'+g.nm+'</b><span>'+g.prey+'</span></span>'+
+      '<span><span class="t"><b>'+g.nm+'</b><span>'+g.prey+' '+g.beast+'</span></span>'+
       '<span class="one">'+g.one+'</span>'+
       '<span class="tags">'+tags+'</span>'+
       '<span class="why">'+why+'</span></span></button>';
@@ -1130,7 +1130,7 @@ function openGround(id){
 function renderTier(){
   var g=CUR, P=powerAt(g.el), done=cleared(g.id), cap=Math.max(1,tierFor(P.pow));
   $('th').innerHTML=gem(g.col, g.elhj)+
-    '<span><h1>'+g.nm+'</h1><span class="hj">'+g.prey+' · 계단부터 갑단까지 열 단</span></span>';
+    '<span><h1>'+g.nm+'</h1><span class="hj">'+g.prey+' '+g.beast+' · 계단부터 갑단까지 열 단</span></span>';
   var parts=FP.ORDER.map(function(x){ return x+'×'+FP.weight(x,g.el); }).join(' + ');
   $('tsub').innerHTML='<b>'+P.edge+' 우세</b> — '+J(P.edge,'i')+' 이 땅을 누릅니다. '+
     '<details class="fxd"><summary>전투력 계산식 보기</summary><span class="fx">'+parts+'</span></details>'+
@@ -1147,8 +1147,8 @@ function renderTier(){
             : isOpen ? '<span class="rt2 open">열림</span>' : '<span class="rt2 shut">잠김</span>';
     var gap=need-P.pow;
     var why = isOpen
-      ? beastOf(t.k)+' · 권장 '+need+' · '+g.el+' '+Math.round(dropFor(t.k,P.n)*lootMul(g.el))+'개'+(lootMul(g.el)>1?' ×'+(Math.round(lootMul(g.el)*10)/10):'')
-      : beastOf(t.k)+' · 권장 '+need+' · <b style="color:#e8a33c">'+gap+' 부족</b>';
+      ? beastOf(g,t.k)+' · 권장 '+need+' · '+g.el+' '+Math.round(dropFor(t.k,P.n)*lootMul(g.el))+'개'+(lootMul(g.el)>1?' ×'+(Math.round(lootMul(g.el)*10)/10):'')
+      : beastOf(g,t.k)+' · 권장 '+need+' · <b style="color:#e8a33c">'+gap+' 부족</b>';
     html += '<button class="rung'+(t.k===cap&&isOpen&&!isDone?' now':'')+'" data-k="'+t.k+'"'+(isOpen?'':' disabled')+'>'+
       gem(g.col, t.hj, 'gz2 sq')+
       '<span><span class="tn">'+t.nm+'</span><span class="td">'+why+'</span></span>'+tag+'</button>';
