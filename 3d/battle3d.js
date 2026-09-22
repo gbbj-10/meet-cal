@@ -106,30 +106,18 @@ function buildArena(sc, el, base) {
     r.position.set(x, s * 0.35, z); r.rotation.set(Math.random()*3, Math.random()*3, Math.random()*3);
     sc.add(r);
   }
-  /* 중경 — 진짜 입체로 세워야 카메라가 흔들릴 때 시차가 난다 */
-  const M = TH.mid, geo = M.kind === 'bamboo' ? new THREE.CylinderGeometry(0.55, 0.75, 1, 6)
-    : M.kind === 'spire' ? new THREE.ConeGeometry(0.6, 1, 5)
-    : M.kind === 'pillar' ? new THREE.CylinderGeometry(0.45, 0.55, 1, 8)
-    : new THREE.ConeGeometry(0.5, 1, 7);
-  const midMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(M.c).multiplyScalar(0.75), roughness: 1, flatShading: true });
-  const inst = new THREE.InstancedMesh(geo, midMat, M.n), dm = new THREE.Object3D();
+  /* 중경 — 진짜 입체로 세워야 카메라가 흔들릴 때 시차가 난다.
+     루프3: 민무늬 원뿔 한 개 → 층진 침엽수·마디 대나무·용암 첨탑·기둥머리 기둥. 그루마다 색이 조금씩 다르다 */
+  const M = TH.mid;
+  const pal = [0.62, 0.78, 0.95].map(k => new THREE.MeshStandardMaterial({
+    color: new THREE.Color(M.c).multiplyScalar(k), roughness: 1, flatShading: true }));
   for (let i = 0; i < M.n; i++) {
     const x = (Math.random() - 0.5) * 26, z = -6 - Math.random() * 9;
+    if (Math.abs(x) < 3.2 && z > -8) continue;             /* 전투 바로 뒤는 비운다 */
     const h = M.h[0] + Math.random() * (M.h[1] - M.h[0]), w = M.w[0] + Math.random() * (M.w[1] - M.w[0]);
-    dm.position.set(x, h * 0.5, z); dm.scale.set(w, h, w);
-    dm.rotation.set((Math.random()-0.5)*0.1, Math.random()*3, (Math.random()-0.5)*0.1); dm.updateMatrix();
-    inst.setMatrixAt(i, dm.matrix);
-  }
-  sc.add(inst);
-  if (M.kind === 'conifer') {            /* 침엽수는 기둥이 있어야 나무로 읽힌다 */
-    const ti = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.07, 0.1, 1, 5), midMat, M.n);
-    const m4 = new THREE.Matrix4(), p = new THREE.Vector3(), q = new THREE.Quaternion(), sv = new THREE.Vector3();
-    for (let i = 0; i < M.n; i++) {
-      inst.getMatrixAt(i, m4); m4.decompose(p, q, sv);
-      dm.position.set(p.x, sv.y * 0.22, p.z); dm.scale.set(sv.x, sv.y * 0.45, sv.x); dm.rotation.set(0,0,0); dm.updateMatrix();
-      ti.setMatrixAt(i, dm.matrix);
-    }
-    sc.add(ti);
+    const p = midProp(M.kind, h, w, pal[i % 3], TH);
+    p.position.set(x, 0, z); p.rotation.y = Math.random() * 6.28;
+    sc.add(p);
   }
   sc.add(buildLandmark(TH));
 
@@ -154,6 +142,119 @@ function buildArena(sc, el, base) {
       dust.geometry.attributes.position.needsUpdate = true;
     }
   };
+}
+
+
+/* 꼭짓점을 조금씩 흔들어 손으로 깎은 느낌을 낸다. 같은 자리의 꼭짓점은 같은 만큼 움직여 틈이 안 생긴다 */
+function jitter(geo, amt) {
+  const a = geo.attributes.position, seen = {};
+  for (let i = 0; i < a.count; i++) {
+    const k = a.getX(i).toFixed(3) + ',' + a.getY(i).toFixed(3) + ',' + a.getZ(i).toFixed(3);
+    const d = seen[k] || (seen[k] = [(Math.random() - .5) * amt, (Math.random() - .5) * amt * .6, (Math.random() - .5) * amt]);
+    a.setXYZ(i, a.getX(i) + d[0], a.getY(i) + d[1], a.getZ(i) + d[2]);
+  }
+  geo.computeVertexNormals(); return geo;
+}
+const MIDG = {};
+function midProp(kind, h, w, mat, TH) {
+  const g = new THREE.Group(), add = (geo, y, sx, sy, m) => {
+    const o = new THREE.Mesh(geo, m || mat); o.position.y = y; o.scale.set(sx, sy, sx); g.add(o); return o; };
+  if (kind === 'conifer') {                       /* 층진 침엽수 + 눈 */
+    const cone = MIDG.cone || (MIDG.cone = jitter(new THREE.ConeGeometry(0.5, 1, 8, 1), 0.08));
+    const trunk = MIDG.trunk || (MIDG.trunk = new THREE.CylinderGeometry(0.06, 0.09, 1, 6));
+    add(trunk, h * 0.15, w, h * 0.3);
+    const snow = TH.mark === 'flags' ? (MIDG.snow || (MIDG.snow = new THREE.MeshStandardMaterial({ color: 0xe8eef4, roughness: .9, flatShading: true }))) : null;
+    for (let k = 0; k < 3; k++) {
+      const s = 1 - k * 0.27, y = h * (0.3 + k * 0.22);
+      add(cone, y + h * 0.2 * s, w * s, h * 0.42 * s).rotation.y = k;
+      if (snow) add(cone, y + h * 0.3 * s, w * s * 0.55, h * 0.2 * s, snow).rotation.y = k;
+    }
+  } else if (kind === 'bamboo') {                 /* 마디 있는 대나무 세 그루 한 떨기 */
+    const st = MIDG.st || (MIDG.st = new THREE.CylinderGeometry(0.5, 0.55, 1, 7));
+    const nd = MIDG.nd || (MIDG.nd = new THREE.CylinderGeometry(0.62, 0.62, 0.05, 7));
+    const lf = MIDG.lf || (MIDG.lf = new THREE.ConeGeometry(0.5, 1, 4, 1));
+    for (let j = 0; j < 3; j++) {
+      const c = new THREE.Group(), hh = h * (0.7 + Math.random() * 0.35);
+      const o = new THREE.Mesh(st, mat); o.scale.set(w, hh, w); o.position.y = hh / 2; c.add(o);
+      for (let y = 0.6; y < hh; y += 0.55 + Math.random() * 0.2) { const n = new THREE.Mesh(nd, mat); n.scale.set(w, 1, w); n.position.y = y; c.add(n); }
+      for (let l = 0; l < 3; l++) { const f = new THREE.Mesh(lf, mat); f.scale.set(0.12, 0.7, 0.03);
+        f.position.set(Math.cos(l * 2.1) * 0.25, hh - 0.2 - l * 0.35, Math.sin(l * 2.1) * 0.25); f.rotation.z = 1.1 * (l % 2 ? 1 : -1); f.rotation.y = l * 2.1; c.add(f); }
+      c.position.set((j - 1) * 0.35, 0, (Math.random() - 0.5) * 0.4); c.rotation.z = (Math.random() - .5) * 0.12; g.add(c);
+    }
+  } else if (kind === 'spire') {                  /* 용암 첨탑 — 갈라진 틈이 빛난다 */
+    const sp = MIDG.sp || (MIDG.sp = jitter(new THREE.ConeGeometry(0.6, 1, 6, 3), 0.18));
+    const lava = MIDG.lava || (MIDG.lava = new THREE.MeshBasicMaterial({ color: 0xff7a2a }));
+    add(sp, h / 2, w, h);
+    add(sp, h * 0.22, w * 0.55, h * 0.45).position.x = w * 0.5;
+    const ln = add(MIDG.ln || (MIDG.ln = new THREE.BoxGeometry(0.05, 1, 0.05)), h * 0.35, 1, h * 0.5, lava);
+    ln.position.z = w * 0.33; ln.rotation.z = 0.15;
+  } else {                                         /* 기둥 — 받침·기둥머리, 셋에 하나는 부러짐 */
+    const sh = MIDG.sh || (MIDG.sh = jitter(new THREE.CylinderGeometry(0.45, 0.5, 1, 8, 4), 0.04));
+    const bx = MIDG.bx || (MIDG.bx = jitter(new THREE.BoxGeometry(1, 1, 1), 0.05));
+    const broken = Math.random() < 0.34, hh = broken ? h * 0.55 : h;
+    add(bx, 0.12, w * 1.5, 0.24);
+    add(sh, 0.24 + hh / 2, w, hh);
+    if (!broken) add(bx, 0.24 + hh + 0.12, w * 1.35, 0.24);
+    else { const r = add(bx, 0.15, w * 0.9, 0.3); r.position.x = w * 1.4; r.rotation.set(0.3, 0.5, 0.2); }
+  }
+  return g;
+}
+
+/* 사냥감 실루엣 — 같은 늑대라도 속성마다 머리·등에 붙는 것이 다르다.
+   화 뿔 · 금 수정 가시 · 목 잎 갈기 · 토 바위 등판 · 수 지느러미. 단이 오르면 개수가 는다.
+   조각은 뼈(Head·Torso·Neck·Tail)에 붙여 걷고 뛸 때 몸을 따라 움직인다 */
+function addCrest(u, el, tier, tint, sc) {
+  u.holder.updateMatrixWorld(true);
+  const bone = {}; u.holder.traverse(o => { if (o.isBone) bone[o.name] = o; });
+  if (!bone.Head || !bone.Torso) return;
+  const S = u.holder.scale.x, UP = new THREE.Vector3(0, 1, 0);
+  const P = n => bone[n].getWorldPosition(new THREE.Vector3());
+  const fwd = P('Head').sub(P('Torso')).setY(0).normalize();
+  const side = new THREE.Vector3().crossVectors(UP, fwd).normalize();
+  const tilt = a => new THREE.Quaternion().setFromAxisAngle(side, a);
+  /* 몸과 같은 색이면 묻힌다 — 속성 색을 밝혀 스스로 빛나게 */
+  const CR = { 화: 0xff5a1f, 금: 0xbfe9ff, 목: 0x7dff5a, 토: 0x6b4a2a, 수: 0x3ab8ff }[el] || 0xffffff;
+  const mat = new THREE.MeshStandardMaterial({ color: CR,
+    emissive: new THREE.Color(CR).multiplyScalar(el === '토' ? 0.15 : 0.75), roughness: el === '금' ? 0.25 : 0.8, metalness: el === '금' ? 0.6 : 0,
+    flatShading: true, side: THREE.DoubleSide });
+  mat.userData.baseEm = mat.emissive.clone();
+  const put = (geo, bn, off, q, sx, sy, sz) => {
+    if (!bone[bn]) return;
+    const m = new THREE.Mesh(geo, mat); sc.add(m);
+    const lift = bn === 'Back' ? 0.3 : bn === 'Torso' ? 0.6 : bn.startsWith('Tail') ? 0 : 1;
+    m.position.copy(P(bn)).addScaledVector(UP, off[1] * lift * S).addScaledVector(fwd, off[0] * S).addScaledVector(side, off[2] * S);
+    if (q) m.quaternion.copy(q);
+    m.scale.set(sx * S, sy * S, (sz == null ? sx : sz) * S);
+    bone[bn].attach(m); u.meshes.push(m);
+  };
+  /* 엉덩이(Back)부터 목(Neck1)까지 고르게 — 단이 오르면 2개 → 5개 */
+  const spine = ['Back', 'Torso', 'Torso2', 'Torso3', 'Neck1'].filter(n => bone[n]);
+  const n = Math.min(spine.length, 2 + Math.floor(tier / 3));
+  const along = n >= spine.length ? spine : Array.from({ length: n }, (_, i) => spine[Math.round(i * (spine.length - 1) / Math.max(1, n - 1))]);
+  const face = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), side);
+  if (el === '화') {
+    const cone = new THREE.ConeGeometry(0.5, 1, 6);
+    for (const z of [-1, 1]) put(cone, 'Head', [-0.03, 0.17, z * 0.07], tilt(0.8).multiply(new THREE.Quaternion().setFromAxisAngle(fwd, z * 0.35)), 0.055, 0.26 + tier * 0.015);
+    along.forEach(b => put(cone, b, [0, 0.22, 0], tilt(0.6), 0.08, 0.2));
+  } else if (el === '금') {
+    const oct = new THREE.OctahedronGeometry(0.5, 0);
+    along.forEach((b, k) => { put(oct, b, [0, 0.24, 0.04], tilt(0.35).multiply(new THREE.Quaternion().setFromAxisAngle(fwd, 0.3)), 0.09, 0.4, 0.09);
+                             put(oct, b, [0.04, 0.22, -0.05], tilt(0.45).multiply(new THREE.Quaternion().setFromAxisAngle(fwd, -0.3)), 0.07, 0.3, 0.07); });
+  } else if (el === '목') {
+    const leaf = new THREE.ConeGeometry(0.5, 1, 4);
+    along.concat(['Neck2', 'Neck3'].filter(x => bone[x])).forEach(b => put(leaf, b, [0, 0.22, 0], tilt(0.9).multiply(face), 0.18, 0.3, 0.04));
+    put(leaf, 'Head', [-0.05, 0.22, 0], tilt(0.5).multiply(face), 0.14, 0.24, 0.04);
+  } else if (el === '토') {
+    const rock = jitter(new THREE.DodecahedronGeometry(0.5, 0), 0.12);
+    along.forEach(b => put(rock, b, [0, 0.15, 0], null, 0.3, 0.14, 0.26));
+  } else {
+    const sh = new THREE.Shape(); sh.moveTo(-0.5, 0); sh.lineTo(0.5, 0); sh.quadraticCurveTo(0.05, 0.25, -0.35, 0.9); sh.lineTo(-0.5, 0);
+    const fin = new THREE.ShapeGeometry(sh);
+    const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(1, 0, 0), fwd.clone().negate());
+    const fq = new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(fwd.clone(), UP.clone(), side.clone()));
+    put(fin, 'Torso2', [0, 0.15, 0], fq, 0.4, 0.28 + tier * 0.015, 1);
+    if (bone.Tail3) put(fin, 'Tail3', [0, 0, 0], fq, 0.26, 0.2, 1);
+  }
 }
 
 /* 랜드마크 — 던전마다 눈에 띄는 한 덩어리. 전투 밖 왼쪽 뒤에 세운다 */
@@ -193,9 +294,16 @@ function buildLandmark(TH) {
       fl.position.set(-3.2 + t * 6.4, 4.9 - t - Math.sin(t * Math.PI) * 0.9 - 0.35, 0); fl.rotation.z = (t - 0.5) * 0.5; g.add(fl);
     }
   }
+  /* 받침돌과 이끼 낀 돌무더기 — 땅에서 솟은 것처럼 */
+  const rk = new THREE.MeshStandardMaterial({ color: new THREE.Color(TH.rock).multiplyScalar(0.9), roughness: 1, flatShading: true });
+  for (let i = 0; i < 6; i++) {
+    const r = new THREE.Mesh(jitter(new THREE.IcosahedronGeometry(0.5 + Math.random() * 0.5, 0), 0.25), rk);
+    const a = i / 6 * 6.28; r.position.set(Math.cos(a) * 2.6, 0.15, Math.sin(a) * 1.4); r.scale.y = 0.6; g.add(r);
+  }
   const bb = new THREE.Box3().setFromObject(g), hh = Math.max(0.001, bb.max.y - bb.min.y);
   g.scale.setScalar(Math.min(2.3 / hh, 0.6));
   g.position.set(-4.6, 0, -6.5); g.rotation.y = 0.42;
+  const pl = new THREE.PointLight(TH.rim, 6, 7, 1.6); pl.position.set(0, 1.6, 0.8); g.add(pl);
   return g;
 }
 
@@ -244,6 +352,9 @@ function mkTween() {
 
 export async function runBattle(o) {
   const { mount, base, dracoPath, ground, team, foe, acts, onCaption, onDone, onProgress } = o;
+  /* 배속 — 매 프레임 시간과 모든 대기 시간에 같이 곱한다 */
+  const sp = () => Math.max(1, (o.speed && o.speed()) || 1);
+  const later = (f, ms) => setTimeout(f, ms / sp());
   /* o.onLoot(주운 수, 전체) — 화면 위 숫자를 세는 쪽에서 쓴다 */
 
   /* ── 모델 받기 ── */
@@ -256,7 +367,7 @@ export async function runBattle(o) {
   }
 
   /* ── 무대 ── */
-  const W = mount.clientWidth, H = Math.round(W * 0.70);
+  const W = mount.clientWidth, H = Math.round(W * (W < 560 ? 0.92 : 0.70));
   const ren = new THREE.WebGLRenderer({ antialias: true, alpha: false });
   ren.setPixelRatio(Math.min(2, devicePixelRatio || 1));
   ren.setSize(W, H);
@@ -269,9 +380,11 @@ export async function runBattle(o) {
   const arena = buildArena(sc, ground.el, (base || '/3d/').replace(/3d\/?$/, ''));
   const TH = arena.TH;
 
-  const cam = new THREE.PerspectiveCamera(41, W / H, 0.1, 80);
-  const camBase = new THREE.Vector3(0.55, 1.78, 5.9);
-  const camAim = new THREE.Vector3(0.55, 0.72, 0);
+  /* 휴대폰은 화면을 세로로 키운 만큼 시야를 넓히고 눈높이를 낮춰, 양 끝 유닛이 잘리지 않게 한다 */
+  const tall = W / H < 1.2;
+  const cam = new THREE.PerspectiveCamera(tall ? 47 : 41, W / H, 0.1, 80);
+  const camBase = tall ? new THREE.Vector3(0.6, 1.5, 6.4) : new THREE.Vector3(0.55, 1.78, 5.9);
+  const camAim = tall ? new THREE.Vector3(0.6, 0.95, 0) : new THREE.Vector3(0.55, 0.72, 0);
   cam.position.copy(camBase); cam.lookAt(camAim);
 
   sc.add(new THREE.HemisphereLight(TH.hemiSky, TH.hemiGnd, TH.hemiI));
@@ -374,7 +487,7 @@ export async function runBattle(o) {
     a.timeScale = dur ? a.getClip().duration / dur : 1;
     a.setEffectiveWeight(1).fadeIn(0.05).play();
     u.one = p;
-    if (!hold) setTimeout(() => { if (u.one === p) { u.one = null; pose(u, 'idle', true); } }, dur * 1000);
+    if (!hold) later(() => { if (u.one === p) { u.one = null; pose(u, 'idle', true); } }, dur * 1000);
   }
 
   /* 파티는 왼쪽에 반원으로, 사냥감은 오른쪽에. 둘 다 옆모습이라
@@ -385,14 +498,49 @@ export async function runBattle(o) {
     return build(t.el, MDL[t.el], -1.15 - Math.abs(k) * 0.55, k * 2.05, Math.PI / 2);
   });
   const boss = build(foe.el, 'm_enemy', 2.45, 0, -Math.PI / 2);
-  boss.holder.scale.setScalar(1.55);
-  boss.half *= 1.55;
+  /* 사냥감은 던전 속성 색으로 물들이고, 단이 오를수록 커진다(계단 1.45 → 갑단 1.9).
+     예전엔 다섯 던전 모두 같은 회색 늑대였다 — 롤토체스·서머너즈워는 적마다 생김이 다르다. */
+  const tierK = Math.max(1, Math.min(10, o.tier || 1));
+  const bs = 1.45 + (tierK - 1) * 0.05;
+  boss.holder.scale.setScalar(bs); boss.half *= bs;
+  const tint = new THREE.Color(COL[foe.el] || 0x888888);
+  boss.meshes.forEach(m => eachMat(m, x => {
+    if (x.color) x.color.lerp(tint, 0.45);
+    if (x.emissive) { x.userData.baseEm = tint.clone().multiplyScalar(0.10 + tierK * 0.02); x.emissive.copy(x.userData.baseEm); }
+  }));
+  addCrest(boss, foe.el, tierK, tint, sc);
+  /* 사냥감 주위를 도는 속성 기운 */
+  {
+    const n = 26, g = new THREE.BufferGeometry(), p = new Float32Array(n * 3);
+    g.setAttribute('position', new THREE.BufferAttribute(p, 3));
+    const aura = new THREE.Points(g, new THREE.PointsMaterial({ color: tint, size: 0.09, map: sparkTexture(),
+      transparent: true, opacity: 0.8, depthWrite: false, blending: THREE.AdditiveBlending }));
+    boss.holder.add(aura); boss.aura = aura; boss.auraN = n;
+  }
 
   /* ── 화면 위 글자 (데미지 숫자) ── */
   const lay = document.createElement('div');
   lay.style.cssText = 'position:absolute;inset:0;pointer-events:none;overflow:hidden';
   mount.style.position = 'relative';
   mount.appendChild(lay);
+  /* 머리 위 HP 막대 — 롤토체스처럼 유닛마다 */
+  const bars = [];
+  function hpBar(u, col, big) {
+    const el = document.createElement('div');
+    el.style.cssText = 'position:absolute;height:' + (big ? 7 : 6) + 'px;width:' + (big ? 64 : 48) + 'px;transform:translate(-50%,-50%);' +
+      'background:rgba(0,0,0,.55);border-radius:4px;box-shadow:0 0 0 1px rgba(255,255,255,.25);overflow:hidden;transition:opacity .3s';
+    const fill = document.createElement('i');
+    fill.style.cssText = 'display:block;height:100%;width:100%;background:' + col + ';transition:width .25s';
+    el.appendChild(fill); lay.appendChild(el);
+    const b = { u, el, fill, hp: 1, y: big ? 1.95 : 1.2 }; bars.push(b); return b;
+  }
+  function stepBars() {
+    bars.forEach(b => {
+      const v = b.u.holder.position.clone(); v.y = b.y + (b.u.wob.position.y || 0); v.project(cam);
+      b.el.style.left = ((v.x * 0.5 + 0.5) * 100) + '%'; b.el.style.top = ((-v.y * 0.5 + 0.5) * 100) + '%';
+      b.el.style.opacity = b.u.alive ? 1 : 0;
+    });
+  }
   function pop(u, txt, kind) {
     const v = u.holder.position.clone(); v.y = 1.25;
     v.project(cam);
@@ -412,6 +560,9 @@ export async function runBattle(o) {
 
   /* ── 연기 ── */
   let stop = 0, shake = 0, zoom = 0, dead = false;
+  mates.forEach(u => { u.bar = hpBar(u, '#' + new THREE.Color(COL[u.el] || 0x7fe08f).getHexString(), false); });
+  boss.bar = hpBar(boss, '#ff6b5b', true);
+  const setHp = (u, r) => { if (u.bar) u.bar.fill.style.width = Math.max(0, Math.round(r * 100)) + '%'; };
   function hitFx(u, kind) {
     u.flash = kind === 'big' ? 0.13 : 0.07;
     stop = Math.max(stop, kind === 'big' ? 0.11 : 0.06);
@@ -508,7 +659,7 @@ export async function runBattle(o) {
       TW.add(0, 1, 0.16, 'out', t => lerp(h, back, t), () =>
         TW.add(0, 1, 0.2, 'in', t => lerp(back, hit, t), () => {
           land(kind === 'big');
-          setTimeout(() => { if (!dead) home(hit, 0.42); }, 140);      /* 붙은 채로 잠깐 버틴다 */
+          later(() => { if (!dead) home(hit, 0.42); }, 140);      /* 붙은 채로 잠깐 버틴다 */
         }));
     } else if (move === 'leap') {         /* 도약 내려찍기 — 높이 뛰어올라 정수리로 떨어진다 */
       once(u, 'attack', 1.0);
@@ -516,7 +667,7 @@ export async function runBattle(o) {
         lerp(h, hit, t); u.wob.position.y = Math.sin(t * Math.PI) * 0.95;
       }, () => {
         u.wob.position.y = 0; land(true); shock(hit, col); shake = Math.max(shake, 0.2);
-        setTimeout(() => { if (!dead) TW.add(0, 1, 0.4, 'out', t => { lerp(hit, h, t); u.wob.position.y = Math.sin(t * Math.PI) * 0.3; },
+        later(() => { if (!dead) TW.add(0, 1, 0.4, 'out', t => { lerp(hit, h, t); u.wob.position.y = Math.sin(t * Math.PI) * 0.3; },
           () => { u.wob.position.y = 0; }); }, 150);
       });
     } else {                              /* 회전 돌진 — 한 바퀴 돌며 달려들어 몸통으로 부딪친다 */
@@ -525,7 +676,7 @@ export async function runBattle(o) {
         lerp(h, hit, t); u.wob.rotation.y = t * Math.PI * 2; u.wob.position.y = Math.sin(t * Math.PI) * 0.12;
       }, () => {
         u.wob.rotation.y = 0; u.wob.position.y = 0; land(kind === 'big');
-        setTimeout(() => { if (!dead) home(hit, 0.38); }, 110);
+        later(() => { if (!dead) home(hit, 0.38); }, 110);
       });
     }
     return move;
@@ -558,14 +709,14 @@ export async function runBattle(o) {
       const r = 0.55 + Math.random() * 1.15;
       const tx = mid.x - 0.7 - Math.cos(a) * r * 0.55;
       const tz = mid.z + Math.sin(a) * r;
-      const top = 1.15 + Math.random() * 0.5;
+      const top = 0.6 + Math.random() * 0.3;
       const st = { holder, mesh: m, halo, taken: false };
       stones.push(st);
       /* 포물선 한 번 — 0→1 을 높이와 수평 이동에 같이 쓴다 */
       TW.add(0, 1, 0.55 + Math.random() * 0.18, '', v => {
         holder.position.x = mid.x + (tx - mid.x) * v;
         holder.position.z = mid.z + (tz - mid.z) * v;
-        m.position.y = 0.16 + Math.sin(v * Math.PI) * top - v * 0.02;
+        m.position.y = 0.12 + Math.sin(v * Math.PI) * top;
         halo.material.opacity = 0.28 * v;
       });
     }
@@ -574,7 +725,7 @@ export async function runBattle(o) {
 
   /* 돌 하나를 개에게 빨아들인다 */
   function suck(st, to, delay, onIn) {
-    setTimeout(() => {
+    later(() => {
       if (dead || st.taken) return;
       st.taken = true;
       const from = st.holder.position.clone();
@@ -622,7 +773,7 @@ export async function runBattle(o) {
         if (got >= shown) {
           /* 다 주우면 남은 몫을 한 번에 알리고, 제자리로 돌아가 앉는다 */
           if (a.n > shown && o.onLoot) o.onLoot(a.n, a.n);
-          setTimeout(() => {
+          later(() => {
             if (dead) return;
             if (me.alive) once(me, 'attack', 0.7);      /* 폴짝 — 기뻐하는 몸짓 */
             TW.add(0, 1, 0.8, '', v => {
@@ -659,6 +810,7 @@ export async function runBattle(o) {
         pop(boss, '−' + a.dmg, a.kind);
         hitFx(boss, a.kind);
         if (boss.alive && a.foeHp > 0) once(boss, 'hit', 0.5);
+        setHp(boss, a.foeHp);
         if (o.onFoeHp) o.onFoeHp(a.foeHp);
       });
       wait = 780;
@@ -670,6 +822,7 @@ export async function runBattle(o) {
         pop(v, '−' + a.dmg, a.kind === 'big' ? 'bad' : '');
         hitFx(v, a.kind);
         if (v.alive) once(v, 'hit', 0.5);
+        (a.hp || []).forEach((h, i) => mates[i] && setHp(mates[i], h));
         if (o.onTeamHp) o.onTeamHp(a.hp);
       });
       wait = 820;
@@ -692,9 +845,9 @@ export async function runBattle(o) {
         boss.alive = false; once(boss, 'death', 1.1, true);
         TW.add(0, 1, 1.3, 'in', p => fade(boss, p, 0.95));
       }
-      wait = 1500;
+      wait = 900;
     }
-    setTimeout(next, wait);
+    later(next, wait);
   }
   function finish() { if (onDone) onDone(); }
 
@@ -703,10 +856,19 @@ export async function runBattle(o) {
   (function loop() {
     if (dead) return;
     requestAnimationFrame(loop);
-    let dt = Math.min(0.05, clock.getDelta());
+    let dt = Math.min(0.05, clock.getDelta()) * sp();
     if (stop > 0) { stop -= dt; dt *= 0.08; }           /* 타격 순간 시간을 눌러 준다 */
     TW.step(dt);
     stepBursts(dt);
+    stepBars();
+    if (boss.aura) {
+      const a = boss.aura.geometry.attributes.position.array, t = performance.now() / 1000;
+      for (let i = 0; i < boss.auraN; i++) {
+        const ang = t * 0.9 + i * (Math.PI * 2 / boss.auraN), r = 0.42 + 0.1 * Math.sin(t * 2 + i);
+        a[i*3] = Math.cos(ang) * r; a[i*3+1] = 0.15 + ((t * 0.35 + i / boss.auraN) % 1) * 0.75; a[i*3+2] = Math.sin(ang) * r;
+      }
+      boss.aura.geometry.attributes.position.needsUpdate = true; boss.aura.visible = boss.alive;
+    }
     arena.step(dt, performance.now() / 1000);
     [...mates, boss].forEach(u => {
       u.mx.update(dt);
@@ -715,8 +877,8 @@ export async function runBattle(o) {
       if (u.outlines[0] && u.outlines[0].visible !== on) u.outlines.forEach(o => { o.visible = on; });
       if (u.flash > 0) {
         u.flash -= dt;
-        const k = Math.max(0, u.flash) * 7;
-        u.meshes.forEach(m => eachMat(m, x => { if (x.emissive) x.emissive.setScalar(k); }));
+        const k = Math.max(0, u.flash) * 2.6;
+        u.meshes.forEach(m => eachMat(m, x => { if (x.emissive) { if (x.userData.baseEm) x.emissive.copy(x.userData.baseEm).addScalar(k); else x.emissive.setScalar(k); } }));
       }
     });
     shake = Math.max(0, shake - dt * 1.6);
@@ -731,7 +893,7 @@ export async function runBattle(o) {
   })();
 
   function onResize() {
-    const w = mount.clientWidth, h = Math.round(w * 0.70);
+    const w = mount.clientWidth, h = Math.round(w * (w < 560 ? 0.92 : 0.70));
     ren.setSize(w, h); cam.aspect = w / h; cam.updateProjectionMatrix();
   }
   addEventListener('resize', onResize);
