@@ -330,7 +330,7 @@ export async function runBattle(o) {
           '#include <skinning_vertex>\n  transformed += normalize(objectNormal) * 0.018;');
       };
       const o = new THREE.SkinnedMesh(m.geometry, om);
-      o.bind(m.skeleton, m.bindMatrix); o.frustumCulled = false;
+      o.bind(m.skeleton, m.bindMatrix); o.frustumCulled = false; o.visible = false;   /* 맞을 때만 켠다 */
       m.parent.add(o); o.position.copy(m.position); o.quaternion.copy(m.quaternion); o.scale.copy(m.scale);
       outlines.push(o);
     });
@@ -351,7 +351,7 @@ export async function runBattle(o) {
 
     /* 몸 반길이 — 코끝이 맞닿는 거리를 재는 데 쓴다. 모델은 +z 를 보고 있다 */
     const half = (sz.z * (0.92 / sz.y)) / 2;
-    const u = { el, holder, wob, mx, clip, meshes, outlines, glow, alive: true, pose: null, one: null, flash: 0,
+    const u = { el, holder, wob, mx, clip, meshes, outlines, glow, alive: true, pose: null, one: null, flash: 0, lineT: 0,
                 half, home: holder.position.clone() };
     pose(u, 'idle');
     return u;
@@ -461,11 +461,29 @@ export async function runBattle(o) {
     }
   }
 
-  /* 맞은 쪽이 살짝 밀렸다가 돌아온다 */
-  function knock(u, dir, amt) {
-    const h = u.home;
-    TW.add(0, amt, 0.1, 'out', v => u.holder.position.set(h.x + dir.x * v, 0, h.z + dir.z * v), () =>
-      TW.add(amt, 0, 0.35, 'out', v => u.holder.position.set(h.x + dir.x * v, 0, h.z + dir.z * v)));
+  /* ── 맞는 모션 ──
+     맞은 쪽은 ① 외곽선이 번쩍 켜지고 ② 뒤로 튕겨 나가며 살짝 떠오르고
+     ③ 코가 들리도록 몸이 뒤로 젖혀졌다가 ④ 제자리로 비틀거리며 돌아온다.
+     세게 맞으면(상극·도약) 더 멀리, 더 높이 날아가고 한 번 더 휘청인다. */
+  function hurt(u, dir, big) {
+    if (!u.alive) return;
+    u.lineT = big ? 0.6 : 0.42;
+    const h = u.home, far = big ? 0.42 : 0.22, up = big ? 0.26 : 0.12, lean = big ? 0.55 : 0.32;
+    const tilt = u === boss ? 1 : 1;      /* 모두 +z 를 보고 서 있어 x 축으로 젖히면 코가 들린다 */
+    TW.add(0, 1, big ? 0.16 : 0.12, 'out', t => {
+      u.holder.position.set(h.x + dir.x * far * t, 0, h.z + dir.z * far * t);
+      u.wob.position.y = Math.sin(t * Math.PI * 0.5) * up;
+      u.wob.rotation.x = -lean * tilt * t;
+    }, () => {
+      TW.add(0, 1, big ? 0.5 : 0.36, 'out', t => {
+        u.holder.position.set(h.x + dir.x * far * (1 - t), 0, h.z + dir.z * far * (1 - t));
+        u.wob.position.y = up * (1 - t) * (1 - t);
+        /* 돌아오며 한두 번 휘청 — 감쇠 진동 */
+        const wob = Math.sin(t * Math.PI * (big ? 3 : 2)) * (1 - t);
+        u.wob.rotation.x = -lean * tilt * (1 - t) * (1 - t);
+        u.wob.rotation.z = wob * (big ? 0.22 : 0.12);
+      }, () => { u.wob.rotation.x = 0; u.wob.rotation.z = 0; u.wob.position.y = 0; });
+    });
   }
 
   function attack(u, target, kind, onLand) {
@@ -481,7 +499,7 @@ export async function runBattle(o) {
     const lerp = (a, b, t) => u.holder.position.set(a.x + (b.x - a.x) * t, 0, a.z + (b.z - a.z) * t);
     const land = (big) => {
       burst(at, dir, col, big); onLand();
-      knock(target, dir, big ? 0.22 : 0.14);
+      hurt(target, dir, big);
     };
     const home = (from, dur) => TW.add(0, 1, dur, 'out', t => lerp(from, h, t), () => { u.wob.rotation.y = 0; u.wob.position.y = 0; });
 
@@ -621,7 +639,7 @@ export async function runBattle(o) {
   /* 쓰러질 때 몸은 서서히 흐려지고, 외곽선·발밑 빛은 먼저 꺼진다 */
   function fade(u, p, k) {
     u.meshes.forEach(m => eachMat(m, x => { x.transparent = true; x.opacity = 1 - p * k; }));
-    u.outlines.forEach(o => { o.visible = p < 0.15; });
+    u.lineT = 0;
     u.glow.material.opacity = 0.55 * (1 - p);
   }
 
@@ -692,6 +710,9 @@ export async function runBattle(o) {
     arena.step(dt, performance.now() / 1000);
     [...mates, boss].forEach(u => {
       u.mx.update(dt);
+      if (u.lineT > 0) u.lineT -= dt;
+      const on = u.alive && u.lineT > 0;
+      if (u.outlines[0] && u.outlines[0].visible !== on) u.outlines.forEach(o => { o.visible = on; });
       if (u.flash > 0) {
         u.flash -= dt;
         const k = Math.max(0, u.flash) * 7;
