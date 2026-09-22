@@ -29,7 +29,7 @@ a{color:var(--acc)}
 .bar{display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--line)}
 .bar .nm{font-weight:800;font-size:17px;color:var(--ink);text-decoration:none;
   letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
-.fpchip{display:inline-flex;align-items:center;gap:5px;text-decoration:none;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:999px;padding:3px 9px 3px 3px;font-size:13px;font-weight:700;color:var(--ink)}.fpchip i{width:19px;height:19px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:800;color:#0a0f18;font-family:"Noto Serif KR",serif}@media(max-width:430px){.fpchip b{display:none}.fpchip{padding:3px}}.mk{width:24px;height:24px;flex:none;display:block}.bar .mk,.top-bar .mk{width:21px;height:21px}@media(max-width:430px){header.site nav a[href="/"],.bar nav a[href="/"],.top-bar nav a[href="/"]{display:none}header.site nav,.bar nav,.top-bar nav{gap:12px}}
+.fpchip{display:inline-flex;align-items:center;gap:5px;text-decoration:none;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:999px;padding:3px 9px 3px 3px;font-size:13px;font-weight:700;color:var(--ink)}.fpchip i{width:19px;height:19px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:800;color:#0a0f18;font-family:"Noto Serif KR",serif}@media(max-width:430px){.fpchip b{display:none}.fpchip{padding:3px}}.mk{width:24px;height:24px;flex:none;display:block}header nav a,.bar nav a,.top-bar nav a,footer a{display:inline-flex;align-items:center;min-height:40px}main .h a,main a[data-cta]{display:inline-flex;align-items:center;min-height:40px}.bar .mk,.top-bar .mk{width:21px;height:21px}@media(max-width:430px){header.site nav a[href="/"],.bar nav a[href="/"],.top-bar nav a[href="/"]{display:none}header.site nav,.bar nav,.top-bar nav{gap:12px}}
 .bar .tl{font-size:12px;color:var(--dim);margin-left:-3px}
 @media(max-width:560px){.bar .tl{display:none}}
 .bar nav{margin-left:auto;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
@@ -70,6 +70,7 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 .mine a{cursor:pointer}
 
 .grid{display:grid;gap:12px}
+@media(min-width:900px){.grid{grid-template-columns:1fr 1fr}}
 .card{display:grid;grid-template-columns:64px 1fr;gap:14px;align-items:center;
   background:var(--pan);border:1px solid var(--line);border-radius:16px;
   padding:14px 16px;cursor:pointer;text-align:left;width:100%;font:inherit;color:inherit;
@@ -145,7 +146,20 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 .hinfo p{margin:3px 0;font-size:14px;color:var(--mut)}
 .hinfo p b{color:var(--ink);font-size:15.5px}
 .hinfo p.day{color:#ffd93d;font-weight:700}
-.hbars .fpbars{margin:0}
+.hbars .fpbars{margin:8px 0 0}
+.hbars summary{cursor:pointer;list-style:none;font-weight:700;font-size:14px;color:var(--mut);display:flex;justify-content:space-between;min-height:32px;align-items:center}
+.hbars summary::-webkit-details-marker{display:none}
+.hbars summary::after{content:'▼';font-size:11px;color:var(--dim)}
+.hbars[open] summary::after{content:'▲'}
+@media(max-width:640px){.hcard{grid-template-columns:96px 1fr}.hdog{height:112px}}
+
+/* ── 배속 · 건너뛰기 (서머너즈워·롤토체스처럼 전투 화면 오른쪽 위에 둔다) ── */
+.stagew{position:relative}
+.spd{position:absolute;top:8px;right:8px;display:flex;gap:6px;z-index:5}
+.spd button{min-height:36px;min-width:44px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(10,14,22,.72);backdrop-filter:blur(3px);
+  color:var(--mut);font:inherit;font-size:13px;font-weight:700;cursor:pointer;padding:0 10px}
+.spd button.on{background:#ffd93d;color:#191600;border-color:#ffd93d}
+#b-skip{margin-left:4px}
 
 /* ── 사냥터 안내 · 오행도 ── */
 .guide{background:var(--pan);border:1px solid var(--line);border-radius:16px;margin:0 0 18px}
@@ -180,7 +194,10 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
   transition:border-color .15s,transform .15s}
 .rung:hover:not(:disabled){border-color:#31405c;transform:translateY(-1px)}
 .rung:disabled{cursor:not-allowed;opacity:.42}
+.tip3{margin:0 0 10px;font-size:13px;color:var(--mut);line-height:1.6}
 .rung:disabled .gz2{filter:grayscale(.65)}
+.fxd{margin:6px 0}.fxd summary{cursor:pointer;color:var(--dim);font-size:13px;min-height:28px}
+.fxd .fx{display:block;font-size:13px;color:var(--mut);margin-top:4px}
 .rung .gz2{width:48px;height:48px;border-radius:13px;display:grid;place-items:center;
   font-size:22px;font-weight:800;font-family:"Noto Serif KR",serif;color:#0a0f18;flex:none}
 .rung .tn{display:block;font-size:17px;font-weight:700;letter-spacing:-.01em}
@@ -249,6 +266,7 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 .stage{margin-top:14px;border-radius:14px;overflow:hidden;background:#0b0f17;
   border:1px solid var(--line);min-height:150px;position:relative}
 .stage canvas{display:block;width:100%;height:auto}
+@media(max-width:560px){.stagew{margin-left:-12px;margin-right:-12px}.stage{border-radius:0;border-left:0;border-right:0}}
 .load{position:absolute;inset:0;display:grid;place-items:center;font-size:13px;color:var(--dim)}
 .cap{margin:11px 2px 0;font-size:14px;line-height:1.6;color:var(--ink);min-height:44px}
 .lgtoggle{margin-top:14px;background:0;border:0;color:var(--mut);font:inherit;font-size:13px;
@@ -344,7 +362,7 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
         <div class="hdog" id="hdog"></div>
         <div class="hinfo" id="today"></div>
       </div>
-      <div class="hbars" id="hbars"></div>
+      <details class="hbars" id="hbarsw"><summary>내 속성 수치</summary><div id="hbars"></div></details>
     </div>
     <p class="mine" id="mine"></p>
     <details class="guide" id="guide-wrap">
@@ -381,11 +399,12 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
   <section class="view" id="v-battle">
     <div class="foe" id="foe"></div>
     <div class="hp"><i id="foe-hp" style="width:100%"></i></div>
-    <div class="stage" id="stage"><div class="load" id="load">사냥터를 그리는 중…</div></div>
+    <div class="stagew"><div class="stage" id="stage"><div class="load" id="load">사냥터를 그리는 중…</div></div>
+      <div class="spd" id="spd"><button data-s="1">×1</button><button data-s="2">×2</button><button data-s="3">×3</button><button id="b-skip">건너뛰기 ▶▶</button></div></div>
     <p class="cap" id="cap"></p>
     <div class="team" id="team"></div>
     <div id="res"></div>
-    <button class="lgtoggle" id="lgtoggle" hidden>기록 보기</button>
+    <button class="lgtoggle" id="lgtoggle" hidden>전투 로그</button>
     <div class="log" id="log" hidden></div>
   </section>
 
@@ -393,8 +412,9 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 
 <div class="mask" id="mask">
   <div class="modal">
-    <h3>합류한 친구</h3>
-    <p class="s">내 초대 링크로 들어온 사람만 보입니다.</p>
+    <h3>친구 목록</h3>
+    <p class="s">내 초대 링크로 들어온 친구가 보입니다. 새 친구는 카카오톡으로 초대하세요.</p>
+    <button class="kbtn" id="btn-invite2" style="margin:10px 0 12px">카카오톡으로 친구 초대</button>
     <ul class="flist2" id="friends"></ul>
     <button class="x" id="btn-close">닫기</button>
   </div>
@@ -575,13 +595,12 @@ function synergy(els){
 /* ===================== 단(段) ===================== */
 /* 사냥터 하나에 열 단. 천간을 거꾸로 써서 계단(癸)이 맨 아래, 갑단(甲)이 꼭대기.
 
-   2026-09-21 규칙을 바꿨다 — 이제 **수치가 문턱을 넘으면 깬다.**
-   - 속성 수치 = 50 + 사주 비율 × 0.4 + 그 속성 용신석 개수   (me.js FP.stats)
-   - 사냥터마다 **그 땅을 누르는 속성**의 수치로 싸운다 (목극토 → 황토 텃밭은 목)
-   - 파티 수치 = 가장 센 사람 + 나머지 합 × 0.2, 상생 한 쌍마다 +5%
-   - 오늘의 기운을 탄 속성이면 +5%
-   - 문턱을 넘은 단은 **반드시 이긴다.** 난수는 몇 번 겨루는지·누가 맞는지에만 쓴다
-   - 이기면 각자 용신석 = 단 × (1 + 0.25 × (인원 − 1))
+   규칙 (루프3, 2026-09-22) — **전투력이 권장 전투력을 넘으면 깬다.**
+   - 속성 수치 = 30 + 사주 비율 × 1.0 + 그 속성 용신석 개수   (me.js FP.stats)
+   - 전투력 = 다섯 수치 × 상성(극 1.5 · 같음 1.0 · 상생 0.8 · 역극 0.5)의 합
+   - 파티 = 가장 센 사람 + 나머지 × 0.2, 상생 한 쌍마다 +5% · 오늘의 기운 속성 +5%
+   - 권장 전투력을 넘은 단은 **반드시 이긴다.** 난수는 몇 번 겨루는지·누가 맞는지에만 쓴다
+   - 용신석 = 단 × (1 + 0.25 × (인원 − 1)), 오늘의 사냥터는 ×1.5
    문턱 곡선과 판 수는 `_content/build/tier_sim.js` 로 검산한다. */
 var TIERS=[
   {k:1, gan:'계', hj:'癸', nm:'계단'}, {k:2, gan:'임', hj:'壬', nm:'임단'},
@@ -678,9 +697,9 @@ function buildFight(){
   function jit(){ return 0.85+Math.random()*0.3; }
 
   push(g.nm+' '+tOf(K).nm+'에 들어섰습니다. '+jn(foe.nm,['이','가'])+' 기다리고 있습니다.','big');
-  push('전투력 '+P.pow+' · 문턱 '+need+(P.pow>=need*1.3?' — 넉넉히 넘습니다.':' — 넘습니다.'),'hit');
+  push('전투력 '+P.pow+' · 권장 전투력 '+need+(P.pow>=need*1.3?' — 여유 있습니다.':''),'hit');
   if(P.pairs) push('파티의 기운이 서로를 살립니다. 상생 '+P.pairs+'쌍 +'+(P.pairs*5)+'%.','hit');
-  var TD=FP.today(); push('오늘의 기운 '+TD.ganHj+TD.zhiHj+' — '+TD.els[0]+(TD.els[1]!==TD.els[0]?'·'+TD.els[1]:'')+' 수치가 10% 오릅니다.','hit');
+  var TD=FP.today(); push('오늘의 기운 '+TD.ganHj+TD.zhiHj+' — '+TD.els[0]+(TD.els[1]!==TD.els[0]?'·'+TD.els[1]:'')+' 수치가 '+Math.round(FP.TODAY*100)+'% 오릅니다.','hit');
 
   /* 우리 쪽 공격 몫 — 각자의 수치와 상성으로 나누고, T 번에 걸쳐 정확히 다 깎는다 */
   var share=team.map(function(t,i){ return P.vals[i]; });
@@ -699,7 +718,7 @@ function buildFight(){
     for(var i=0;i<n;i++){
       var t=team[i], sk=strike(t.el,gEl), dmg=plan[pi++];
       foe.hp=Math.max(0,foe.hp-dmg);
-      var line=t.nick+'의 '+J(t.el,'i')+' '+jn(foe.nm,['을','를'])+' 칩니다'+(sk.s?' — '+sk.s:'');
+      var line=t.nick+'의 '+J(t.el,'i')+' '+jn(foe.nm,['을','를'])+' 칩니다'+(t.el===FP.edge(gEl)?' — 우세!':'');
       push(line+' (−'+dmg+')', sk.k); L[L.length-1].foe=foe.hp/foe.max;
       act({t:'hit', by:i, dmg:dmg, kind:(sk.m>=1.5?'big':''), foeHp:foe.hp/foe.max, text:line});
       if(foe.hp<=0) break;
@@ -718,13 +737,14 @@ function buildFight(){
   var endLine=jn(foe.nm,['이','가'])+' 물러갑니다.';
   push(endLine,'big'); act({t:'end', win:true, text:endLine});
 
-  var loot=dropFor(K,n);
-  var ltext=gEl+' 용신석 '+loot+'개가 떨어집니다'+(n>1?' — 한 사람에 '+loot+'개씩':'')+'.';
+  var loot=Math.round(dropFor(K,n)*(isTodayG(gEl)?1.5:1));
+  var ltext=gEl+' 용신석 '+loot+'개 획득'+(isTodayG(gEl)?' (오늘의 사냥터 ×1.5)':'')+(n>1?' — 한 사람에 '+loot+'개씩':'')+'.';
   push(ltext,'big'); act({t:'loot', el:gEl, n:loot, yong:true, text:ltext});
 
-  var why = margin>=1.3 ? '전투력 '+P.pow+' · 문턱 '+need+' — 넉넉히 넘었습니다.'
-          : margin>=1.1 ? '전투력 '+P.pow+' · 문턱 '+need+' — 넘었습니다.'
-          : '문턱 '+need+'에 딱 걸쳤습니다. 한 번만 더 모으면 편해집니다.';
+  var nxt = K<10 ? TH[K] : null, gapN = nxt ? nxt-P.pow : 0;
+  var why = !nxt ? '갑단 정복 — 이 사냥터의 끝까지 올랐습니다.'
+          : gapN<=0 ? '여유 있게 이겼습니다. '+tOf(K+1).nm+'이 이미 열려 있습니다.'
+          : tOf(K+1).nm+'까지 전투력 '+gapN+' 남았습니다 — '+FP.edge(gEl)+' 용신석이 가장 빨리 채워 줍니다.';
 
   return {log:L, acts:A, win:true, turns:T, standing:n, total:n, why:why,
           foe:foe, team:team, syn:{pairs:P.pairs}, tier:K, loot:loot, lootEl:gEl, P:P, need:need};
@@ -749,7 +769,11 @@ function paintTeam(st, team){
   }).join('');
 }
 
-var BT=null;      /* 글로 흐를 때의 타이머 */
+var BT=null, CURF=null;
+/* 배속 — 기억해 둔다. 판수가 많은 게임이라 두 번째 판부터는 대부분 빠르게 본다 */
+var SPEED=LS.get('hunt.speed',1)||1;
+function setSpeed(v){ SPEED=v; LS.set('hunt.speed',v);
+  [].forEach.call(document.querySelectorAll('#spd [data-s]'),function(b){ b.classList.toggle('on', +b.dataset.s===v); }); }      /* 글로 흐를 때의 타이머 */
 var V3=null;      /* 돌고 있는 3D 화면 */
 
 /* 이 브라우저에서 3D 를 돌릴 수 있나. 못 돌리면 글로 흐른다 —
@@ -769,11 +793,15 @@ function stopBattle(){
 
 function playBattle(){
   stopBattle();
-  var F=buildFight();
-  show('v-battle');
+  var F=buildFight(); CURF=F;
+  show('v-battle'); setSpeed(SPEED);
+  [].forEach.call(document.querySelectorAll('#spd [data-s]'),function(b){ b.onclick=function(){ setSpeed(+b.dataset.s); }; });
+  $('b-skip').hidden=false;
+  $('b-skip').onclick=function(){ if(!CURF) return; var f=CURF; CURF=null; stopBattle();
+    $('stage').hidden=true; ev('hunt_skip',{}); endBattle(f); };
   renderBattleHead(F);
   $('res').innerHTML=''; $('cap').textContent='';
-  $('log').hidden=true; $('lgtoggle').hidden=true; $('lgtoggle').textContent='기록 보기';
+  $('log').hidden=true; $('lgtoggle').hidden=true; $('lgtoggle').textContent='전투 로그';
   fillLog(F);
   ev('hunt_battle',{ground:CUR.nm, size:F.total});
 
@@ -786,14 +814,15 @@ function playBattle(){
       ground:{el:CUR.el, nm:CUR.nm, id:CUR.id},
       team:F.team.map(function(t){ return {el:t.el, nick:t.nick}; }),
       foe:{el:F.foe.el, nm:F.foe.nm},
-      acts:F.acts,
+      acts:F.acts, tier:F.tier,
+      speed:function(){ return SPEED; },
       onProgress:function(p){ var l=$('load'); if(l) l.textContent='사냥터를 그리는 중… '+Math.round(p*100)+'%'; },
       onCaption:function(t){ $('cap').textContent=t; },
-      onLoot:function(got,all){ $('cap').textContent='오행석 '+got+' / '+all+' 개를 담았습니다'; },
+      onLoot:function(got,all){ $('cap').textContent='용신석 '+got+' / '+all+'개 획득'; },
       onFoeHp:function(r){ $('foe-hp').style.width=Math.round(r*100)+'%'; },
       onTeamHp:function(hp){ paintTeam(hp.map(function(h,i){
         return {hp:h, down:F.team[i].down&&h<=0}; }), F.team); },
-      onDone:function(){ endBattle(F); }
+      onDone:function(){ if(CURF===F){ CURF=null; endBattle(F); } }
     });
   }).then(function(h){ V3=h; }).catch(function(e){
     /* 모델을 못 받았거나 three 가 안 뜬 경우 — 조용히 글로 넘어간다 */
@@ -818,7 +847,7 @@ function playLog(F){
   $('log').hidden=false; $('log').innerHTML='';
   var i=0;
   (function step(){
-    if(i>=F.log.length){ BT=null; return endBattle(F); }
+    if(i>=F.log.length){ BT=null; if(CURF===F){ CURF=null; endBattle(F); } return; }
     var l=F.log[i++];
     var p=document.createElement('p');
     p.className=l.k; p.textContent=l.t;
@@ -826,11 +855,12 @@ function playLog(F){
     $('log').scrollTop=$('log').scrollHeight;
     if(l.foe!=null) $('foe-hp').style.width=Math.round(l.foe*100)+'%';
     if(l.team) paintTeam(l.team, F.team);
-    BT=setTimeout(step, l.k==='turn' ? 260 : 430);
+    BT=setTimeout(step, (l.k==='turn' ? 260 : 430)/SPEED);
   })();
 }
 
 function endBattle(F){
+  if($('b-skip')) $('b-skip').hidden=true;
   paintTeam(F.team.map(function(t){return {hp:t.hp/t.max, down:false}}), F.team);
   markCleared(CUR.id, F.tier); addStones(F.lootEl, F.loot);
   if(window.FP) FP.push();              /* 로그인했으면 계정에 저장 */
@@ -848,14 +878,14 @@ function endBattle(F){
         (mineNow!=null ? '<span class="bo">내 '+F.lootEl+' 수치 '+mineNow+' ('+
           (st[F.lootEl].val-F.loot)+' → '+mineNow+')</span>' : '')+'</div>'+
       '<div class="rn"><span><b>'+F.turns+'</b>번 겨룸</span>'+
-        '<span>전투력 <b>'+F.P.pow+'</b> / 문턱 '+F.need+'</span>'+
-        (nextNeed ? '<span>'+tOf(nx).nm+' 문턱 <b>'+nextNeed+'</b></span>' : '')+'</div>'+
+        '<span>전투력 <b>'+F.P.pow+'</b> / 권장 '+F.need+'</span>'+
+        (nextNeed ? '<span>'+tOf(nx).nm+' 권장 전투력 <b>'+nextNeed+'</b></span>' : '')+'</div>'+
     '</div>'+
     '<div class="again">'+
       (canNext ? '<button class="pri" id="b-next">'+tOf(nx).nm+'으로 올라가기</button>' : '')+
-      '<button'+(canNext?'':' class="pri"')+' id="b-again">'+tn+' 다시</button>'+
-      '<button id="b-tier">단 고르기</button>'+
-      '<button id="b-ground">사냥터 바꾸기</button>'+
+      '<button'+(canNext?'':' class="pri"')+' id="b-again">다시 도전</button>'+
+      '<button id="b-tier">단 선택</button>'+
+      '<button id="b-ground">사냥터 목록</button>'+
     '</div>';
   LS.set('hunt.last.'+CUR.id, {win:true, turns:F.turns, total:F.total, tier:F.tier, at:Date.now()});
   ev('hunt_result',{ground:CUR.nm, tier:F.tier, win:1, turns:F.turns, size:F.total, loot:F.loot, pow:F.P.pow});
@@ -863,7 +893,7 @@ function endBattle(F){
   $('lgtoggle').hidden=false;
   $('lgtoggle').onclick=function(){
     var on=$('log').hidden; $('log').hidden=!on;
-    this.textContent = on ? '기록 접기' : '기록 보기';
+    this.textContent = on ? '전투 로그 닫기' : '전투 로그';
   };
   $('b-again').onclick=playBattle;
   if($('b-next')) $('b-next').onclick=function(){ stopBattle(); TIER=nx; renderParty(); };
@@ -898,9 +928,11 @@ function renderTop(){
       '<b class="gem sq" style="--c:'+colOf(b)+'" title="'+d.zhi+'">'+TD.zhiHj+'</b></div>'+
     (MYEL?'<p>오행 속성 <b>'+MYEL+'</b></p>':'')+
     '<p>오늘의 기운 <b>'+d.gan+d.zhi+'</b></p>'+
-    '<p class="day">'+dayTxt+' — '+a+(a!==b?'·'+b:'')+' 수치 +10%</p>';
+    '<p class="day">'+dayTxt+' — '+a+(a!==b?'·'+b:'')+' 수치 +'+Math.round(FP.TODAY*100)+'%</p>';
   $('hbars').innerHTML = MYEL ? FP.barsHTML({}) : '';
-  $('hbars').hidden = !MYEL;
+  $('hbarsw').hidden = !MYEL;
+  /* 넓은 화면은 펼쳐 두고, 휴대폰은 접어서 던전 카드가 첫 화면에 보이게 한다 */
+  if(!$('hbarsw').dataset.init){ $('hbarsw').dataset.init='1'; $('hbarsw').open = innerWidth > 640; }
 
   /* 3D 캐릭터는 한 번만 띄운다 */
   var dg=$('hdog');
@@ -968,29 +1000,27 @@ function renderGuide(){
 
 function colOf(el){ for(var i=0;i<GROUNDS.length;i++) if(GROUNDS[i].el===el) return GROUNDS[i].col; return '#8e9bb0'; }
 
+/* 오늘의 사냥터 — 서머너즈워의 요일 던전처럼, 오늘의 기운이 든 땅은 용신석 ×1.5 */
+function isTodayG(el){ return DAY.els.indexOf(el)>=0; }
+
 function renderPick(){
   MYEL = myElement();
   renderTop();
-  var best=-99;
-  GROUNDS.forEach(function(g){ var s=todayScore(g.el,DAY.els); if(s>best) best=s; });
   var html='';
   GROUNDS.forEach(function(g){
-    var ts=todayScore(g.el,DAY.els), rel=mineRel(MYEL,g.el);
+    var P0=powerAt(g.el), cap=Math.max(1,tierFor(P0.pow)), rec=TH[Math.min(9,cap)] || TH[9];
     var tags='';
-    if(ts>=2 && ts===best) tags+='<span class="tag good">오늘 가장 유리</span>';
-    else if(ts>0)          tags+='<span class="tag good">오늘 유리</span>';
-    else if(ts<0)          tags+='<span class="tag warn">오늘 불리</span>';
-    if(rel && rel.tag) tags+='<span class="tag '+(rel.k==='risk'?'warn':'mine')+'">'+rel.tag+'</span>';
-    tags += '<span class="tag edge">'+keyOf(g.el)+' 우세</span>';
-    var why = (ts>0 ? '오늘 '+DAY.gan+DAY.zhi+'의 기운이 '+g.el+'에 실립니다. '
-                    : ts<0 ? '오늘 기운이 '+J(g.el,'eul')+' 누릅니다. ' : '')
-            + (rel ? rel.why : '');
-    html += '<button class="card'+((ts>=2&&ts===best)?' best':'')+'" data-g="'+g.id+'" '+
+    if(isTodayG(g.el)) tags+='<span class="tag good">오늘의 사냥터 · 용신석 ×1.5</span>';
+    tags+='<span class="tag edge">'+FP.edge(g.el)+' 우세</span>';
+    var dn=cleared(g.id);
+    var why='내 전투력 <b>'+P0.pow+'</b> · '+(cap<10 ? tOf(cap+1).nm+' 권장 '+rec : '갑단까지 열림')+
+            (dn ? ' · '+tOf(dn).nm+' 정복' : '');
+    html += '<button class="card'+(isTodayG(g.el)?' best':'')+'" data-g="'+g.id+'" '+
       'style="--bg:url(/img/dungeon/'+g.id+'.webp)">'+ gem(g.col, g.elhj) +
       '<span><span class="t"><b>'+g.nm+'</b><span>'+g.prey+'</span></span>'+
       '<span class="one">'+g.one+'</span>'+
-      (tags?'<span class="tags">'+tags+'</span>':'')+
-      (why?'<span class="why">'+why+'</span>':'')+'</span></button>';
+      '<span class="tags">'+tags+'</span>'+
+      '<span class="why">'+why+'</span></span></button>';
   });
   $('grid').innerHTML=html;
   renderGuide();
@@ -999,7 +1029,7 @@ function renderPick(){
   });
   if(MODE==='demo'){
     $('demo-note').hidden=false;
-    $('demo-note').textContent='데모 모드입니다 — 이 브라우저 안에서만 저장되고 친구와 공유되지 않습니다. Supabase 키를 넣으면 실제로 돕니다.';
+    $('demo-note').textContent='데모 모드입니다 — 이 브라우저 안에서만 저장되고 친구와 공유되지 않습니다.';
   }
   show('v-pick');
 }
@@ -1025,8 +1055,8 @@ function renderTier(){
   $('th').innerHTML=gem(g.col, g.elhj)+
     '<span><h1>'+g.nm+'</h1><span class="hj">'+g.prey+' · 계단부터 갑단까지 열 단</span></span>';
   var parts=FP.ORDER.map(function(x){ return x+'×'+FP.weight(x,g.el); }).join(' + ');
-  $('tsub').innerHTML='<b>'+P.edge+' 우세</b> — '+P.edge+'이 이 땅을 누릅니다. '+
-    '전투력은 다섯 속성을 모두 더해 냅니다: <span class="fx">'+parts+'</span><br>'+
+  $('tsub').innerHTML='<b>'+P.edge+' 우세</b> — '+J(P.edge,'i')+' 이 땅을 누릅니다. '+
+    '<details class="fxd"><summary>전투력 계산식 보기</summary><span class="fx">'+parts+'</span></details>'+
     (P.n>1?P.n+'명 파티 전투력 ':'내 전투력 ')+'<b class="pw">'+P.pow+'</b>'+
     (P.n>1&&P.pairs?' (상생 '+P.pairs+'쌍 포함)':'')+'.';
 
@@ -1040,9 +1070,8 @@ function renderTier(){
             : isOpen ? '<span class="rt2 open">열림</span>' : '<span class="rt2 shut">잠김</span>';
     var gap=need-P.pow;
     var why = isOpen
-      ? '문턱 '+need+' · 이기면 한 사람에 '+g.el+' 용신석 '+dropFor(t.k,P.n)+'개'
-      : '문턱 '+need+' — 전투력 '+gap+' 더. '+P.edge+' 용신석이 가장 잘 듣습니다(1개 +1.5, '+
-        FP.FROM[P.edge]+'에서 남)'+(P.n<5?'. 친구와 오면 더 빨리 열립니다':'');
+      ? '권장 '+need+' · '+g.el+' 용신석 '+Math.round(dropFor(t.k,P.n)*(isTodayG(g.el)?1.5:1))+'개'+(isTodayG(g.el)?' (×1.5)':'')
+      : '권장 '+need+' · <b style="color:#e8a33c">'+gap+' 부족</b>';
     html += '<button class="rung'+(t.k===cap&&isOpen&&!isDone?' now':'')+'" data-k="'+t.k+'"'+(isOpen?'':' disabled')+'>'+
       gem(g.col, t.hj, 'gz2 sq')+
       '<span><span class="tn">'+t.nm+'</span><span class="td">'+why+'</span></span>'+tag+'</button>';
@@ -1052,21 +1081,25 @@ function renderTier(){
     b.onclick=function(){ TIER=+b.dataset.k; renderParty(); };
   });
 
-  $('tnote').innerHTML =
-    '<b>전투력이 문턱을 넘은 단은 반드시 깹니다.</b> '+TIERS.map(function(t){return t.nm+' '+TH[t.k-1]}).join(' · ')+'.<br>'+
+  var tip = (P.pow<TH[9]) ? '<p class="tip3">부족한 전투력은 <b>'+P.edge+' 용신석</b>이 가장 빨리 채웁니다(1개 +1.5, '+FP.FROM[P.edge]+'에서 나옴)'+(P.n<5?' · 친구와 오면 더 빨리 열립니다':'')+'.</p>' : '';
+  $('tnote').innerHTML = tip +
+    '<b>권장 전투력을 넘은 단은 반드시 깹니다.</b> '+TIERS.map(function(t){return t.nm+' '+TH[t.k-1]}).join(' · ')+'.<br>'+
     '<b>'+g.el+' 용신석</b>은 이곳에서 나고 '+g.el+' 수치를 올립니다. 모든 사냥터의 전투력에 조금씩 보탬이 됩니다. '+
     '친구와 오면 파티 수치가 오르고, 각자 받는 돌도 늘어납니다(다섯이면 두 배).';
   ev('hunt_tier_view',{ground:g.nm, done:done, cap:cap, pow:P.pow});
   show('v-tier');
+  /* 서머너즈워 층 선택처럼 — 들어오면 지금 도전할 단이 먼저 보이게 */
+  var now=$('ladder').querySelector('.rung.now') || [].filter.call($('ladder').querySelectorAll('.rung'),function(r){return !r.disabled}).pop();
+  if(now) setTimeout(function(){ now.scrollIntoView({block:'center'}); }, 30);
 }
 
 function renderParty(){
   var g=CUR, ts=todayScore(g.el,DAY.els), rel=mineRel(MYEL,g.el);
   $('gh').innerHTML=gem(g.col, g.elhj)+
     '<span><h1>'+g.nm+' '+tOf(TIER).nm+'</h1><span class="hj">'+tOf(TIER).gan+'급 '+g.prey+'</span></span>';
-  $('gsub').textContent = g.one + ' — ' +
-    (ts>0?'오늘 기운이 이곳에 실립니다.':ts<0?'오늘 기운이 이곳을 누릅니다.':'오늘 기운은 이곳과 무관합니다.') +
-    (rel? ' '+rel.why : '');
+  var Pp=powerAt(g.el);
+  $('gsub').textContent = g.one + ' — 권장 전투력 '+TH[TIER-1]+' · 내 '+(Pp.n>1?'파티 ':'')+'전투력 '+Pp.pow+
+    (isTodayG(g.el)?' · 오늘의 사냥터(용신석 ×1.5)':'');
 
   var html='';
   /* 내 자리 */
@@ -1086,8 +1119,7 @@ function renderParty(){
     } else {
       html += '<div class="slot empty"><span class="av">＋</span>'+
               '<span class="rl">빈 자리</span>'+
-              '<button class="add" data-invite="'+i+'">카카오톡으로 부르기</button>'+
-              '<button class="pick" data-pick="'+i+'">합류한 친구</button></div>';
+              '<button class="add" data-pick="'+i+'">친구 초대</button></div>';
     }
   }
   $('slots').innerHTML=html;
@@ -1116,7 +1148,7 @@ function renderParty(){
       ? tOf(TIER).nm+'은 지금 인원으로 열리지 않습니다'
       : (filled===1 ? '혼자 '+tOf(TIER).nm+'으로' : filled+'명으로 '+tOf(TIER).nm+'으로');
 
-  var danger = (rel && rel.k==='risk' && filled<=2 && TIER>1);
+  var danger = false;
   $('note').innerHTML =
     '<b>'+tOf(TIER).nm+'으로 들어갑니다.</b> <a href="#" id="a-tier">단 다시 고르기</a><br>'+
     '<b>친구와 파티를 하면 더 높은 단을 깰 수 있습니다.</b> 한 사람이 받는 용신석도 늘어납니다.<br>'+
@@ -1124,8 +1156,7 @@ function renderParty(){
                '친구를 더 부르거나 단을 내리세요.</span><br>' : '')+
     (danger ? '<span style="color:#f0a0a0">이 사냥터는 내 기운을 누릅니다. '+
               '적은 인원으로는 버티기 어렵습니다.</span><br>' : '')+
-    '빈 자리는 <b>카카오톡으로 부르기</b>로 채웁니다. '+
-    '친구가 링크로 들어오면 <b>합류한 친구</b>에 뜨고, 눌러서 자리에 앉힙니다.';
+    '빈 자리의 <b>친구 초대</b>를 누르면 친구 목록이 열립니다. 카카오톡으로 초대한 친구가 들어오면 여기서 자리에 앉힙니다.';
   if($('a-tier')) $('a-tier').onclick=function(e){ e.preventDefault(); renderTier(); };
   show('v-party');
 }
@@ -1171,7 +1202,8 @@ function openFriends(slot){
       return '<li><span class="av gem" style="--c:'+colOf(f.el)+'">'+
         (({목:'木',화:'火',토:'土',금:'金',수:'水'})[f.el]||'?')+'</span>'+
         '<b>'+esc(f.nick)+'</b><button data-id="'+esc(f.id)+'">앉히기</button></li>';
-    }).join('') : '<li class="none">아직 합류한 친구가 없습니다. 먼저 카카오톡으로 불러 보세요.</li>';
+    }).join('') : '<li class="none">아직 들어온 친구가 없습니다. 위 버튼으로 초대해 보세요.</li>';
+    $('btn-invite2').onclick=invite;
     [].forEach.call($('friends').querySelectorAll('button'),function(b){
       b.onclick=function(){
         var f=free.filter(function(x){return String(x.id)===b.dataset.id})[0];
