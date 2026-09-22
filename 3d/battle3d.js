@@ -1057,7 +1057,7 @@ export async function runBattle(o) {
   (function loop() {
     if (dead) return;
     requestAnimationFrame(loop);
-    let dt = Math.min(0.05, clock.getDelta()) * sp();
+    let dt = Math.min(0.1, clock.getDelta()) * sp();       /* 10fps 까지는 실제 시간대로 */
     if (stop > 0) { stop -= dt; dt *= 0.08; }           /* 타격 순간 시간을 눌러 준다 */
     gT += dt; runDue();
     TW.step(dt);
