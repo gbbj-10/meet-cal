@@ -357,7 +357,10 @@ export async function runBattle(o) {
   const { mount, base, dracoPath, ground, team, foe, acts, onCaption, onDone, onProgress } = o;
   /* 배속 — 매 프레임 시간과 모든 대기 시간에 같이 곱한다 */
   const sp = () => window.__FPSP || Math.max(1, (o.speed && o.speed()) || 1);   /* __FPSP: 플레이테스터용 슬로모션 */
-  const later = (f, ms) => setTimeout(f, ms / sp());
+  /* 대기 시간도 화면 시계로 잰다 — 프레임이 느린 기기에서 글·숫자가 그림보다 앞서 가지 않게 */
+  let gT = 0; const due = [];
+  const later = (f, ms) => { due.push({ t: gT + ms / 1000, f }); };
+  const runDue = () => { for (let i = 0; i < due.length; i++) if (due[i].t <= gT) { const d = due.splice(i--, 1)[0]; try { d.f(); } catch (e) { console.error(e); } } };
   /* o.onLoot(주운 수, 전체) — 화면 위 숫자를 세는 쪽에서 쓴다 */
 
   /* ── 모델 받기 ── */
@@ -633,8 +636,10 @@ export async function runBattle(o) {
       '<small style="font-size:clamp(11px,2.6vw,14px);color:#e8ecf3;font-weight:700">' + a.name + ' · ' + a.nm + '</small></span>';
     lay.appendChild(d);
     requestAnimationFrame(() => requestAnimationFrame(() => { d.style.transform = 'translateX(0)'; }));
-    later(() => { d.style.transition = 'transform .28s ease-in,opacity .28s'; d.style.transform = 'translateX(105%)'; d.style.opacity = '0'; }, 1150);
-    later(() => d.remove(), 1600);
+    /* 배속을 올려도 기술 이름은 읽을 만큼(실제 0.9초 이상) 머문다 */
+    const hold = Math.max(900, 1150 / sp());
+    setTimeout(() => { d.style.transition = 'transform .28s ease-in,opacity .28s'; d.style.transform = 'translateX(105%)'; d.style.opacity = '0'; }, hold);
+    setTimeout(() => d.remove(), hold + 450);
   }
   function screenTint(col, ms) {
     const d = document.createElement('div');
@@ -1018,7 +1023,9 @@ export async function runBattle(o) {
       if (a.win) {
         boss.alive = false; once(boss, 'death', 1.1, true);
         TW.add(0, 1, 1.3, 'in', p => fade(boss, p, 0.95));
-        later(victory, 1050);          /* 쓰러지는 걸 본 다음에 */
+        /* 쓰러지는 걸 본 다음, 필살기 연출이 다 끝난 뒤에 */
+        later(() => { const t0 = performance.now();
+          (function wv() { if (dead) return; if (fxs.length && performance.now() - t0 < 2500) return requestAnimationFrame(wv); victory(); })(); }, 1050);
       }
       wait = a.win ? 1900 : 900;
     }
@@ -1039,8 +1046,9 @@ export async function runBattle(o) {
       'text-shadow:0 0 18px rgba(255,200,60,.75),0 3px 8px rgba(0,0,0,.8);transition:transform .35s cubic-bezier(.2,.9,.3,1.3),opacity .35s';
     lay.appendChild(d);
     requestAnimationFrame(() => { d.style.opacity = '1'; d.style.transform = 'translate(-50%,-50%) scale(1)'; });
-    later(() => { d.style.opacity = '0'; d.style.transform = 'translate(-50%,-60%) scale(.96)'; }, 1300);
-    later(() => d.remove(), 1750);
+    const hold = Math.max(800, 1300 / sp());
+    setTimeout(() => { d.style.opacity = '0'; d.style.transform = 'translate(-50%,-60%) scale(.96)'; }, hold);
+    setTimeout(() => d.remove(), hold + 450);
   }
   function finish() { if (onDone) onDone(); }
 
@@ -1051,6 +1059,7 @@ export async function runBattle(o) {
     requestAnimationFrame(loop);
     let dt = Math.min(0.05, clock.getDelta()) * sp();
     if (stop > 0) { stop -= dt; dt *= 0.08; }           /* 타격 순간 시간을 눌러 준다 */
+    gT += dt; runDue();
     TW.step(dt);
     stepBursts(dt); stepFx(dt);
     stepBars();
