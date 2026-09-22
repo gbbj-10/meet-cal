@@ -99,7 +99,7 @@ html,body{margin:0;background:#080c13;color:var(--ink);
 a{color:var(--acc)}
 .bar{display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--line)}
 .bar .nm{font-weight:800;font-size:17px;color:var(--ink);text-decoration:none;
-  letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
+  letter-spacing:-.02em;display:flex;align-items:center;gap:8px;min-height:40px}
 __MKCSS__
 .bar .tl{font-size:12px;color:var(--dim);margin-left:-3px}
 @media(max-width:560px){.bar .tl{display:none}}
@@ -211,7 +211,8 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 .combo .orb.sm{width:26px;height:26px;display:grid;place-items:center;font:800 12px "Noto Serif KR",serif}
 .combo .cel{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-family:"Noto Serif KR",serif;font-size:17px;
   color:#0a0f18;background:radial-gradient(circle at 35% 30%,#fff,var(--cc) 55%,color-mix(in srgb,var(--cc) 60%,#000));box-shadow:0 0 12px var(--cc)}
-.combo .ctx{font-size:12.5px;line-height:1.5;color:var(--mut)}.combo .ctx b{color:var(--ink)}.combo small{color:var(--dim)}
+.combo .ctx{font-size:12.5px;line-height:1.5;color:var(--mut);text-align:left}.combo .ctx b.ctag{color:var(--cc)}.combo .ctx b{color:var(--ink)}.combo small{color:var(--mut);font-size:11.5px}
+.combo .cok{color:var(--cc);font-weight:700}.combo .clk{color:#e8a33c;font-weight:700}.combo.lock .cel{filter:saturate(.35) brightness(.8)}
 .hero2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:14px;margin:0 0 16px}
 @media(max-width:640px){.hero2{grid-template-columns:1fr}}
 .hcard,.hbars{background:var(--pan);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
@@ -808,21 +809,33 @@ function buildFight(){
   /* 상대 쪽 공격 몫 — 끝났을 때 각자 left 만큼 남게. 쓰러지는 사람은 없다. */
   var hurt=Math.round((1-left)*100*n), hits=T-1, per=hits?hurt/hits:0;
 
-  var pi=0, CB=myCombo(), ultAt=(CB && K>=FP.ULT_TIER) ? Math.min(2,T) : 0, calm=0;
+  var pi=0, CB=myCombo(), ultAt=(CB && K>=FP.ULT_TIER) ? Math.min(2,T) : 0, calm=0, dotV=0, dotN=0, guard=0, guardK=1;
+  function dot(){ if(!dotN||foe.hp<=0) return; var v=Math.min(dotV,foe.hp); dotN--; foe.hp-=v;
+    var ld=jn(foe.nm,['이','가'])+' '+(CB.fx==='gas'?'독연에 괴로워합니다':'뜨거운 김에 데었습니다');
+    push(ld+' (−'+v+')','hit'); L[L.length-1].foe=foe.hp/foe.max;
+    act({t:'dot', dmg:v, col:CB.col, foeHp:foe.hp/foe.max, text:ld}); }
   /* 필살기 = 이번 겨룸 내 몫 + 다음 겨룸 내 몫을 한 번에. 다음 겨룸 내 차례는 쉰다 */
   if(ultAt && plan[(ultAt)*n]!==undefined){ plan[(ultAt-1)*n]+=plan[ultAt*n]; plan[ultAt*n]=0; }
   for(var turn=1; turn<=T; turn++){
     push('— '+turn+'번째 겨룸','turn'); act({t:'turn', text:'— '+turn+'번째 겨룸'});
+    dot(); if(foe.hp<=0) break;
     for(var i=0;i<n;i++){
       var t=team[i], sk=strike(t.el,gEl), dmg=plan[pi++];
       if(!dmg) continue;
       if(i===0 && turn===ultAt){
+        /* 효과마다 실제로 다르게 — 설명과 전투가 맞게 */
+        var fx=CB.fx, splits=[dmg];
+        if((fx==='gas'||fx==='steam') && dmg>=6){ dotV=Math.max(1,Math.round(dmg*(fx==='gas'?0.12:0.2))); dotN=fx==='gas'?2:1; dmg-=dotV*dotN; splits=[dmg]; }
+        if(fx==='bolt'){ var b1=Math.round(dmg*0.55); splits=[b1,dmg-b1]; }
+        if(fx==='wind'){ var w1=Math.round(dmg*0.3), w2=Math.round(dmg*0.3); splits=[w1,w2,dmg-w1-w2]; }
         foe.hp=Math.max(0,foe.hp-dmg);
         var lu=t.nick+'의 조합 필살기 '+CB.sk+'('+CB.skHj+')! '+HJEL[CB.a]+HJEL[CB.b]+' → '+CB.nm+'. '+CB.eff+'.';
         push(lu+' (−'+dmg+')','big'); L[L.length-1].foe=foe.hp/foe.max;
-        act({t:'ult', by:0, dmg:dmg, foeHp:foe.hp/foe.max, fx:CB.fx, col:CB.col, name:CB.sk, hj:CB.skHj,
+        act({t:'ult', by:0, dmg:dmg, splits:splits, foeHp:foe.hp/foe.max, fx:fx, col:CB.col, name:CB.sk, hj:CB.skHj,
              pair:HJEL[CB.a]+HJEL[CB.b], nm:CB.nm, eff:CB.eff, text:lu});
-        if(/ice|quake|mist/.test(CB.fx)) calm=1;          /* 사냥감이 한 번 쉰다 */
+        if(/ice|quake|mist/.test(fx)) calm=1;          /* 사냥감이 한 번 쉰다 */
+        if(fx==='crystal') guard=2, guardK=0.5;        /* 결정 방벽 — 두 번 반으로 */
+        if(fx==='mud') guard=2, guardK=0.6;            /* 속박 — 두 번 약하게 */
         if(foe.hp<=0) break;
         continue;
       }
@@ -839,12 +852,15 @@ function buildFight(){
     var v=team.slice().sort(function(a,b){return b.hp-a.hp})[0];
     var d2=Math.max(1,Math.round(per*jit()));
     d2=Math.min(d2, Math.max(0, v.hp-Math.round(left*100*0.9)));
+    var gd=''; if(guard>0){ guard--; d2=Math.max(1,Math.round(d2*guardK)); gd=CB.fx==='crystal'?' — 결정 방벽이 막아 줍니다':' — 발이 묶여 힘이 빠졌습니다'; }
     v.hp-=d2;
-    var line2=jn(foe.nm,['이','가'])+' '+jn(v.nick,['을','를'])+' 덮칩니다';
+    var line2=jn(foe.nm,['이','가'])+' '+jn(v.nick,['을','를'])+' 덮칩니다'+gd;
     push(line2+' (−'+d2+')', ''); L[L.length-1].team=team.map(function(x){return {hp:x.hp/x.max,down:false}});
     act({t:'foehit', to:team.indexOf(v), dmg:d2, kind:'', hp:team.map(function(x){return x.hp/x.max}), text:line2});
   }
 
+  while(dotN>0 && foe.hp>0) dot();                    /* 남은 독·화상은 끝에 */
+  if(foe.hp>0){ foe.hp=0; }
   var endLine=jn(foe.nm,['이','가'])+' 물러갑니다.';
   push(endLine,'big'); act({t:'end', win:true, text:endLine});
 
@@ -1067,12 +1083,18 @@ function renderTop(){
 /* 내 조합 필살기 한 줄 — 사주 1·2위 속성이 만든 변화 속성 */
 function comboHTML(){
   var c=myCombo(); if(!c) return '';
-  return '<div class="combo" style="--cc:'+c.col+'">'+
+  /* 아직 기단 전이면 잠긴 채로 보여 준다 — 목표가 눈에 보이게 */
+  var best=0; GROUNDS.forEach(function(g){ best=Math.max(best, tierFor(powerAt(g.el).pow)); });
+  var open=best>=FP.ULT_TIER, need=TH[FP.ULT_TIER-1], now=0;
+  GROUNDS.forEach(function(g){ now=Math.max(now, powerAt(g.el).pow); });
+  return '<div class="combo'+(open?'':' lock')+'" style="--cc:'+c.col+'">'+
     '<span class="cgems">'+gem(colOf(c.a),HJEL[c.a],'orb sm')+'<i>+</i>'+gem(colOf(c.b),HJEL[c.b],'orb sm')+'<i>=</i>'+
     '<b class="cel">'+c.hj+'</b></span>'+
     '<span class="ctx"><b>조합 필살기 · '+c.sk+'</b> <small>'+c.skHj+'</small><br>'+
-    c.a+'+'+c.b+' → <b>'+c.nm+'</b>. '+'기단'+'부터 전투에 나옵니다 · '+
-    FP.FROM[c.strong[0]]+'·'+FP.FROM[c.strong[1]]+' 전투력 +'+Math.round(FP.COMBO_BONUS*100)+'%</span></div>';
+    c.a+'+'+c.b+' → <b>'+c.nm+'</b> · <b class="ctag">'+c.eff.split(' — ')[0]+'</b> '+(c.eff.split(' — ')[1]||'')+'<br>'+
+    (open ? '<span class="cok">열림 · 둘째 겨룸에 나갑니다</span>'
+          : '<span class="clk">잠김 · 기단(5단)에서 열림 · 전투력 '+now+' / '+need+'</span>')+'<br>'+
+    '공명 · '+FP.FROM[c.strong[0]]+'·'+FP.FROM[c.strong[1]]+' 전투력 +'+Math.round(FP.COMBO_BONUS*100)+'%</span></div>';
 }
 /* 보석 한 알. sq 면 네모 보석 */
 function gem(col, txt, cls){ return '<span class="'+(cls||'orb')+' gem" style="--c:'+col+'"><span class="h">'+txt+'</span></span>'; }

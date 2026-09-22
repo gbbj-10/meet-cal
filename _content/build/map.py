@@ -137,7 +137,7 @@ html,body{margin:0;background:#080c13;color:var(--ink);
 a{color:var(--acc)}
 .bar{display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--line)}
 .bar .nm{font-weight:800;font-size:17px;color:var(--ink);text-decoration:none;
-  letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
+  letter-spacing:-.02em;display:flex;align-items:center;gap:8px;min-height:40px}
 __MKCSS__
 .bar .tl{font-size:12px;color:var(--dim);margin-left:-3px}
 @media(max-width:560px){.bar .tl{display:none}}

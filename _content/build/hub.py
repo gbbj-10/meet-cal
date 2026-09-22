@@ -59,7 +59,7 @@ a{color:var(--acc)}
 header.site{border-bottom:1px solid var(--line);padding:16px 0}
 header.site .wrap{display:flex;align-items:center;gap:14px}
 header.site .nm{font-weight:800;font-size:19px;color:var(--ink);text-decoration:none;
-  letter-spacing:-.02em;display:flex;align-items:center;gap:9px}
+  letter-spacing:-.02em;display:flex;align-items:center;gap:9px;min-height:40px}
 __MKCSS__
 header.site .tl{font-size:12.5px;color:var(--dim);margin-left:-4px}
 header.site nav{margin-left:auto;display:flex;gap:16px;flex-wrap:wrap}
