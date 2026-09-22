@@ -208,6 +208,7 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 .hcombo{grid-column:1/-1}.hcombo:empty{display:none}
 .combo{display:flex;gap:10px;align-items:center;margin-top:10px;padding:9px 11px;border-radius:12px;
   background:linear-gradient(135deg,color-mix(in srgb,var(--cc) 16%,transparent),transparent);border:1px solid color-mix(in srgb,var(--cc) 45%,transparent)}
+@media(max-width:640px){.combo{flex-direction:column;align-items:flex-start;gap:6px}}
 .combo .cgems{display:flex;align-items:center;gap:3px;flex:none}.combo .cgems i{font-style:normal;color:var(--mut);font-size:12px}
 .combo .orb.sm{width:26px;height:26px;display:grid;place-items:center;font:800 12px "Noto Serif KR",serif}
 .combo .cel{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-family:"Noto Serif KR",serif;font-size:17px;
@@ -1222,7 +1223,7 @@ function renderTier(){
             : isOpen ? '<span class="rt2 open">열림</span>' : '<span class="rt2 shut">잠김</span>';
     var gap=need-P.pow;
     var why = isOpen
-      ? beastOf(t.k)+' · 권장 '+need+' · '+g.el+' 용신석 '+Math.round(dropFor(t.k,P.n)*lootMul(g.el))+'개'+(lootMul(g.el)>1?' ×'+(Math.round(lootMul(g.el)*10)/10):'')
+      ? beastOf(t.k)+' · 권장 '+need+' · '+g.el+' '+Math.round(dropFor(t.k,P.n)*lootMul(g.el))+'개'+(lootMul(g.el)>1?' ×'+(Math.round(lootMul(g.el)*10)/10):'')
       : beastOf(t.k)+' · 권장 '+need+' · <b style="color:#e8a33c">'+gap+' 부족</b>';
     html += '<button class="rung'+(t.k===cap&&isOpen&&!isDone?' now':'')+'" data-k="'+t.k+'"'+(isOpen?'':' disabled')+'>'+
       gem(g.col, t.hj, 'gz2 sq')+
