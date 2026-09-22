@@ -88,6 +88,7 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 .tag.good{color:#7fe08f;border-color:#2d6b38;background:#0f2415}
 .tag.mine{color:#9cc3f7;border-color:#2c4a7a;background:#141d2b}
 .tag.edge{color:#ffe27a;border-color:#6b5a1a;background:#241f0f}
+.tag.res{color:#e3b8ff;border-color:#5b3a78;background:#1c1226}
 .tag.warn{color:#f0a0a0;border-color:#5c241f;background:#1c100e}
 .card.best{border-color:#2d6b38;box-shadow:0 0 0 1px #2d6b38}
 .why{font-size:12.5px;color:var(--dim);margin-top:7px}
@@ -674,6 +675,10 @@ function beastOf(K){ return K>=10?'해태':K>=8?'범':K>=5?'멧돼지':'늑대';
 function preyOf(g,K){ return K>=10 ? g.el+'령 해태' : K>=8 ? g.el+'령 범' : K>=5 ? g.el+'령 멧돼지' : g.prey; }
 function tierCap(gEl){ return Math.max(1, tierFor(powerAt(gEl).pow)); }
 function dropFor(k,n){ return Math.round(k*(1+0.25*(n-1))); }
+/* 내 조합이 누르는 두 땅(공명) — 용신석 ×1.2. 사주마다 자주 가는 땅이 갈라진다 */
+function isResG(el){ var c=myCombo(); return !!(c && c.strong.indexOf(el)>=0); }
+function lootMul(el){ return (isTodayG(el)?1.5:1)*(isResG(el)?1.2:1); }
+function lootTag(el){ var t=[]; if(isTodayG(el)) t.push('오늘 ×1.5'); if(isResG(el)) t.push('공명 ×1.2'); return t.join(' · '); }
 
 /* ===================== 전투 ===================== */
 /* 보는 전투다. 한 번 누르면 끝까지 굴러가고, 사람은 로그를 읽는다.
@@ -788,8 +793,8 @@ function buildFight(){
   var endLine=jn(foe.nm,['이','가'])+' 물러갑니다.';
   push(endLine,'big'); act({t:'end', win:true, text:endLine});
 
-  var loot=Math.round(dropFor(K,n)*(isTodayG(gEl)?1.5:1));
-  var ltext=gEl+' 용신석 '+loot+'개 획득'+(isTodayG(gEl)?' (오늘의 사냥터 ×1.5)':'')+(n>1?' — 한 사람에 '+loot+'개씩':'')+'.';
+  var loot=Math.round(dropFor(K,n)*lootMul(gEl));
+  var ltext=gEl+' 용신석 '+loot+'개 획득'+(lootTag(gEl)?' ('+lootTag(gEl)+')':'')+(n>1?' — 한 사람에 '+loot+'개씩':'')+'.';
   push(ltext,'big'); act({t:'loot', el:gEl, n:loot, yong:true, text:ltext});
 
   var nxt = K<10 ? TH[K] : null, gapN = nxt ? nxt-P.pow : 0;
@@ -1018,7 +1023,7 @@ function comboHTML(){
     c.a+'+'+c.b+' → <b>'+c.nm+'</b> · <b class="ctag">'+c.eff.split(' — ')[0]+'</b> '+(c.eff.split(' — ')[1]||'')+'<br>'+
     (open ? '<span class="cok">열림 · 둘째 겨룸에 나갑니다</span>'
           : '<span class="clk">잠김 · 기단(5단)에서 열림 · 전투력 '+now+' / '+need+'</span>')+'<br>'+
-    '공명 · '+FP.FROM[c.strong[0]]+'·'+FP.FROM[c.strong[1]]+' 전투력 +'+Math.round(FP.COMBO_BONUS*100)+'%</span></div>';
+    '공명 · '+FP.FROM[c.strong[0]]+'·'+FP.FROM[c.strong[1]]+' — 용신석 ×1.2, 기단부터 전투력 +'+Math.round(FP.COMBO_BONUS*100)+'%</span></div>';
 }
 /* 보석 한 알. sq 면 네모 보석 */
 function gem(col, txt, cls){ return '<span class="'+(cls||'orb')+' gem" style="--c:'+col+'"><span class="h">'+txt+'</span></span>'; }
@@ -1063,6 +1068,8 @@ function renderGuide(){
     '<li>이기면 그 땅의 <b>용신석</b>이 떨어집니다. 용신석을 모으면 그 속성 수치가 올라 <b>더 높은 단</b>으로 갈 수 있습니다.</li>'+
     '<li><b>친구와 파티를 하면 더 높은 단을 깰 수 있고</b>, 한 사람이 받는 용신석도 늘어납니다.</li>'+
     '<li>높은 단일수록 용신석이 많이 나옵니다.</li>'+
+    '<li><b>오늘의 사냥터</b>는 용신석 ×1.5, 내 사주 조합이 누르는 두 땅(<b>조합 공명</b>)은 ×1.2 — 사주마다 자주 가는 땅이 다릅니다.</li>'+
+    '<li><b>기단</b>부터는 사주 1·2위 속성이 만난 <b>조합 필살기</b>가 둘째 겨룸에 나갑니다.</li>'+
     '</ul></div>'+ wuxingSVG();
 }
 
@@ -1079,6 +1086,7 @@ function renderPick(){
     var P0=powerAt(g.el), cap=Math.max(1,tierFor(P0.pow)), rec=TH[Math.min(9,cap)] || TH[9];
     var tags='';
     if(isTodayG(g.el)) tags+='<span class="tag good">오늘의 사냥터 · 용신석 ×1.5</span>';
+    if(isResG(g.el)) tags+='<span class="tag res">조합 공명 · 용신석 ×1.2</span>';
     tags+='<span class="tag edge">'+FP.edge(g.el)+' 우세</span>';
     var dn=cleared(g.id);
     var why='내 전투력 <b>'+P0.pow+'</b> · '+(cap<10 ? tOf(cap+1).nm+' 권장 '+rec : '갑단까지 열림')+
@@ -1138,7 +1146,7 @@ function renderTier(){
             : isOpen ? '<span class="rt2 open">열림</span>' : '<span class="rt2 shut">잠김</span>';
     var gap=need-P.pow;
     var why = isOpen
-      ? beastOf(t.k)+' · 권장 '+need+' · '+g.el+' 용신석 '+Math.round(dropFor(t.k,P.n)*(isTodayG(g.el)?1.5:1))+'개'+(isTodayG(g.el)?' (×1.5)':'')
+      ? beastOf(t.k)+' · 권장 '+need+' · '+g.el+' 용신석 '+Math.round(dropFor(t.k,P.n)*lootMul(g.el))+'개'+(lootMul(g.el)>1?' ×'+(Math.round(lootMul(g.el)*10)/10):'')
       : beastOf(t.k)+' · 권장 '+need+' · <b style="color:#e8a33c">'+gap+' 부족</b>';
     html += '<button class="rung'+(t.k===cap&&isOpen&&!isDone?' now':'')+'" data-k="'+t.k+'"'+(isOpen?'':' disabled')+'>'+
       gem(g.col, t.hj, 'gz2 sq')+
@@ -1167,7 +1175,7 @@ function renderParty(){
     '<span><h1>'+g.nm+' '+tOf(TIER).nm+'</h1><span class="hj">'+tOf(TIER).gan+'급 '+preyOf(g,TIER)+'</span></span>';
   var Pp=powerAt(g.el);
   $('gsub').textContent = g.one + ' — 권장 전투력 '+TH[TIER-1]+' · 내 '+(Pp.n>1?'파티 ':'')+'전투력 '+Pp.pow+
-    (isTodayG(g.el)?' · 오늘의 사냥터(용신석 ×1.5)':'');
+    (lootTag(g.el)?' · 용신석 '+lootTag(g.el):'');
 
   var html='';
   /* 내 자리 */
