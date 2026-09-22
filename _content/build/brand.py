@@ -53,6 +53,9 @@ CHIP = ('.fpchip{display:inline-flex;align-items:center;gap:5px;text-decoration:
 
 CSS = (CHIP +
        '.mk{width:24px;height:24px;flex:none;display:block}'
+       # 메뉴 링크 누름 영역 — 손가락 기준 최소 40px (루프1 플레이테스트: 15px 였다)
+       'header nav a,.bar nav a,.top-bar nav a,footer a{display:inline-flex;align-items:center;min-height:40px}'
+       'main .h a,main a[data-cta]{display:inline-flex;align-items:center;min-height:40px}'
        '.bar .mk,.top-bar .mk{width:21px;height:21px}'
        '@media(max-width:430px){'
        'header.site nav a[href="/"],.bar nav a[href="/"],.top-bar nav a[href="/"]{display:none}'

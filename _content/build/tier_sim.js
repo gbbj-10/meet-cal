@@ -1,43 +1,33 @@
-/* Four Paws — 단(段) 성장 검산기   node _content/build/tier_sim.js
+/* 단 밸런스 검산 — node _content/build/tier_sim.js
  *
- * 규칙 (2026-09-21 개정 — me.js · hunt.py 와 같은 숫자)
- *   속성 수치 = 50 + 사주 비율 × 0.4 + 그 속성 용신석 개수   (오늘의 기운 속성은 +10%)
- *   전투력 = 다섯 속성 × 땅과의 관계 무게의 합
- *            그 땅을 누르는 속성 1.5 · 같은 속성 1.0 · 서로 살리는 사이 0.8 · 그 땅에 눌리는 속성 0.5
- *   문턱   = 250 265 290 340 425 565 765 1040 1425 1950  (계단 → 갑단)
- *   문턱을 넘은 단은 반드시 이긴다. 이기면 각자 용신석 = 단 × (1 + 0.25 × (인원 − 1))
- *   파티 전투력 = 가장 센 사람 + 나머지 × 0.2, 상생 한 쌍마다 +5%
- * 목표: 혼자 갑단까지 약 250~330판(한 판 1분 → 4~6시간)
+ * 규칙은 me.js / hunt.py 와 같다 (루프3, 2026-09-22):
+ *   수치     = 30 + 사주 비율 × 1.0 + 그 속성 용신석 (오늘의 기운 +5%)
+ *   전투력   = Σ 수치 × 상성(극 1.5 · 같음 1.0 · 상생 0.8 · 역극 0.5)
+ *   권장     = 180 205 240 310 425 605 880 1260 1790 2515 (계단 → 갑단)
+ *   보상     = 단 번호개, 오늘의 사냥터(오늘 기운이 든 땅) ×1.5
+ * 하루 10판, 날마다 오늘의 기운이 돈다. 목표: 혼자 갑단까지 약 200~230판(3~4주).
  */
-const DGEUK={목:'토',토:'수',수:'화',화:'금',금:'목'};
-const DSAENG={목:'화',화:'토',토:'금',금:'수',수:'목'};
-const ELS=['목','화','토','금','수'];
-const TH=[250,265,290,340,425,565,765,1040,1425,1950];
-const NM=['계단','임단','신단','경단','기단','무단','정단','병단','을단','갑단'];
-const w=(X,G)=>DGEUK[X]===G?1.5:X===G?1.0:(DSAENG[G]===X||DSAENG[X]===G)?0.8:0.5;
-const pow=(st,G)=>ELS.reduce((a,X)=>a+st[X]*w(X,G),0);
-const drop=(k,n)=>Math.round(k*(1+0.25*(n-1)));
-const tierOf=p=>{let t=0;for(let i=0;i<10;i++) if(p>=TH[i]) t=i+1; return t;};
-function run(ratio,n){
-  const st={}; ELS.forEach(e=>st[e]=50+Math.round((ratio[e]||0)*0.4));
-  const party=n>1?(1+0.2*(n-1))*(1+0.05*Math.min(5,n)):1;   // 친구도 나와 비슷하다고 본다
-  const at=G=>tierOf(pow(st,G)*party);
-  const start={}; ELS.forEach(G=>start[G]=NM[at(G)-1]);
-  const best=ELS.slice().sort((a,b)=>pow(st,b)-pow(st,a))[0];
-  let r=0; const hit={};
-  while(at(best)<10 && r<9000){
-    const G=ELS.slice().sort((a,b)=>at(b)-at(a) || w(b,best)-w(a,best))[0];   // 가장 높은 단을 도는 곳
-    st[G]+=drop(Math.max(1,at(G)),n); r++;
-    const t=at(best); if(hit[t]===undefined) hit[t]=r;
+const DGEUK={목:'토',토:'수',수:'화',화:'금',금:'목'}, DSAENG={목:'화',화:'토',토:'금',금:'수',수:'목'};
+const E=['목','화','토','금','수'];
+const w=(x,g)=>DGEUK[x]===g?1.5:x===g?1:(DSAENG[g]===x||DSAENG[x]===g)?0.8:0.5;
+const P={p1:{목:13,화:0,토:25,금:37,수:25},p2:{목:0,화:17,토:49,금:17,수:17},p3:{목:36,화:0,토:13,금:13,수:38},p4:{목:0,화:0,토:50,금:25,수:25},p5:{목:0,화:13,토:25,금:49,수:13}};
+const TH=[180,205,240,310,425,605,880,1260,1790,2515];
+const GAN='목목화화토토금금수수', ZHI='수토목목토화화토금금토수';
+const tier=p=>{let t=0;for(let i=0;i<10;i++) if(p>=TH[i]) t=i+1; return t;};
+for(const [k,r] of Object.entries(P)){
+  const st={};E.forEach(e=>st[e]=30+r[e]);
+  let n=0, day=0; const vis={};
+  while(n<600){
+    const td=[GAN[day%10],ZHI[day%12]];
+    for(let j=0;j<10&&n<600;j++){ n++;   // 하루 10판
+      const pw=g=>E.reduce((a,x)=>a+st[x]*(td.includes(x)?1.05:1)*w(x,g),0);
+      const val=g=>{const t=tier(pw(g));return t*(td.includes(g)?1.5:1);};
+      const g=E.slice().sort((a,b)=>val(b)-val(a)||pw(b)-pw(a))[0];
+      vis[g]=(vis[g]||0)+1; st[g]+=Math.round(Math.max(1,tier(pw(g)))*(td.includes(g)?1.5:1));
+      if(E.some(x=>tier(pw(x))>=10)) break;
+    }
+    if(E.some(x=>tier(E.reduce((a,y)=>a+st[y]*w(y,x),0))>=10)) break;
+    day++;
   }
-  return {start,best,r,hit};
+  console.log(k,'갑단',n,'판',day+1,'일',JSON.stringify(vis),'돌',JSON.stringify(Object.fromEntries(E.map(e=>[e,st[e]-30-r[e]]))));
 }
-const CH={'금 50%':{목:0,화:33,토:0,금:50,수:17},'고르게 퍼진 사주':{목:25,화:25,토:12.5,금:25,수:12.5},'목 75% 몰림':{목:75,화:0,토:12.5,금:12.5,수:0}};
-console.log('문턱  '+NM.map((x,i)=>x+' '+TH[i]).join(' · '));
-for(const [nm,r] of Object.entries(CH)){
-  const o=run(r,1);
-  console.log(`\n[${nm}] 시작: ${Object.entries(o.start).map(([g,t])=>g+'땅 '+t).join(', ')}`);
-  console.log(`   가장 센 땅(${o.best}) — `+NM.map((x,i)=>o.hit[i+1]!==undefined? x+' '+o.hit[i+1]:null).filter(Boolean).join(' → ')+'판');
-}
-console.log('\n인원별 갑단까지 (고르게 퍼진 사주)');
-for(let n=1;n<=5;n++) console.log(`  ${n}명  ${run(CH['고르게 퍼진 사주'],n).r}판`);
