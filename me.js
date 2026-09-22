@@ -103,6 +103,35 @@
 
     FROM: { 목: '녹빛 언덕', 화: '붉은 마당', 토: '황토 텃밭', 금: '하얀 골목', 수: '청빛 호수' },
 
+    /* ── 사주 조합 필살기 (2026-09-22) ──
+       사주에서 가장 많은 두 속성이 만나면 오행 너머의 '변화 속성'이 생긴다.
+       금+수 → 얼음, 화+토 → 가스 … 열 가지. 기단(5단)부터 전투에 나오고,
+       두 속성이 누르는 두 땅에서 전투력 +8% (조합 공명). 후반에도 사주마다 길이 갈린다. */
+    ULT_TIER: 5, COMBO_BONUS: 0.08,
+    COMBO: {
+      '목화': { nm: '번개',   hj: '雷', sk: '벽력일섬', skHj: '霹靂一閃', fx: 'bolt',    col: '#ffe45c', eff: '연쇄 — 벼락이 두 번 떨어집니다' },
+      '화토': { nm: '가스',   hj: '瓦', sk: '독연분화', skHj: '毒煙噴火', fx: 'gas',     col: '#b6e05a', eff: '중독 — 사냥감이 독연에 휩싸입니다' },
+      '토금': { nm: '수정',   hj: '晶', sk: '수정천주', skHj: '水晶天柱', fx: 'crystal', col: '#e9b8ff', eff: '결정 방벽 — 파티가 받는 피해가 줄어듭니다' },
+      '금수': { nm: '얼음',   hj: '氷', sk: '빙결만리', skHj: '氷結萬里', fx: 'ice',     col: '#a8ecff', eff: '빙결 — 사냥감이 한 번 얼어붙습니다' },
+      '목수': { nm: '안개',   hj: '霧', sk: '운무미혹', skHj: '雲霧迷惑', fx: 'mist',    col: '#dfe9f2', eff: '미혹 — 사냥감의 반격이 빗나갑니다' },
+      '목토': { nm: '지진',   hj: '震', sk: '지룡진동', skHj: '地龍震動', fx: 'quake',   col: '#d9a45b', eff: '기절 — 사냥감이 한 번 쓰러집니다' },
+      '토수': { nm: '진흙',   hj: '泥', sk: '니소속박', skHj: '泥沼束縛', fx: 'mud',     col: '#9b7a52', eff: '속박 — 사냥감의 발이 묶입니다' },
+      '화수': { nm: '증기',   hj: '蒸', sk: '증기폭발', skHj: '蒸氣爆發', fx: 'steam',   col: '#f4f4f4', eff: '화상 — 뜨거운 김이 터집니다' },
+      '화금': { nm: '쇳물',   hj: '熔', sk: '용철낙하', skHj: '熔鐵落下', fx: 'molten',  col: '#ff8a3d', eff: '관통 — 쇳물이 쏟아져 크게 들어갑니다' },
+      '목금': { nm: '칼바람', hj: '風', sk: '풍인난무', skHj: '風刃亂舞', fx: 'wind',    col: '#d7fff0', eff: '연타 — 바람 칼날이 세 번 벱니다' }
+    },
+    /* r = 사주 비율 {목:..}. 1·2위(동률이면 ORDER 순). 2위가 0% 면 1위 속성끼리(순수) */
+    combo: function (r) {
+      r = r || this.ratio(); if (!r) return null;
+      var o = this.ORDER.slice().sort(function (x, y) { return (r[y] || 0) - (r[x] || 0); });
+      var a = o[0], b = (r[o[1]] || 0) > 0 ? o[1] : null;
+      if (!b) return null;
+      var ord = this.ORDER, k = [a, b].sort(function (x, y) { return ord.indexOf(x) - ord.indexOf(y); }).join('');
+      var c = this.COMBO[k]; if (!c) return null;
+      return { a: a, b: b, key: k, nm: c.nm, hj: c.hj, sk: c.sk, skHj: c.skHj, fx: c.fx, col: c.col, eff: c.eff,
+               strong: [GEUK[a], GEUK[b]] };
+    },
+
     ratio: function () {
       var m = this.get(); if (!m) return null;
       if (m.ratio) return m.ratio;
