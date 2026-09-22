@@ -16,7 +16,9 @@ const COL = { 목:0x4fb95f, 화:0xe8483c, 토:0xffd93d, 금:0x8e9bb0, 수:0x3f8f
 const MDL = { 목:'m_mok', 화:'m_hwa', 토:'m_to', 금:'m_geum', 수:'m_su' };
 /* 사냥감 — 단이 오르면 짐승이 바뀐다 (트리포 메시 + 늑대 뼈대, rigN)
    계단~경단 늑대 · 기단~정단 멧돼지 · 병단~을단 범 · 갑단 해태 */
-const FOE_MDL = t => t >= 10 ? 'm_haetae' : t >= 8 ? 'm_tiger' : t >= 5 ? 'm_boar' : 'm_enemy';
+/* 던전마다 사냥감이 다르다 — 수 늑대 · 토 멧돼지 · 목 사슴 · 화 해태(불을 먹는 짐승) · 금 백호(서쪽의 흰 범) */
+const FOE_BY_EL = { 수: 'm_enemy', 토: 'm_boar', 목: 'm_deer', 화: 'm_haetae', 금: 'm_tiger' };
+const FOE_MDL = el => FOE_BY_EL[el] || 'm_enemy';
 const POSE = { idle:'Idle', attack:'Attack', hit:'Idle_HitReact1', death:'Death', walk:'Walk' };
 
 /* ── 던전 테마 ── (예전 3D 파티전투 원형 34_3D_파티전투_5종.html 에서 옮겨 왔다)
@@ -364,7 +366,7 @@ export async function runBattle(o) {
   /* o.onLoot(주운 수, 전체) — 화면 위 숫자를 세는 쪽에서 쓴다 */
 
   /* ── 모델 받기 ── */
-  const want = [...new Set(team.map(t => MDL[t.el]))].concat(FOE_MDL(o.tier || 1));
+  const want = [...new Set(team.map(t => MDL[t.el]))].concat(FOE_MDL(foe.el));
   let got = 0;
   const packs = {};
   for (const n of want) {
@@ -505,17 +507,21 @@ export async function runBattle(o) {
     const k = n === 1 ? 0 : i / (n - 1) - 0.5;          /* -0.5 ~ +0.5 */
     return build(t.el, MDL[t.el], -1.2 - Math.abs(k) * 0.7 - (k < 0 ? 0.25 : 0), k * 2.5, Math.PI / 2);
   });
-  const foeMdl = FOE_MDL(o.tier || 1);
+  const foeMdl = FOE_MDL(foe.el);
   const boss = build(foe.el, foeMdl, 2.45, 0, -Math.PI / 2);
   /* 사냥감은 던전 속성 색으로 물들이고, 단이 오를수록 커진다(계단 1.45 → 갑단 1.9).
      예전엔 다섯 던전 모두 같은 회색 늑대였다 — 롤토체스·서머너즈워는 적마다 생김이 다르다. */
   const tierK = Math.max(1, Math.min(10, o.tier || 1));
-  const bs = 1.45 + (tierK - 1) * 0.05;
+  /* 사슴은 뿔까지 키에 들어가 몸이 작아 보인다 — 조금 키운다 */
+  const bs = (1.45 + (tierK - 1) * 0.05) * (foeMdl === 'm_deer' && !packs[foeMdl].fallback ? 1.18 : 1);
   boss.wob.scale.setScalar(bs); boss.glow.scale.setScalar(bs); boss.shadow.scale.setScalar(bs); boss.half *= bs;
   boss.sc = bs;
   const tint = new THREE.Color(COL[foe.el] || 0x888888);
+  /* 백호는 흰 털이 살도록 속성 색 대신 흰빛으로 */
+  const white = foeMdl === 'm_tiger' && !packs[foeMdl].fallback;
+  const bodyTint = white ? new THREE.Color(0xf4f6fa) : tint;
   boss.meshes.forEach(m => eachMat(m, x => {
-    if (x.color) x.color.lerp(tint, 0.45);
+    if (x.color) x.color.lerp(bodyTint, white ? 0.55 : 0.45);
     if (x.emissive) { x.userData.baseEm = tint.clone().multiplyScalar(0.10 + tierK * 0.02); x.emissive.copy(x.userData.baseEm); }
   }));
   if (foeMdl === 'm_enemy' || packs[foeMdl].fallback) addCrest(boss, foe.el, tierK, tint, sc);   /* 늑대만 — 새 짐승은 생김 자체가 다르다 */
