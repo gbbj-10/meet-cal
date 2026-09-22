@@ -468,7 +468,7 @@ export async function runBattle(o) {
     sh.rotation.x = -Math.PI / 2; sh.position.y = 0.012; holder.add(sh);
 
     /* 몸 반길이 — 코끝이 맞닿는 거리를 재는 데 쓴다. 모델은 +z 를 보고 있다 */
-    const half = (sz.z * (0.92 / sz.y)) / 2;
+    const half = (Math.max(sz.z, sz.x) * (0.92 / sz.y)) / 2;   /* Tripo 모델은 옆으로 누운 축일 수 있어 긴 쪽 */
     const u = { el, holder, wob, mx, clip, meshes, outlines, glow, shadow: sh, alive: true, pose: null, one: null, flash: 0, lineT: 0,
                 half, home: holder.position.clone() };
     pose(u, 'idle');
@@ -548,14 +548,14 @@ export async function runBattle(o) {
       b.el.style.opacity = b.u.alive ? 1 : 0;
     });
   }
-  function pop(u, txt, kind) {
+  function pop(u, txt, kind, col) {
     const v = u.holder.position.clone(); v.y = 1.25;
     v.project(cam);
     const el = document.createElement('div');
     el.textContent = txt;
     el.style.cssText = 'position:absolute;font-weight:800;font-size:' +
       (kind === 'ult' ? 30 : kind === 'big' ? 22 : 17) + 'px;transform:translate(-50%,-50%);' +
-      'color:' + (kind === 'ult' ? '#fff3b0' : kind === 'big' ? '#ffd93d' : kind === 'bad' ? '#ff8f8f' : '#ffffff') +
+      'color:' + (col ? col : kind === 'ult' ? '#fff3b0' : kind === 'big' ? '#ffd93d' : kind === 'bad' ? '#ff8f8f' : '#ffffff') +
       ';text-shadow:0 2px 6px rgba(0,0,0,.85);transition:transform .7s ease-out,opacity .7s ease-out;' +
       'left:' + ((v.x * 0.5 + 0.5) * 100) + '%;top:' + ((-v.y * 0.5 + 0.5) * 100) + '%';
     lay.appendChild(el);
@@ -971,12 +971,23 @@ export async function runBattle(o) {
       if (onCaption) onCaption(a.text);
       cutIn(a); charge(u, a.col); once(u, 'attack', 0.9);
       later(() => ultFx(a), 650);
-      later(() => {
-        boss.hpNow = a.foeHp; pop(boss, '−' + a.dmg, 'ult'); hitFx(boss, 'big');
-        if (boss.alive && a.foeHp > 0 && a.fx !== 'ice') once(boss, 'hit', 0.6);
-        setHp(boss, a.foeHp); if (o.onFoeHp) o.onFoeHp(a.foeHp);
-      }, 1150);
-      wait = 2300;
+      /* 연쇄·연타는 숫자가 나눠 뜬다 — 번개 두 번, 칼바람 세 번 */
+      const parts = (a.splits && a.splits.length) ? a.splits : [a.dmg];
+      const hp0 = boss.hpNow == null ? 1 : boss.hpNow;
+      let acc = 0;
+      parts.forEach((d, k) => later(() => {
+        acc += d; const r = hp0 - (hp0 - a.foeHp) * (acc / a.dmg);
+        boss.hpNow = r; pop(boss, '−' + d, 'ult'); hitFx(boss, 'big');
+        if (k === parts.length - 1 && boss.alive && a.foeHp > 0 && a.fx !== 'ice') once(boss, 'hit', 0.6);
+        setHp(boss, r); if (o.onFoeHp) o.onFoeHp(r);
+      }, 1150 + k * 260));
+      wait = 2300 + (parts.length - 1) * 260;
+    }
+    else if (a.t === 'dot') {                        /* 독연·화상 — 사냥감 위로 색 숫자 */
+      if (onCaption) onCaption(a.text);
+      boss.hpNow = a.foeHp; pop(boss, '−' + a.dmg, 'dot', a.col); hitFx(boss, '');
+      setHp(boss, a.foeHp); if (o.onFoeHp) o.onFoeHp(a.foeHp);
+      wait = 650;
     }
     else if (a.t === 'foehit') {
       const v = mates[a.to]; if (!v) return next();
@@ -1007,10 +1018,29 @@ export async function runBattle(o) {
       if (a.win) {
         boss.alive = false; once(boss, 'death', 1.1, true);
         TW.add(0, 1, 1.3, 'in', p => fade(boss, p, 0.95));
+        later(victory, 1050);          /* 쓰러지는 걸 본 다음에 */
       }
-      wait = 900;
+      wait = a.win ? 1900 : 900;
     }
     later(next, wait);
+  }
+  /* 이긴 순간 — 파티가 두 번 뛰고, 가운데 '승리' 가 찍힌다 */
+  function victory() {
+    zoom = Math.max(zoom, 0.9);
+    mates.forEach((u, i) => { if (!u.alive) return;
+      later(() => { if (dead) return;
+        TW.add(0, 1, 0.34, 'out', t => { u.wob.position.y = Math.sin(t * Math.PI) * 0.42; }, () => {
+          TW.add(0, 1, 0.3, 'out', t => { u.wob.position.y = Math.sin(t * Math.PI) * 0.26; }, () => { u.wob.position.y = 0; }); });
+      }, i * 90); });
+    const d = document.createElement('div');
+    d.textContent = '승리';
+    d.style.cssText = 'position:absolute;left:50%;top:40%;transform:translate(-50%,-50%) scale(1.6);opacity:0;pointer-events:none;' +
+      'font:900 clamp(34px,10vw,58px) "Noto Serif KR",serif;letter-spacing:.18em;color:#ffe27a;' +
+      'text-shadow:0 0 18px rgba(255,200,60,.75),0 3px 8px rgba(0,0,0,.8);transition:transform .35s cubic-bezier(.2,.9,.3,1.3),opacity .35s';
+    lay.appendChild(d);
+    requestAnimationFrame(() => { d.style.opacity = '1'; d.style.transform = 'translate(-50%,-50%) scale(1)'; });
+    later(() => { d.style.opacity = '0'; d.style.transform = 'translate(-50%,-60%) scale(.96)'; }, 1300);
+    later(() => d.remove(), 1750);
   }
   function finish() { if (onDone) onDone(); }
 
