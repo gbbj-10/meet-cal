@@ -14,13 +14,15 @@ const P={p1:{목:13,화:0,토:25,금:37,수:25},p2:{목:0,화:17,토:49,금:17,�
 const TH=[180,205,240,310,425,605,880,1260,1790,2515];
 const GAN='목목화화토토금금수수', ZHI='수토목목토화화토금금토수';
 const tier=p=>{let t=0;for(let i=0;i<10;i++) if(p>=TH[i]) t=i+1; return t;};
-for(const [k,r] of Object.entries(P)){
+const GE={목:'토',토:'수',수:'화',화:'금',금:'목'};
+const comboStrong=r=>{const o=E.slice().sort((a,b)=>(r[b]||0)-(r[a]||0)); return (r[o[1]]||0)>0?[GE[o[0]],GE[o[1]]]:[];};
+for(const [k,r] of Object.entries(P)){ const CS=comboStrong(r);
   const st={};E.forEach(e=>st[e]=30+r[e]);
   let n=0, day=0; const vis={};
   while(n<600){
     const td=[GAN[day%10],ZHI[day%12]];
     for(let j=0;j<10&&n<600;j++){ n++;   // 하루 10판
-      const pw=g=>E.reduce((a,x)=>a+st[x]*(td.includes(x)?1.05:1)*w(x,g),0);
+      const pw0=g=>E.reduce((a,x)=>a+st[x]*(td.includes(x)?1.05:1)*w(x,g),0); const pw=g=>{const p=pw0(g); return (CS.includes(g)&&tier(p*1.08)>=5)?p*1.08:p;};
       const val=g=>{const t=tier(pw(g));return t*(td.includes(g)?1.5:1);};
       const g=E.slice().sort((a,b)=>val(b)-val(a)||pw(b)-pw(a))[0];
       vis[g]=(vis[g]||0)+1; st[g]+=Math.round(Math.max(1,tier(pw(g)))*(td.includes(g)?1.5:1));

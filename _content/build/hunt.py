@@ -204,6 +204,14 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 .card .tag{backdrop-filter:blur(2px)}
 
 /* ── 맨 위: 내 캐릭터 + 오늘의 기운 | 속성 막대 ── */
+.hcombo{grid-column:1/-1}.hcombo:empty{display:none}
+.combo{display:flex;gap:10px;align-items:center;margin-top:10px;padding:9px 11px;border-radius:12px;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--cc) 16%,transparent),transparent);border:1px solid color-mix(in srgb,var(--cc) 45%,transparent)}
+.combo .cgems{display:flex;align-items:center;gap:3px;flex:none}.combo .cgems i{font-style:normal;color:var(--mut);font-size:12px}
+.combo .orb.sm{width:26px;height:26px;display:grid;place-items:center;font:800 12px "Noto Serif KR",serif}
+.combo .cel{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-family:"Noto Serif KR",serif;font-size:17px;
+  color:#0a0f18;background:radial-gradient(circle at 35% 30%,#fff,var(--cc) 55%,color-mix(in srgb,var(--cc) 60%,#000));box-shadow:0 0 12px var(--cc)}
+.combo .ctx{font-size:12.5px;line-height:1.5;color:var(--mut)}.combo .ctx b{color:var(--ink)}.combo small{color:var(--dim)}
 .hero2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:14px;margin:0 0 16px}
 @media(max-width:640px){.hero2{grid-template-columns:1fr}}
 .hcard,.hbars{background:var(--pan);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
@@ -432,6 +440,7 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
       <div class="hcard">
         <div class="hdog" id="hdog"></div>
         <div class="hinfo" id="today"></div>
+        <div class="hcombo" id="hcombo"></div>
       </div>
       <details class="hbars" id="hbarsw"><summary>내 속성 수치</summary><div id="hbars"></div></details>
     </div>
@@ -721,12 +730,23 @@ function powerAt(gEl){
   var who=[{me:true, el:MYEL, nick:(ME&&ME.nick)||'나'}];
   PARTY.forEach(function(f){ if(f) who.push({el:f.el, nick:f.nick, stats:f.stats}); });
   var pows=who.map(function(w){ return FP.powerOf(valsOf(w), gEl); });
-  var top=Math.max.apply(null,pows), sum=pows.reduce(function(a,b){return a+b},0);
   var syn=synergy(who.map(function(w){return w.el}));
-  var pow=(top + (sum-top)*0.2) * (1+0.05*syn.pairs);
+  function total(p){ var top=Math.max.apply(null,p), sum=p.reduce(function(a,b){return a+b},0);
+    return (top + (sum-top)*0.2) * (1+0.05*syn.pairs); }
+  var pow=total(pows), res=0, CB=myCombo();
+  /* 조합 공명 — 내 조합이 누르는 땅에서는 내 몫 +8%. 기단(필살기가 열리는 단)부터 */
+  if(CB && CB.strong.indexOf(gEl)>=0){
+    var p2=pows.slice(); p2[0]=Math.round(p2[0]*(1+FP.COMBO_BONUS));
+    var pw2=total(p2);
+    if(tierFor(pw2)>=FP.ULT_TIER){ pow=pw2; pows=p2; res=1; }
+  }
   return {edge:FP.edge(gEl), pow:Math.round(pow), mine:pows[0], n:who.length,
-          pairs:syn.pairs, who:who, vals:pows};
+          pairs:syn.pairs, who:who, vals:pows, res:res};
 }
+function myCombo(){ return (window.FP && FP.combo) ? FP.combo() : null; }
+/* 단이 오르면 사냥감이 바뀐다 — battle3d FOE_MDL 과 같은 구간 */
+function beastOf(K){ return K>=10?'해태':K>=8?'범':K>=5?'멧돼지':'늑대'; }
+function preyOf(g,K){ return K>=10 ? g.el+'령 해태' : K>=8 ? g.el+'령 범' : K>=5 ? g.el+'령 멧돼지' : g.prey; }
 function tierCap(gEl){ return Math.max(1, tierFor(powerAt(gEl).pow)); }
 function dropFor(k,n){ return Math.round(k*(1+0.25*(n-1))); }
 
@@ -764,7 +784,7 @@ function buildFight(){
   /* 여유가 클수록 빨리 끝나고 덜 맞는다. 문턱에 딱 걸치면 아슬아슬하다. */
   var T    = Math.max(3, Math.min(7, Math.round(7-(margin-1)*8)));
   var left = Math.max(0.16, Math.min(0.92, 0.16+(margin-1)*1.6));
-  var foe  = {nm:tOf(K).gan+'급 '+g.prey, el:gEl, max:Math.round(need*(1+0.6*(n-1))), hp:0};
+  var foe  = {nm:tOf(K).gan+'급 '+preyOf(g,K), el:gEl, max:Math.round(need*(1+0.6*(n-1))), hp:0};
   foe.hp=foe.max;
 
   var L=[], A=[];
@@ -788,11 +808,24 @@ function buildFight(){
   /* 상대 쪽 공격 몫 — 끝났을 때 각자 left 만큼 남게. 쓰러지는 사람은 없다. */
   var hurt=Math.round((1-left)*100*n), hits=T-1, per=hits?hurt/hits:0;
 
-  var pi=0;
+  var pi=0, CB=myCombo(), ultAt=(CB && K>=FP.ULT_TIER) ? Math.min(2,T) : 0, calm=0;
+  /* 필살기 = 이번 겨룸 내 몫 + 다음 겨룸 내 몫을 한 번에. 다음 겨룸 내 차례는 쉰다 */
+  if(ultAt && plan[(ultAt)*n]!==undefined){ plan[(ultAt-1)*n]+=plan[ultAt*n]; plan[ultAt*n]=0; }
   for(var turn=1; turn<=T; turn++){
     push('— '+turn+'번째 겨룸','turn'); act({t:'turn', text:'— '+turn+'번째 겨룸'});
     for(var i=0;i<n;i++){
       var t=team[i], sk=strike(t.el,gEl), dmg=plan[pi++];
+      if(!dmg) continue;
+      if(i===0 && turn===ultAt){
+        foe.hp=Math.max(0,foe.hp-dmg);
+        var lu=t.nick+'의 조합 필살기 '+CB.sk+'('+CB.skHj+')! '+HJEL[CB.a]+HJEL[CB.b]+' → '+CB.nm+'. '+CB.eff+'.';
+        push(lu+' (−'+dmg+')','big'); L[L.length-1].foe=foe.hp/foe.max;
+        act({t:'ult', by:0, dmg:dmg, foeHp:foe.hp/foe.max, fx:CB.fx, col:CB.col, name:CB.sk, hj:CB.skHj,
+             pair:HJEL[CB.a]+HJEL[CB.b], nm:CB.nm, eff:CB.eff, text:lu});
+        if(/ice|quake|mist/.test(CB.fx)) calm=1;          /* 사냥감이 한 번 쉰다 */
+        if(foe.hp<=0) break;
+        continue;
+      }
       foe.hp=Math.max(0,foe.hp-dmg);
       var line=t.nick+'의 '+J(t.el,'i')+' '+jn(foe.nm,['을','를'])+' 칩니다'+(t.el===FP.edge(gEl)?' — 우세!':'');
       push(line+' (−'+dmg+')', sk.k); L[L.length-1].foe=foe.hp/foe.max;
@@ -800,6 +833,8 @@ function buildFight(){
       if(foe.hp<=0) break;
     }
     if(foe.hp<=0) break;
+    if(calm){ calm=0; var lc=jn(foe.nm,['이','가'])+' '+(CB.fx==='ice'?'얼어붙어 움직이지 못합니다':CB.fx==='quake'?'땅이 흔들려 쓰러져 있습니다':'안개 속에서 헛손질합니다')+'.';
+      push(lc,'hit'); act({t:'turn', text:lc}); continue; }
     /* 가장 성한 사람을 노린다 — 한 명만 몰려 쓰러지는 일이 없게 */
     var v=team.slice().sort(function(a,b){return b.hp-a.hp})[0];
     var d2=Math.max(1,Math.round(per*jit()));
@@ -1005,6 +1040,7 @@ function renderTop(){
     (MYEL?'<p>오행 속성 <b>'+MYEL+'</b></p>':'')+
     '<p>오늘의 기운 <b>'+d.gan+d.zhi+'</b></p>'+
     '<p class="day">'+dayTxt+' — '+a+(a!==b?'·'+b:'')+' 수치 +'+Math.round(FP.TODAY*100)+'%</p>';
+  $('hcombo').innerHTML = comboHTML();
   $('hbars').innerHTML = MYEL ? FP.barsHTML({}) : '';
   $('hbarsw').hidden = !MYEL;
   /* 넓은 화면은 펼쳐 두고, 휴대폰은 접어서 던전 카드가 첫 화면에 보이게 한다 */
@@ -1028,6 +1064,16 @@ function renderTop(){
   }
 }
 
+/* 내 조합 필살기 한 줄 — 사주 1·2위 속성이 만든 변화 속성 */
+function comboHTML(){
+  var c=myCombo(); if(!c) return '';
+  return '<div class="combo" style="--cc:'+c.col+'">'+
+    '<span class="cgems">'+gem(colOf(c.a),HJEL[c.a],'orb sm')+'<i>+</i>'+gem(colOf(c.b),HJEL[c.b],'orb sm')+'<i>=</i>'+
+    '<b class="cel">'+c.hj+'</b></span>'+
+    '<span class="ctx"><b>조합 필살기 · '+c.sk+'</b> <small>'+c.skHj+'</small><br>'+
+    c.a+'+'+c.b+' → <b>'+c.nm+'</b>. '+'기단'+'부터 전투에 나옵니다 · '+
+    FP.FROM[c.strong[0]]+'·'+FP.FROM[c.strong[1]]+' 전투력 +'+Math.round(FP.COMBO_BONUS*100)+'%</span></div>';
+}
 /* 보석 한 알. sq 면 네모 보석 */
 function gem(col, txt, cls){ return '<span class="'+(cls||'orb')+' gem" style="--c:'+col+'"><span class="h">'+txt+'</span></span>'; }
 
@@ -1146,8 +1192,8 @@ function renderTier(){
             : isOpen ? '<span class="rt2 open">열림</span>' : '<span class="rt2 shut">잠김</span>';
     var gap=need-P.pow;
     var why = isOpen
-      ? '권장 '+need+' · '+g.el+' 용신석 '+Math.round(dropFor(t.k,P.n)*(isTodayG(g.el)?1.5:1))+'개'+(isTodayG(g.el)?' (×1.5)':'')
-      : '권장 '+need+' · <b style="color:#e8a33c">'+gap+' 부족</b>';
+      ? beastOf(t.k)+' · 권장 '+need+' · '+g.el+' 용신석 '+Math.round(dropFor(t.k,P.n)*(isTodayG(g.el)?1.5:1))+'개'+(isTodayG(g.el)?' (×1.5)':'')
+      : beastOf(t.k)+' · 권장 '+need+' · <b style="color:#e8a33c">'+gap+' 부족</b>';
     html += '<button class="rung'+(t.k===cap&&isOpen&&!isDone?' now':'')+'" data-k="'+t.k+'"'+(isOpen?'':' disabled')+'>'+
       gem(g.col, t.hj, 'gz2 sq')+
       '<span><span class="tn">'+t.nm+'</span><span class="td">'+why+'</span></span>'+tag+'</button>';
@@ -1172,7 +1218,7 @@ function renderTier(){
 function renderParty(){
   var g=CUR, ts=todayScore(g.el,DAY.els), rel=mineRel(MYEL,g.el);
   $('gh').innerHTML=gem(g.col, g.elhj)+
-    '<span><h1>'+g.nm+' '+tOf(TIER).nm+'</h1><span class="hj">'+tOf(TIER).gan+'급 '+g.prey+'</span></span>';
+    '<span><h1>'+g.nm+' '+tOf(TIER).nm+'</h1><span class="hj">'+tOf(TIER).gan+'급 '+preyOf(g,TIER)+'</span></span>';
   var Pp=powerAt(g.el);
   $('gsub').textContent = g.one + ' — 권장 전투력 '+TH[TIER-1]+' · 내 '+(Pp.n>1?'파티 ':'')+'전투력 '+Pp.pow+
     (isTodayG(g.el)?' · 오늘의 사냥터(용신석 ×1.5)':'');
