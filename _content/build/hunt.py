@@ -29,13 +29,15 @@ GROUNDS = [
     ('금', 'hayan',    '하얀 골목', '쇠붙이가 발에 차이는 뒷골목', '금령'),
     ('수', 'cheongbit','청빛 호수', '바닥이 보이지 않는 깊은 물',  '수령'),
 ]
+# 던전마다 다른 사냥감 (battle3d FOE_BY_EL 과 같다)
+BEAST = {'목': '사슴', '화': '해태', '토': '멧돼지', '금': '백호', '수': '늑대'}
 COL = {'목': '#4fb95f', '화': '#e8483c', '토': '#ffd93d', '금': '#8e9bb0', '수': '#3f8fe0'}
 HJ  = {'목': '木', '화': '火', '토': '土', '금': '金', '수': '水'}
 
 
 def grounds_json():
     import json
-    rows = [{'el': e, 'id': i, 'nm': n, 'one': o, 'prey': p,
+    rows = [{'el': e, 'id': i, 'nm': n, 'one': o, 'prey': p, 'beast': BEAST[e],
              'col': COL[e], 'elhj': HJ[e]} for e, i, n, o, p in GROUNDS]
     return json.dumps(rows, ensure_ascii=False, separators=(',', ':'))
 
@@ -45,7 +47,7 @@ def fallback():
     o = ['<ul class="flist">']
     for e, i, n, one, prey in GROUNDS:
         o.append(f'<li><i style="background:{COL[e]}">{HJ[e]}</i>'
-                 f'<b>{n}</b><span>{prey}</span><em>{one}</em></li>')
+                 f'<b>{n}</b><span>{prey} {BEAST[e]}</span><em>{one}</em></li>')
     o.append('</ul>')
     return ''.join(o)
 
@@ -747,9 +749,9 @@ function powerAt(gEl){
           pairs:syn.pairs, who:who, vals:pows, res:res};
 }
 function myCombo(){ return (window.FP && FP.combo) ? FP.combo() : null; }
-/* 단이 오르면 사냥감이 바뀐다 — battle3d FOE_MDL 과 같은 구간 */
-function beastOf(K){ return K>=10?'해태':K>=8?'범':K>=5?'멧돼지':'늑대'; }
-function preyOf(g,K){ return K>=10 ? g.el+'령 해태' : K>=8 ? g.el+'령 범' : K>=5 ? g.el+'령 멧돼지' : g.prey; }
+/* 던전마다 사냥감이 다르다(수 늑대·토 멧돼지·목 사슴·화 해태·금 백호). 갑단은 우두머리 '왕' */
+function beastOf(g,K){ return g.beast+(K>=10?'왕':''); }
+function preyOf(g,K){ return g.prey+' '+beastOf(g,K); }
 function tierCap(gEl){ return Math.max(1, tierFor(powerAt(gEl).pow)); }
 function dropFor(k,n){ return Math.round(k*(1+0.25*(n-1))); }
 /* 내 조합이 누르는 두 땅(공명) — 용신석 ×1.2. 사주마다 자주 가는 땅이 갈라진다 */
@@ -1170,7 +1172,7 @@ function renderPick(){
             (dn ? ' · '+tOf(dn).nm+' 정복' : '');
     html += '<button class="card'+(isTodayG(g.el)?' best':'')+'" data-g="'+g.id+'" '+
       'style="--bg:url(/img/dungeon/'+g.id+'.webp)">'+ gem(g.col, g.elhj) +
-      '<span><span class="t"><b>'+g.nm+'</b><span>'+g.prey+'</span></span>'+
+      '<span><span class="t"><b>'+g.nm+'</b><span>'+g.prey+' '+g.beast+'</span></span>'+
       '<span class="one">'+g.one+'</span>'+
       '<span class="tags">'+tags+'</span>'+
       '<span class="why">'+why+'</span></span></button>';
@@ -1206,7 +1208,7 @@ function openGround(id){
 function renderTier(){
   var g=CUR, P=powerAt(g.el), done=cleared(g.id), cap=Math.max(1,tierFor(P.pow));
   $('th').innerHTML=gem(g.col, g.elhj)+
-    '<span><h1>'+g.nm+'</h1><span class="hj">'+g.prey+' · 계단부터 갑단까지 열 단</span></span>';
+    '<span><h1>'+g.nm+'</h1><span class="hj">'+g.prey+' '+g.beast+' · 계단부터 갑단까지 열 단</span></span>';
   var parts=FP.ORDER.map(function(x){ return x+'×'+FP.weight(x,g.el); }).join(' + ');
   $('tsub').innerHTML='<b>'+P.edge+' 우세</b> — '+J(P.edge,'i')+' 이 땅을 누릅니다. '+
     '<details class="fxd"><summary>전투력 계산식 보기</summary><span class="fx">'+parts+'</span></details>'+
@@ -1223,8 +1225,8 @@ function renderTier(){
             : isOpen ? '<span class="rt2 open">열림</span>' : '<span class="rt2 shut">잠김</span>';
     var gap=need-P.pow;
     var why = isOpen
-      ? beastOf(t.k)+' · 권장 '+need+' · '+g.el+' '+Math.round(dropFor(t.k,P.n)*lootMul(g.el))+'개'+(lootMul(g.el)>1?' ×'+(Math.round(lootMul(g.el)*10)/10):'')
-      : beastOf(t.k)+' · 권장 '+need+' · <b style="color:#e8a33c">'+gap+' 부족</b>';
+      ? beastOf(g,t.k)+' · 권장 '+need+' · '+g.el+' '+Math.round(dropFor(t.k,P.n)*lootMul(g.el))+'개'+(lootMul(g.el)>1?' ×'+(Math.round(lootMul(g.el)*10)/10):'')
+      : beastOf(g,t.k)+' · 권장 '+need+' · <b style="color:#e8a33c">'+gap+' 부족</b>';
     html += '<button class="rung'+(t.k===cap&&isOpen&&!isDone?' now':'')+'" data-k="'+t.k+'"'+(isOpen?'':' disabled')+'>'+
       gem(g.col, t.hj, 'gz2 sq')+
       '<span><span class="tn">'+t.nm+'</span><span class="td">'+why+'</span></span>'+tag+'</button>';
