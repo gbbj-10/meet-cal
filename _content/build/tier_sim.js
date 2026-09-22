@@ -4,7 +4,7 @@
  *   수치     = 30 + 사주 비율 × 1.0 + 그 속성 용신석 (오늘의 기운 +5%)
  *   전투력   = Σ 수치 × 상성(극 1.5 · 같음 1.0 · 상생 0.8 · 역극 0.5)
  *   권장     = 180 205 240 310 425 605 880 1260 1790 2515 (계단 → 갑단)
- *   보상     = 단 번호개, 오늘의 사냥터(오늘 기운이 든 땅) ×1.5
+ *   보상     = 단 번호개, 오늘의 사냥터(오늘 기운이 든 땅) ×1.5, 조합 공명 땅 ×1.2 (루프7)
  * 하루 10판, 날마다 오늘의 기운이 돈다. 목표: 혼자 갑단까지 약 200~230판(3~4주).
  */
 const DGEUK={목:'토',토:'수',수:'화',화:'금',금:'목'}, DSAENG={목:'화',화:'토',토:'금',금:'수',수:'목'};
@@ -23,9 +23,10 @@ for(const [k,r] of Object.entries(P)){ const CS=comboStrong(r);
     const td=[GAN[day%10],ZHI[day%12]];
     for(let j=0;j<10&&n<600;j++){ n++;   // 하루 10판
       const pw0=g=>E.reduce((a,x)=>a+st[x]*(td.includes(x)?1.05:1)*w(x,g),0); const pw=g=>{const p=pw0(g); return (CS.includes(g)&&tier(p*1.08)>=5)?p*1.08:p;};
-      const val=g=>{const t=tier(pw(g));return t*(td.includes(g)?1.5:1);};
+      const mul=g=>(td.includes(g)?1.5:1)*(CS.includes(g)?1.2:1);
+      const val=g=>{const t=tier(pw(g));return Math.round(Math.max(1,t)*mul(g));};
       const g=E.slice().sort((a,b)=>val(b)-val(a)||pw(b)-pw(a))[0];
-      vis[g]=(vis[g]||0)+1; st[g]+=Math.round(Math.max(1,tier(pw(g)))*(td.includes(g)?1.5:1));
+      vis[g]=(vis[g]||0)+1; st[g]+=Math.round(Math.max(1,tier(pw(g)))*mul(g));
       if(E.some(x=>tier(pw(x))>=10)) break;
     }
     if(E.some(x=>tier(E.reduce((a,y)=>a+st[y]*w(y,x),0))>=10)) break;
