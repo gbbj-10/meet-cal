@@ -166,11 +166,11 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 
 /* ── 배속 · 건너뛰기 (서머너즈워·롤토체스처럼 전투 화면 오른쪽 위에 둔다) ── */
 .stagew{position:relative}
-.spd{position:absolute;top:8px;right:8px;display:flex;gap:6px;z-index:5}
-.spd button{min-height:36px;min-width:44px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(10,14,22,.72);backdrop-filter:blur(3px);
-  color:var(--mut);font:inherit;font-size:13px;font-weight:700;cursor:pointer;padding:0 10px}
-.spd button.on{background:#ffd93d;color:#191600;border-color:#ffd93d}
-#b-skip{margin-left:4px}
+.tbars{display:flex;gap:6px;margin:10px 0 8px}
+.tbar{flex:1;min-width:0;height:22px;border-radius:7px;background:#1b2436;overflow:hidden;position:relative;border:1px solid #243049}
+.tbar i{display:block;height:100%;width:100%;background:linear-gradient(180deg,#5fe08f,#2fa85c);transition:width .32s ease}
+.tbar b{position:absolute;left:8px;top:0;line-height:22px;font-size:12px;font-weight:800;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.7);white-space:nowrap;overflow:hidden;max-width:calc(100% - 12px)}
+.tbar.down i{background:#3a3f4c}.tbar.down b{opacity:.5}
 
 /* ── 사냥터 안내 · 오행도 ── */
 .guide{background:var(--pan);border:1px solid var(--line);border-radius:16px;margin:0 0 18px}
@@ -218,6 +218,7 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 .rt2.open{color:#ffd93d;border-color:#6b5a1a;background:#241f0f}
 .rt2.shut{color:#8494ab;border-color:#2b3a52;background:#121a29}
 .rung.now{border-color:#6b5a1a;box-shadow:0 0 0 1px #6b5a1a}
+.rung.weak{border-color:rgba(232,72,60,.55)}
 .loot{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 2px;font-size:13.5px}
 .loot .st{width:14px;height:14px;border-radius:4px;transform:rotate(45deg);flex:none}
 .loot .bo{color:var(--dim)}
@@ -254,6 +255,7 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 .go{width:100%;margin-top:16px;padding:15px;border:0;border-radius:12px;
   background:var(--acc);color:#08101c;font:inherit;font-size:16.5px;font-weight:800;cursor:pointer}
 .go[disabled]{background:#22304a;color:#5f7291;cursor:default}
+.go.weak{background:#e8483c;color:#fff}
 .note{font-size:12.5px;color:var(--dim);margin-top:12px;line-height:1.7}
 
 /* 3. 전투 — 보는 화면이다. 누를 것은 끝나고 나서만 생긴다. */
@@ -295,6 +297,7 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 .res.win{border-color:rgba(255,217,61,.5);background:rgba(255,217,61,.08)}
 .res .rt{font-size:20px;font-weight:800;letter-spacing:-.02em}
 .res.win .rt{color:#ffd93d}
+.res.lose{border-color:rgba(232,72,60,.5);background:rgba(232,72,60,.08)}.res.lose .rt{color:#e8483c}
 .res .rw{font-size:13.5px;color:var(--mut);line-height:1.7;margin-top:6px}
 .res .rn{display:flex;gap:18px;margin-top:12px;font-size:12.5px;color:var(--dim)}
 .res .rn b{color:var(--mut);font-weight:700}
@@ -410,9 +413,8 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
   <!-- 4. 전투 -->
   <section class="view" id="v-battle">
     <div class="foe" id="foe"></div>
-    <div class="hp"><i id="foe-hp" style="width:100%"></i></div>
-    <div class="stagew"><div class="stage" id="stage"><div class="load" id="load">사냥터를 그리는 중…</div></div>
-      <div class="spd" id="spd"><button data-s="1">×1</button><button data-s="2">×2</button><button data-s="3">×3</button><button id="b-skip">건너뛰기 ▶▶</button></div></div>
+    <div class="tbars" id="tbars"></div>
+    <div class="stagew"><div class="stage" id="stage"><div class="load" id="load">사냥터를 그리는 중…</div></div></div>
     <p class="cap" id="cap"></p>
     <div class="team" id="team"></div>
     <div id="res"></div>
@@ -674,7 +676,12 @@ function myCombo(){ return (window.FP && FP.combo) ? FP.combo() : null; }
 /* 던전마다 사냥감이 다르다(수 늑대·토 멧돼지·목 사슴·화 해태·금 백호). 갑단은 우두머리 '왕' */
 function beastOf(g,K){ return g.beast+(K>=10?'왕':''); }
 function preyOf(g,K){ return g.prey+' '+beastOf(g,K); }
-function tierCap(gEl){ return Math.max(1, tierFor(powerAt(gEl).pow)); }
+/* 열리는 단 = 바로 전 단을 깬 다음 단까지(계단은 늘 열림). 단은 급수라서 어느 사냥터에서 깼든 같은 단이 다른 사냥터에도
+   열린다 — 사냥터마다 처음부터 다시 오르게 하면 한 곳만 파게 된다(시뮬 322판·한 곳 100%).
+   권장 전투력은 문턱이 아니라 경고다 — 모자라도 들어갈 수 있지만 진다 */
+function topCleared(){ var m=0; GROUNDS.forEach(function(g){ m=Math.max(m, cleared(g.id)); }); return m; }
+function tierCap(gEl){ return Math.min(10, topCleared()+1); }
+function tierReach(gEl){ return Math.max(1, tierFor(powerAt(gEl).pow)); }     /* 전투력으로 깰 수 있는 단 */
 function dropFor(k,n){ return Math.round(k*(1+0.25*(n-1))); }
 /* 같은 사냥터를 잇따라 돌면 사냥감이 경계한다 — 판마다 용신석 12%씩, 최대 절반까지 줄어든다.
    다른 사냥터로 옮기면 바로 풀린다. 다섯 곳을 고루 돌게 하는 장치다(서머너즈워의 요일 던전과 같은 목적) */
@@ -712,132 +719,166 @@ function strike(att, def){
   return {m:1.0, s:'', k:'hit'};
 }
 
+/* 단이 오르면 마물 수가 는다 — 계·임 1, 경·신 2, 두 단마다 +1 (갑단 5).
+   총 체력과 반격 총량은 그대로라 깰 수 있는 난이도는 같다. 숫자가 늘어 보이는 만큼만 달라진다 */
+function foeCount(K){ return Math.min(5, 1+Math.floor((K-1)/2)); }
+
 function buildFight(){
   var g=CUR, gEl=g.el, K=TIER;
   var P=powerAt(gEl), need=TH[K-1];
-  var margin=Math.max(1, P.pow/need);           /* 문턱을 얼마나 넘었나 */
+  var ratio=P.pow/need, win=ratio>=1;
+  var margin=Math.max(1, ratio);                /* 문턱을 얼마나 넘었나 */
   var team=P.who.map(function(w){ return {nick:w.nick, el:w.el, me:!!w.me, hp:100, max:100, down:false}; });
-  var n=team.length;
+  var n=team.length, M=foeCount(K);
 
-  /* 여유가 클수록 빨리 끝나고 덜 맞는다. 문턱에 딱 걸치면 아슬아슬하다. */
-  var T    = Math.max(3, Math.min(7, Math.round(7-(margin-1)*8)));
-  var left = Math.max(0.16, Math.min(0.92, 0.16+(margin-1)*1.6));
-  var foe  = {nm:tOf(K).gan+'급 '+preyOf(g,K), el:gEl, max:Math.round(need*(1+0.6*(n-1))), hp:0};
-  foe.hp=foe.max;
+  /* 여유가 클수록 빨리 끝나고 덜 맞는다. 문턱에 딱 걸치면 아슬아슬하다. 문턱 아래면 진다. */
+  var T    = win ? Math.max(3, Math.min(7, Math.round(7-(margin-1)*8))) : 6;
+  var left = win ? Math.max(0.16, Math.min(0.92, 0.16+(margin-1)*1.6)) : 0;
+  var total=Math.round(need*(1+0.6*(n-1)));
+  var beast=beastOf(g,K), foeNm=tOf(K).gan+'급 '+preyOf(g,K);
+  var foes=[]; for(var fi=0;fi<M;fi++){ var hpF=Math.round(total/M); foes.push({i:fi, nm:foeNm+(M>1?' '+(fi+1):''), el:gEl, max:hpF, hp:hpF, alive:true}); }
+  foes[M-1].max += total - foes.reduce(function(a,f){return a+f.max},0); foes[M-1].hp=foes[M-1].max;
+  var foe={nm:foeNm, el:gEl, max:total, hp:total, count:M};     /* 합계 — 헤더·로그용 */
+  var alive=function(){ return foes.filter(function(f){return f.alive}); };
+  var target=function(){ var a=alive(); return a.length?a[0]:null; };
 
   var L=[], A=[];
   function push(t,k){ L.push({t:t,k:k||''}); return L[L.length-1]; }
   function act(o){ A.push(o); }
   function jit(){ return 0.85+Math.random()*0.3; }
+  function hpOf(f){ return f.hp/f.max; }
 
-  push(g.nm+' '+tOf(K).nm+'에 들어섰습니다. '+jn(foe.nm,['이','가'])+' 기다리고 있습니다.','big');
-  push('전투력 '+P.pow+' · 권장 전투력 '+need+(P.pow>=need*1.3?' — 여유 있습니다.':''),'hit');
+  push(g.nm+' '+tOf(K).nm+'에 들어섰습니다. '+(M>1 ? beast+' '+M+'마리가' : jn(foe.nm,['이','가']))+' 기다리고 있습니다.','big');
+  push('전투력 '+P.pow+' · 권장 전투력 '+need+(P.pow>=need*1.3?' — 여유 있습니다.':P.pow<need?' — 모자랍니다.':''),'hit');
   if(P.pairs) push('파티의 기운이 서로를 살립니다. 상생 '+P.pairs+'쌍 +'+(P.pairs*5)+'%.','hit');
   var TD=FP.today(); push('오늘의 기운 '+TD.ganHj+TD.zhiHj+' — '+TD.els[0]+(TD.els[1]!==TD.els[0]?'·'+TD.els[1]:'')+' 수치가 '+Math.round(FP.TODAY*100)+'% 오릅니다.','hit');
 
-  /* 우리 쪽 공격 몫 — 각자의 수치와 상성으로 나누고, T 번에 걸쳐 정확히 다 깎는다 */
+  /* 우리 쪽 공격 몫 — 각자의 수치와 상성으로 나누고, T 번에 걸쳐 정확히 다 깎는다(지면 비율만큼만) */
   var share=team.map(function(t,i){ return P.vals[i]; });
   var shareSum=share.reduce(function(a,b){return a+b},0);
+  var dealTotal = win ? foe.max : Math.round(foe.max*Math.min(0.85, ratio*0.9));
   var plan=[], tot=0;
-  for(var r=0;r<T;r++) for(var i=0;i<n;i++){ var d=share[i]/shareSum*foe.max/T*jit(); plan.push(d); tot+=d; }
-  plan=plan.map(function(d){ return Math.max(1,Math.round(d*foe.max/tot)); });
-  var fix=foe.max-plan.reduce(function(a,b){return a+b},0); plan[plan.length-1]+=fix;
+  for(var r=0;r<T;r++) for(var i=0;i<n;i++){ var d=share[i]/shareSum*dealTotal/T*jit(); plan.push(d); tot+=d; }
+  plan=plan.map(function(d){ return Math.max(1,Math.round(d*dealTotal/tot)); });
+  var fix=dealTotal-plan.reduce(function(a,b){return a+b},0); plan[plan.length-1]+=fix;
 
-  /* 상대 쪽 공격 몫 — 끝났을 때 각자 left 만큼 남게. 쓰러지는 사람은 없다. */
-  var hurt=Math.round((1-left)*100*n), hits=T-1, per=hits?hurt/hits:0;
+  /* 상대 쪽 공격 몫 — 끝났을 때 각자 left 만큼 남게. 이기면 쓰러지는 사람은 없다. 지면 한 명이 쓰러지고 물러난다 */
+  var hurt=Math.round((1-Math.max(left,0.16))*100*n), hits=T-1, per=hits?hurt/hits:0;
+  if(!win) per*=1.35;
+
+  /* 내 한 방을 마물에게 넣는다 — 넘치는 만큼은 다음 마물로 */
+  function dealTo(who, i, dmg, kind, lineBase){
+    while(dmg>0){
+      var f=target(); if(!f) return;
+      var d=Math.min(dmg, f.hp); f.hp-=d; dmg-=d;
+      var line=lineBase(f);
+      push(line+' (−'+d+')', kind.k); L[L.length-1].foe=foe.hp>0 ? (foes.reduce(function(a,x){return a+x.hp},0)/foe.max) : 0;
+      act({t:'hit', by:i, foe:f.i, dmg:d, kind:(kind.m>=1.5?'big':''), foeHp:hpOf(f), allHp:foes.reduce(function(a,x){return a+x.hp},0)/foe.max, text:line});
+      if(f.hp<=0){ f.alive=false; var ld=jn(f.nm,['이','가'])+' 쓰러집니다.'; push(ld,'big'); act({t:'foedown', foe:f.i, text:ld}); }
+    }
+  }
 
   var pi=0, CB=myCombo(), ultAt=(CB && K>=FP.ULT_TIER) ? Math.min(2,T) : 0, calm=0, dotV=0, dotN=0, guard=0, guardK=1;
-  function dot(){ if(!dotN||foe.hp<=0) return; var v=Math.min(dotV,foe.hp); dotN--; foe.hp-=v;
-    var ld=jn(foe.nm,['이','가'])+' '+(CB.fx==='gas'?'독연에 괴로워합니다':'뜨거운 김에 데었습니다');
-    push(ld+' (−'+v+')','hit'); L[L.length-1].foe=foe.hp/foe.max;
-    act({t:'dot', dmg:v, col:CB.col, foeHp:foe.hp/foe.max, text:ld}); }
+  function dot(){ if(!dotN||!target()) return; dotN--; var left2=dotV;
+    while(left2>0){ var f=target(); if(!f) return; var v=Math.min(left2,f.hp); f.hp-=v; left2-=v;
+      var ld=jn(f.nm,['이','가'])+' '+(CB.fx==='gas'?'독연에 괴로워합니다':'뜨거운 김에 데었습니다');
+      push(ld+' (−'+v+')','hit'); L[L.length-1].foe=hpOf(f);
+      act({t:'dot', foe:f.i, dmg:v, col:CB.col, foeHp:hpOf(f), text:ld});
+      if(f.hp<=0){ f.alive=false; var ld2=jn(f.nm,['이','가'])+' 쓰러집니다.'; push(ld2,'big'); act({t:'foedown', foe:f.i, text:ld2}); } } }
   /* 필살기 = 이번 겨룸 내 몫 + 다음 겨룸 내 몫을 한 번에. 다음 겨룸 내 차례는 쉰다 */
   if(ultAt && plan[(ultAt)*n]!==undefined){ plan[(ultAt-1)*n]+=plan[ultAt*n]; plan[ultAt*n]=0; }
+  var downed=null;
   for(var turn=1; turn<=T; turn++){
     push('— '+turn+'번째 겨룸','turn'); act({t:'turn', text:'— '+turn+'번째 겨룸'});
-    dot(); if(foe.hp<=0) break;
+    dot(); if(!target()) break;
     for(var i=0;i<n;i++){
       var t=team[i], sk=strike(t.el,gEl), dmg=plan[pi++];
-      if(!dmg) continue;
+      if(!dmg || t.down) continue;
       if(i===0 && turn===ultAt){
         /* 효과마다 실제로 다르게 — 설명과 전투가 맞게 */
         var fx=CB.fx, splits=[dmg];
         if((fx==='gas'||fx==='steam') && dmg>=6){ dotV=Math.max(1,Math.round(dmg*(fx==='gas'?0.12:0.2))); dotN=fx==='gas'?2:1; dmg-=dotV*dotN; splits=[dmg]; }
         if(fx==='bolt'){ var b1=Math.round(dmg*0.55); splits=[b1,dmg-b1]; }
         if(fx==='wind'){ var w1=Math.round(dmg*0.3), w2=Math.round(dmg*0.3); splits=[w1,w2,dmg-w1-w2]; }
-        foe.hp=Math.max(0,foe.hp-dmg);
+        var ft=target(); var dU=Math.min(dmg, ft.hp); var over=dmg-dU; ft.hp-=dU;
         var lu=t.nick+'의 조합 필살기 '+CB.sk+'('+CB.skHj+')! '+HJEL[CB.a]+HJEL[CB.b]+' → '+CB.nm+'. '+CB.eff+'.';
-        push(lu+' (−'+dmg+')','big'); L[L.length-1].foe=foe.hp/foe.max;
-        act({t:'ult', by:0, dmg:dmg, splits:splits, foeHp:foe.hp/foe.max, fx:fx, col:CB.col, name:CB.sk, hj:CB.skHj,
+        push(lu+' (−'+dU+')','big'); L[L.length-1].foe=hpOf(ft);
+        act({t:'ult', by:0, foe:ft.i, dmg:dU, splits:(function(){ var acc=0, out=splits.map(function(x,q){ var v=(q<splits.length-1)?Math.round(x*dU/Math.max(1,dmg)):dU-acc; acc+=v; return v; }); return out; })(), foeHp:hpOf(ft), fx:fx, col:CB.col, name:CB.sk, hj:CB.skHj,
              pair:HJEL[CB.a]+HJEL[CB.b], nm:CB.nm, eff:CB.eff, text:lu});
-        if(/ice|quake|mist/.test(fx)) calm=1;          /* 사냥감이 한 번 쉰다 */
+        if(ft.hp<=0){ ft.alive=false; var ld3=jn(ft.nm,['이','가'])+' 쓰러집니다.'; push(ld3,'big'); act({t:'foedown', foe:ft.i, text:ld3}); }
+        if(over>0) dealTo(t, i, over, sk, function(f){ return '넘친 기운이 '+jn(f.nm,['을','를'])+' 덮칩니다'; });
+        if(/ice|quake|mist/.test(fx)) calm=1;          /* 마물이 한 번 쉰다 */
         if(fx==='crystal') guard=2, guardK=0.5;        /* 결정 방벽 — 두 번 반으로 */
         if(fx==='mud') guard=2, guardK=0.6;            /* 속박 — 두 번 약하게 */
-        if(foe.hp<=0) break;
+        if(!target()) break;
         continue;
       }
-      foe.hp=Math.max(0,foe.hp-dmg);
-      var line=t.nick+'의 '+J(t.el,'i')+' '+jn(foe.nm,['을','를'])+' 칩니다'+(t.el===FP.edge(gEl)?' — 우세!':'');
-      push(line+' (−'+dmg+')', sk.k); L[L.length-1].foe=foe.hp/foe.max;
-      act({t:'hit', by:i, dmg:dmg, kind:(sk.m>=1.5?'big':''), foeHp:foe.hp/foe.max, text:line});
-      if(foe.hp<=0) break;
+      dealTo(t, i, dmg, sk, function(f){ return t.nick+'의 '+J(t.el,'i')+' '+jn(f.nm,['을','를'])+' 칩니다'+(t.el===FP.edge(gEl)?' — 우세!':''); });
+      if(!target()) break;
     }
-    if(foe.hp<=0) break;
-    if(calm){ calm=0; var lc=jn(foe.nm,['이','가'])+' '+(CB.fx==='ice'?'얼어붙어 움직이지 못합니다':CB.fx==='quake'?'땅이 흔들려 쓰러져 있습니다':'안개 속에서 헛손질합니다')+'.';
+    if(!target()) break;
+    if(calm){ calm=0; var lc=beast+(M>1?'들':'')+(CB.fx==='ice'?'이 얼어붙어 움직이지 못합니다':CB.fx==='quake'?'이 땅이 흔들려 쓰러져 있습니다':'이 안개 속에서 헛손질합니다')+'.';
       push(lc,'hit'); act({t:'turn', text:lc}); continue; }
-    /* 가장 성한 사람을 노린다 — 한 명만 몰려 쓰러지는 일이 없게 */
-    var v=team.slice().sort(function(a,b){return b.hp-a.hp})[0];
-    var d2=Math.max(1,Math.round(per*jit()));
-    d2=Math.min(d2, Math.max(0, v.hp-Math.round(left*100*0.9)));
-    var gd=''; if(guard>0){ guard--; d2=Math.max(1,Math.round(d2*guardK)); gd=CB.fx==='crystal'?' — 결정 방벽이 막아 줍니다':' — 발이 묶여 힘이 빠졌습니다'; }
-    v.hp-=d2;
-    var line2=jn(foe.nm,['이','가'])+' '+jn(v.nick,['을','를'])+' 덮칩니다'+gd;
-    push(line2+' (−'+d2+')', ''); L[L.length-1].team=team.map(function(x){return {hp:x.hp/x.max,down:false}});
-    act({t:'foehit', to:team.indexOf(v), dmg:d2, kind:'', hp:team.map(function(x){return x.hp/x.max}), text:line2});
+    /* 살아 있는 마물이 한 번씩 — 가장 성한 사람을 노린다. 총량은 마물 수와 상관없이 같다 */
+    var al=alive();
+    for(var m=0;m<al.length;m++){
+      var v=team.filter(function(x){return !x.down}).sort(function(a,b){return b.hp-a.hp})[0]; if(!v) break;
+      var d2=Math.max(1,Math.round(per/al.length*jit()));
+      if(win) d2=Math.min(d2, Math.max(0, v.hp-Math.round(left*100*0.9)));
+      var gd=''; if(guard>0){ guard--; d2=Math.max(1,Math.round(d2*guardK)); gd=CB.fx==='crystal'?' — 결정 방벽이 막아 줍니다':' — 발이 묶여 힘이 빠졌습니다'; }
+      v.hp=Math.max(0, v.hp-d2);
+      var line2=jn(al[m].nm,['이','가'])+' '+jn(v.nick,['을','를'])+' 덮칩니다'+gd;
+      push(line2+' (−'+d2+')', ''); L[L.length-1].team=team.map(function(x){return {hp:x.hp/x.max,down:x.down}});
+      act({t:'foehit', from:al[m].i, to:team.indexOf(v), dmg:d2, kind:'', hp:team.map(function(x){return x.hp/x.max}), text:line2});
+      if(!win && v.hp<=0 && !v.down){ v.down=true; downed=v; var ldn=jn(v.nick,['이','가'])+' 쓰러졌습니다.'; push(ldn,'big'); act({t:'down', i:team.indexOf(v), text:ldn}); }
+    }
+    if(!win && (downed || turn===T)) break;
+  }
+  if(!win && !downed){ var vv=team.slice().sort(function(a,b){return a.hp-b.hp})[0]; vv.hp=0; vv.down=true; downed=vv;
+    var ldn2=jn(vv.nick,['이','가'])+' 쓰러졌습니다.'; push(ldn2,'big'); act({t:'down', i:team.indexOf(vv), text:ldn2}); }
+  while(win && dotN>0 && target()) dot();                    /* 남은 독·화상은 끝에 */
+  if(win){ foes.forEach(function(f){ if(f.alive){ f.hp=0; f.alive=false; act({t:'foedown', foe:f.i, text:''}); } }); }
+  foe.hp = foes.reduce(function(a,x){return a+x.hp},0);
+
+  var loot=0, ltext='';
+  if(win){
+    var endLine=(M>1 ? beast+'들이' : jn(foe.nm,['이','가']))+' 물러갑니다.';
+    push(endLine,'big'); act({t:'end', win:true, text:endLine});
+    loot=Math.max(1, Math.round(dropFor(K,n)*lootMul(gEl,g.id)));
+    ltext=gEl+' 용신석 '+loot+'개 획득'+(lootTag(gEl,g.id)?' ('+lootTag(gEl,g.id)+')':'')+(n>1?' — 한 사람에 '+loot+'개씩':'')+'.';
+    push(ltext,'big'); act({t:'loot', el:gEl, n:loot, yong:true, text:ltext});
+  } else {
+    var endL='버티지 못하고 물러났습니다. 용신석은 없습니다.';
+    push(endL,'big'); act({t:'end', win:false, text:endL});
   }
 
-  while(dotN>0 && foe.hp>0) dot();                    /* 남은 독·화상은 끝에 */
-  if(foe.hp>0){ foe.hp=0; }
-  var endLine=jn(foe.nm,['이','가'])+' 물러갑니다.';
-  push(endLine,'big'); act({t:'end', win:true, text:endLine});
-
-  var loot=Math.max(1, Math.round(dropFor(K,n)*lootMul(gEl,g.id)));
-  var ltext=gEl+' 용신석 '+loot+'개 획득'+(lootTag(gEl,g.id)?' ('+lootTag(gEl,g.id)+')':'')+(n>1?' — 한 사람에 '+loot+'개씩':'')+'.';
-  push(ltext,'big'); act({t:'loot', el:gEl, n:loot, yong:true, text:ltext});
-
   var nxt = K<10 ? TH[K] : null, gapN = nxt ? nxt-P.pow : 0;
-  var why = !nxt ? '갑단 정복 — 이 사냥터의 끝까지 올랐습니다.'
+  var why = !win ? '권장 전투력 '+need+'에 '+(need-P.pow)+' 모자랍니다 — '+FP.edge(gEl)+' 용신석 '+Math.ceil((need-P.pow)/1.5)+'개쯤이면 넘습니다.'
+          : !nxt ? '갑단 정복 — 이 사냥터의 끝까지 올랐습니다.'
           : gapN<=0 ? '여유 있게 이겼습니다. '+tOf(K+1).nm+'이 이미 열려 있습니다.'
           : tOf(K+1).nm+'까지 전투력 '+gapN+' 남았습니다 — '+FP.edge(gEl)+' 용신석이 가장 빨리 채워 줍니다.';
 
-  return {log:L, acts:A, win:true, turns:T, standing:n, total:n, why:why,
-          foe:foe, team:team, syn:{pairs:P.pairs}, tier:K, loot:loot, lootEl:gEl, P:P, need:need};
+  return {log:L, acts:A, win:win, turns:T, standing:team.filter(function(x){return !x.down}).length, total:n, why:why,
+          foe:foe, foes:foes, team:team, syn:{pairs:P.pairs}, tier:K, loot:loot, lootEl:gEl, P:P, need:need};
 }
 
 function renderBattleHead(F){
   var g=CUR;
   $('foe').innerHTML=gem(g.col, HJEL[g.el])+
-    '<span><h1>'+esc(F.foe.nm)+'</h1><span class="wh">'+esc(g.nm)+' '+tOf(F.tier).nm+' · '+g.el+'</span></span>';
-  $('foe-hp').style.background=g.col;
-  $('foe-hp').style.width='100%';
+    '<span><h1>'+esc(F.foe.nm)+(F.foe.count>1?' × '+F.foe.count:'')+'</h1><span class="wh">'+esc(g.nm)+' '+tOf(F.tier).nm+' · '+g.el+'</span></span>';
   paintTeam(F.team.map(function(t){return {hp:1,down:false}}), F.team);
 }
 function paintTeam(st, team){
-  $('team').innerHTML=team.map(function(t,i){
+  /* 내 캐릭터와 친구들의 체력 — 화면 위에 한 줄, 인원수만큼 나눠서. 마물 체력은 3D 안 마물 머리 위에 */
+  $('tbars').innerHTML=team.map(function(t,i){
     var s=st[i]||{hp:1,down:false};
-    return '<div class="mate'+(s.down?' down':'')+'">'+
-      '<div class="av2 gem" style="--c:'+colOf(t.el)+'"><span class="h">'+HJEL[t.el]+'</span></div>'+
-      '<div class="n2">'+esc(t.nick)+'</div>'+
-      '<div class="hp"><i style="width:'+Math.round(s.hp*100)+'%;background:'+colOf(t.el)+'"></i></div>'+
-    '</div>';
+    return '<div class="tbar'+(s.down?' down':'')+'"><i style="width:'+Math.round(s.hp*100)+'%"></i><b>'+esc(t.nick)+(s.down?' · 쓰러짐':'')+'</b></div>';
   }).join('');
 }
 
 var BT=null, CURF=null;
 /* 배속 — 기억해 둔다. 판수가 많은 게임이라 두 번째 판부터는 대부분 빠르게 본다 */
-var SPEED=LS.get('hunt.speed',1)||1;
-function setSpeed(v){ SPEED=v; LS.set('hunt.speed',v);
-  [].forEach.call(document.querySelectorAll('#spd [data-s]'),function(b){ b.classList.toggle('on', +b.dataset.s===v); }); }      /* 글로 흐를 때의 타이머 */
+var SPEED=1;                                    /* 배속·건너뛰기는 뺐다 — 전투를 보는 게 놀이다 */
 var V3=null;      /* 돌고 있는 3D 화면 */
 
 /* 이 브라우저에서 3D 를 돌릴 수 있나. 못 돌리면 글로 흐른다 —
@@ -858,11 +899,7 @@ function stopBattle(){
 function playBattle(){
   stopBattle();
   var F=buildFight(); CURF=F;
-  show('v-battle'); setSpeed(SPEED);
-  [].forEach.call(document.querySelectorAll('#spd [data-s]'),function(b){ b.onclick=function(){ setSpeed(+b.dataset.s); }; });
-  $('b-skip').hidden=false;
-  $('b-skip').onclick=function(){ if(!CURF) return; var f=CURF; CURF=null; stopBattle();
-    $('stage').hidden=true; ev('hunt_skip',{}); endBattle(f); };
+  show('v-battle');
   renderBattleHead(F);
   $('res').innerHTML=''; $('cap').textContent='';
   $('log').hidden=true; $('lgtoggle').hidden=true; $('lgtoggle').textContent='전투 로그';
@@ -877,13 +914,12 @@ function playBattle(){
       mount:$('stage'), base:'/3d/',
       ground:{el:CUR.el, nm:CUR.nm, id:CUR.id},
       team:F.team.map(function(t){ return {el:t.el, nick:t.nick}; }),
-      foe:{el:F.foe.el, nm:F.foe.nm},
+      foe:{el:F.foe.el, nm:F.foe.nm}, foeCount:F.foe.count,
       acts:F.acts, tier:F.tier,
       speed:function(){ return SPEED; },
       onProgress:function(p){ var l=$('load'); if(l) l.textContent='사냥터를 그리는 중… '+Math.round(p*100)+'%'; },
       onCaption:function(t){ $('cap').textContent=t; },
       onLoot:function(got,all){ $('cap').textContent='용신석 '+got+' / '+all+'개 획득'; },
-      onFoeHp:function(r){ $('foe-hp').style.width=Math.round(r*100)+'%'; },
       onTeamHp:function(hp){ paintTeam(hp.map(function(h,i){
         return {hp:h, down:F.team[i].down&&h<=0}; }), F.team); },
       onDone:function(){ if(CURF===F){ CURF=null; endBattle(F); } }
@@ -917,42 +953,51 @@ function playLog(F){
     p.className=l.k; p.textContent=l.t;
     $('log').appendChild(p);
     $('log').scrollTop=$('log').scrollHeight;
-    if(l.foe!=null) $('foe-hp').style.width=Math.round(l.foe*100)+'%';
     if(l.team) paintTeam(l.team, F.team);
     BT=setTimeout(step, (l.k==='turn' ? 260 : 430)/SPEED);
   })();
 }
 
 function endBattle(F){
-  if($('b-skip')) $('b-skip').hidden=true;
-  paintTeam(F.team.map(function(t){return {hp:t.hp/t.max, down:false}}), F.team);
-  markCleared(CUR.id, F.tier); addStones(F.lootEl, F.loot); noteVisit(CUR.id);
+  paintTeam(F.team.map(function(t){return {hp:t.hp/t.max, down:t.down}}), F.team);
+  var tn=tOf(F.tier).nm, nx=F.tier+1;
+  if(F.win){ markCleared(CUR.id, F.tier); addStones(F.lootEl, F.loot); noteVisit(CUR.id); }
   if(window.FP) FP.push();              /* 로그인했으면 계정에 저장 */
-  var tn=tOf(F.tier).nm, nx=F.tier+1, cap=tierCap(CUR.el);
-  var canNext = nx<=10 && nx<=cap;
+  var cap=tierCap(CUR.el);
+  var canNext = F.win && nx<=10 && nx<=cap;
   var st = window.FP && FP.stats ? FP.stats() : null;
   var mineNow = st ? st[F.lootEl].val : null;   /* 오늘 몫 뺀 본 수치 */
   var nextNeed = nx<=10 ? TH[nx-1] : null;
-  $('res').innerHTML=
-    '<div class="res win">'+
-      '<div class="rt">'+tn+' 정복</div>'+
-      '<div class="rw">'+esc(F.why)+'</div>'+
-      '<div class="loot"><span class="st" style="background:'+colOf(F.lootEl)+'"></span>'+
-        '<b>'+F.lootEl+' 용신석 '+F.loot+'개</b>'+
-        (mineNow!=null ? '<span class="bo">내 '+F.lootEl+' 수치 '+mineNow+' ('+
-          (st[F.lootEl].val-F.loot)+' → '+mineNow+')</span>' : '')+'</div>'+
-      '<div class="rn"><span><b>'+F.turns+'</b>번 겨룸</span>'+
-        '<span>전투력 <b>'+F.P.pow+'</b> / 권장 '+F.need+'</span>'+
-        (nextNeed ? '<span>'+tOf(nx).nm+' 권장 전투력 <b>'+nextNeed+'</b></span>' : '')+'</div>'+
-    '</div>'+
+  if(F.win){
+    $('res').innerHTML=
+      '<div class="res win">'+
+        '<div class="rt">'+tn+' 정복</div>'+
+        '<div class="rw">'+esc(F.why)+'</div>'+
+        '<div class="loot"><span class="st" style="background:'+colOf(F.lootEl)+'"></span>'+
+          '<b>'+F.lootEl+' 용신석 '+F.loot+'개</b>'+
+          (mineNow!=null ? '<span class="bo">내 '+F.lootEl+' 수치 '+mineNow+' ('+
+            (st[F.lootEl].val-F.loot)+' → '+mineNow+')</span>' : '')+'</div>'+
+        '<div class="rn"><span><b>'+F.turns+'</b>번 겨룸</span>'+
+          '<span>전투력 <b>'+F.P.pow+'</b> / 권장 '+F.need+'</span>'+
+          (nextNeed ? '<span>'+tOf(nx).nm+' 권장 전투력 <b>'+nextNeed+'</b></span>' : '')+'</div>'+
+      '</div>';
+  } else {
+    $('res').innerHTML=
+      '<div class="res lose">'+
+        '<div class="rt">'+tn+' — 물러났습니다</div>'+
+        '<div class="rw" style="color:#f0a0a0">'+esc(F.why)+'</div>'+
+        '<div class="rn"><span>전투력 <b>'+F.P.pow+'</b> / 권장 <b style="color:#e8483c">'+F.need+'</b></span><span>용신석 없음</span></div>'+
+      '</div>';
+  }
+  $('res').innerHTML +=
     '<div class="again">'+
       (canNext ? '<button class="pri" id="b-next">'+tOf(nx).nm+'으로 올라가기</button>' : '')+
       '<button'+(canNext?'':' class="pri"')+' id="b-again">다시 도전</button>'+
       '<button id="b-tier">단 선택</button>'+
       '<button id="b-ground">사냥터 목록</button>'+
     '</div>';
-  LS.set('hunt.last.'+CUR.id, {win:true, turns:F.turns, total:F.total, tier:F.tier, at:Date.now()});
-  ev('hunt_result',{ground:CUR.nm, tier:F.tier, win:1, turns:F.turns, size:F.total, loot:F.loot, pow:F.P.pow});
+  LS.set('hunt.last.'+CUR.id, {win:F.win, turns:F.turns, total:F.total, tier:F.tier, at:Date.now()});
+  ev('hunt_result',{ground:CUR.nm, tier:F.tier, win:F.win?1:0, turns:F.turns, size:F.total, loot:F.loot, pow:F.P.pow});
   if(window.FP) FP.paint();
   $('lgtoggle').hidden=false;
   $('lgtoggle').onclick=function(){
@@ -1098,8 +1143,9 @@ function renderPick(){
     if(isResG(g.el)) tags+='<span class="tag res">조합 공명 · 용신석 ×1.2</span>';
     if(wary(g.id)<1) tags+='<span class="tag warn">연속 '+streakN(g.id)+'판 · 사냥감 경계 ×'+(Math.round(wary(g.id)*100)/100)+'</span>';
     tags+='<span class="tag edge">'+FP.edge(g.el)+' 우세</span>';
-    var dn=cleared(g.id);
-    var why='내 전투력 <b>'+P0.pow+'</b> · '+(cap<10 ? tOf(cap+1).nm+' 권장 '+rec : '갑단까지 열림')+
+    var dn=cleared(g.id), nx=Math.min(10,topCleared()+1), nd=TH[nx-1];
+    var why='내 전투력 <b>'+P0.pow+'</b> · 다음 '+tOf(nx).nm+' 권장 '+nd+
+            (P0.pow<nd ? ' <b style="color:#e8483c">('+g.el+' 용신석 '+Math.ceil((nd-P0.pow)/1.5)+'개 더)</b>' : '')+
             (dn ? ' · '+tOf(dn).nm+' 정복' : '');
     html += '<button class="card'+(isTodayG(g.el)?' best':'')+'" data-g="'+g.id+'" '+
       'style="--bg:url(/img/dungeon/'+g.id+'.webp)">'+ gem(g.col, g.elhj) +
@@ -1151,14 +1197,15 @@ function renderTier(){
 
   var html='';
   TIERS.forEach(function(t){
-    var need=TH[t.k-1], isOpen=P.pow>=need, isDone=t.k<=done;
+    var top=topCleared(), need=TH[t.k-1], isDone=t.k<=done, isOpen=t.k<=top+1, weak=P.pow<need;
     var tag = isDone ? '<span class="rt2 done">정복</span>'
             : isOpen ? '<span class="rt2 open">열림</span>' : '<span class="rt2 shut">잠김</span>';
     var gap=need-P.pow;
-    var why = isOpen
-      ? beastOf(g,t.k)+' · 권장 '+need+' · '+g.el+' '+Math.max(1,Math.round(dropFor(t.k,P.n)*lootMul(g.el,g.id)))+'개'+(lootMul(g.el,g.id)!==1?' ×'+(Math.round(lootMul(g.el,g.id)*100)/100):'')
-      : beastOf(g,t.k)+' · 권장 '+need+' · <b style="color:#e8a33c">'+gap+' 부족</b>';
-    html += '<button class="rung'+(t.k===cap&&isOpen&&!isDone?' now':'')+'" data-k="'+t.k+'"'+(isOpen?'':' disabled')+'>'+
+    var cnt=foeCount(t.k);
+    var why = beastOf(g,t.k)+(cnt>1?' '+cnt+'마리':'')+' · 권장 '+need+
+      (weak ? ' · <b style="color:#e8483c">'+g.el+' 용신석 '+Math.ceil(gap/1.5)+'개 더</b>'
+            : ' · '+g.el+' '+Math.max(1,Math.round(dropFor(t.k,P.n)*lootMul(g.el,g.id)))+'개'+(lootMul(g.el,g.id)!==1?' ×'+(Math.round(lootMul(g.el,g.id)*100)/100):''));
+    html += '<button class="rung'+(t.k===top+1&&isOpen?' now':'')+(weak&&isOpen?' weak':'')+'" data-k="'+t.k+'"'+(isOpen?'':' disabled')+'>'+
       gem(g.col, t.hj, 'gz2 sq')+
       '<span><span class="tn">'+t.nm+'</span><span class="td">'+why+'</span></span>'+tag+'</button>';
   });
@@ -1169,7 +1216,7 @@ function renderTier(){
 
   var tip = (P.pow<TH[9]) ? '<p class="tip3">부족한 전투력은 <b>'+P.edge+' 용신석</b>이 가장 빨리 채웁니다(1개 +1.5, '+FP.FROM[P.edge]+'에서 나옴)'+(P.n<5?' · 친구와 오면 더 빨리 열립니다':'')+'.</p>' : '';
   $('tnote').innerHTML = tip +
-    '<b>권장 전투력을 넘은 단은 반드시 깹니다.</b> '+TIERS.map(function(t){return t.nm+' '+TH[t.k-1]}).join(' · ')+'.<br>'+
+    '<b>바로 전 단을 깨면 다음 단이 열립니다</b>(어느 사냥터에서 깼든). 권장 전투력을 넘으면 반드시 깨고, <b style="color:#e8483c">붉은 글씨</b>가 뜬 단은 들어갈 수는 있지만 집니다. '+TIERS.map(function(t){return t.nm+' '+TH[t.k-1]}).join(' · ')+'.<br>'+
     '<b>'+g.el+' 용신석</b>은 이곳에서 나고 '+g.el+' 수치를 올립니다. 모든 사냥터의 전투력에 조금씩 보탬이 됩니다. '+
     '친구와 오면 파티 수치가 오르고, 각자 받는 돌도 늘어납니다(다섯이면 두 배).';
   ev('hunt_tier_view',{ground:g.nm, done:done, cap:cap, pow:P.pow});
@@ -1228,18 +1275,19 @@ function renderParty(){
     (filled<5 ? ' — <span style="color:#6f7d92">더 부르면 시너지가 올라갑니다</span>' : '');
   /* 인원은 1~5 어디든 된다. 다만 고른 단이 지금 인원으로 열리는 단이어야 한다.
      친구를 빼서 상한이 내려가면 단을 조용히 내리지 않고 그 자리에서 말해 준다. */
-  var cap2=tierCap(g.el), tooHigh=TIER>cap2;
+  var cap2=tierCap(g.el), tooHigh=TIER>cap2, Pp2=powerAt(g.el), weak=Pp2.pow<TH[TIER-1];
   $('btn-go').disabled = tooHigh;
   $('btn-go').textContent = tooHigh
-      ? tOf(TIER).nm+'은 지금 인원으로 열리지 않습니다'
+      ? tOf(TIER-1).nm+'을 먼저 깨야 합니다'
       : (filled===1 ? '혼자 '+tOf(TIER).nm+'으로' : filled+'명으로 '+tOf(TIER).nm+'으로');
+  $('btn-go').classList.toggle('weak', weak && !tooHigh);
 
   var danger = false;
   $('note').innerHTML =
     '<b>'+tOf(TIER).nm+'으로 들어갑니다.</b> <a href="#" id="a-tier">단 다시 고르기</a><br>'+
     '<b>친구와 파티를 하면 더 높은 단을 깰 수 있습니다.</b> 한 사람이 받는 용신석도 늘어납니다.<br>'+
-    (tooHigh ? '<span style="color:#f0a0a0">'+tOf(TIER).nm+'은 '+filled+'명으로는 열리지 않습니다. '+
-               '친구를 더 부르거나 단을 내리세요.</span><br>' : '')+
+    (tooHigh ? '<span style="color:#f0a0a0">'+tOf(TIER).nm+'은 아직 잠겨 있습니다. '+tOf(TIER-1).nm+'을 먼저 깨세요.</span><br>' : '')+
+    (weak && !tooHigh ? '<span style="color:#e8483c;font-weight:700">전투력이 권장 '+TH[TIER-1]+'에 '+(TH[TIER-1]-Pp2.pow)+' 모자랍니다 — '+FP.edge(g.el)+' 용신석 '+Math.ceil((TH[TIER-1]-Pp2.pow)/1.5)+'개 더 모으면 넘습니다. 지금 들어가면 집니다.</span><br>' : '')+
     (danger ? '<span style="color:#f0a0a0">이 사냥터는 내 기운을 누릅니다. '+
               '적은 인원으로는 버티기 어렵습니다.</span><br>' : '')+
     '빈 자리의 <b>친구 초대</b>를 누르면 친구 목록이 열립니다. 카카오톡으로 초대한 친구가 들어오면 여기서 자리에 앉힙니다.';
