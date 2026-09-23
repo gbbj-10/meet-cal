@@ -30,7 +30,7 @@ KAKAO_JS_KEY = '60b71fcf9ec72aad11e6f5d62358c8db'
 #                   'Publishable and secret API keys' 탭의 Publishable key
 #                   (sb_publishable_... 로 시작. 브라우저에 넣어도 되는 공개 키)
 #  ⚠️ Secret key(sb_secret_...) 는 절대 넣지 않습니다. RLS 를 무시합니다.
-SUPABASE = ('', '')
+SUPABASE = ('https://ibwgtlzdlbakjihilklq.supabase.co', 'sb_publishable_Mpp5qKwA0OXAZqNyMaqC6Q_EAjMpF8w')
 
 import brand as BRAND
 BRAND.set_config(*SUPABASE)          # 모든 페이지의 me.js 가 같은 계정 설정을 읽는다
