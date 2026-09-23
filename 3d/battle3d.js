@@ -395,6 +395,10 @@ export async function runBattle(o) {
   const cam = new THREE.PerspectiveCamera(tall ? 47 : 41, W / H, 0.1, 80);
   const camBase = tall ? new THREE.Vector3(0.6, 1.5, 6.4) : new THREE.Vector3(0.55, 1.78, 5.9);
   const camAim = tall ? new THREE.Vector3(0.6, 0.95, 0) : new THREE.Vector3(0.55, 0.72, 0);
+  {                                    /* 단이 높을수록 사냥감이 커진다 — 카메라를 뒤로 빼 몸이 안 잘리게 */
+    const big = Math.max(0, (Math.min(10, o.tier || 1) - 6)) * 0.22;
+    camBase.z += big; camBase.x += big * 0.12; camAim.x += big * 0.1;
+  }
   cam.position.copy(camBase); cam.lookAt(camAim);
 
   sc.add(new THREE.HemisphereLight(TH.hemiSky, TH.hemiGnd, TH.hemiI));
@@ -508,7 +512,7 @@ export async function runBattle(o) {
     return build(t.el, MDL[t.el], -1.2 - Math.abs(k) * 0.7 - (k < 0 ? 0.25 : 0), k * 2.5, Math.PI / 2);
   });
   const foeMdl = FOE_MDL(foe.el);
-  const boss = build(foe.el, foeMdl, 2.45, 0, -Math.PI / 2);
+  const boss = build(foe.el, foeMdl, 2.45 + Math.max(0, (Math.min(10, o.tier || 1) - 6)) * 0.13, 0, -Math.PI / 2);  /* 큰 단일수록 한 걸음 뒤에 선다 */
   /* 사냥감은 던전 속성 색으로 물들이고, 단이 오를수록 커진다(계단 1.45 → 갑단 1.9).
      예전엔 다섯 던전 모두 같은 회색 늑대였다 — 롤토체스·서머너즈워는 적마다 생김이 다르다. */
   const tierK = Math.max(1, Math.min(10, o.tier || 1));
@@ -524,7 +528,16 @@ export async function runBattle(o) {
     if (x.color) x.color.lerp(bodyTint, white ? 0.55 : 0.45);
     if (x.emissive) { x.userData.baseEm = tint.clone().multiplyScalar(0.10 + tierK * 0.02); x.emissive.copy(x.userData.baseEm); }
   }));
-  if (foeMdl === 'm_enemy' || packs[foeMdl].fallback) addCrest(boss, foe.el, tierK, tint, sc);   /* 늑대만 — 새 짐승은 생김 자체가 다르다 */
+  /* 속성 장식(뿔·가시·잎 갈기…)은 늑대와, 모델을 못 받아 늑대로 대신할 때만.
+     던전마다 짐승이 다른 지금은 생김 자체가 속성을 말한다 */
+  if (foeMdl === 'm_enemy' || packs[foeMdl].fallback) addCrest(boss, foe.el, tierK, tint, sc);
+  /* 갑단 우두머리 — 머리 위로 도는 빛 고리 하나. '○○왕' 이라는 이름이 눈에도 보이게 */
+  if (tierK >= 10) {
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.035, 8, 40),
+      new THREE.MeshBasicMaterial({ color: tint, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false }));
+    ring.rotation.x = Math.PI / 2; ring.position.y = 0.80 * bs;
+    boss.holder.add(ring); boss.crown = ring;
+  }
   /* 사냥감 주위를 도는 속성 기운 */
   {
     const n = 26, g = new THREE.BufferGeometry(), p = new Float32Array(n * 3);
@@ -1069,6 +1082,7 @@ export async function runBattle(o) {
     TW.step(dt);
     stepBursts(dt); stepFx(dt);
     stepBars();
+    if (boss.crown) { boss.crown.rotation.z += dt * 1.2; boss.crown.position.y = 0.80 * boss.sc + Math.sin(performance.now() / 700) * 0.05; boss.crown.visible = boss.alive; }
     if (boss.aura) {
       const a = boss.aura.geometry.attributes.position.array, t = performance.now() / 1000;
       for (let i = 0; i < boss.auraN; i++) {
