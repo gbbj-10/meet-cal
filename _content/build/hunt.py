@@ -754,10 +754,17 @@ function beastOf(g,K){ return g.beast+(K>=10?'왕':''); }
 function preyOf(g,K){ return g.prey+' '+beastOf(g,K); }
 function tierCap(gEl){ return Math.max(1, tierFor(powerAt(gEl).pow)); }
 function dropFor(k,n){ return Math.round(k*(1+0.25*(n-1))); }
+/* 같은 사냥터를 잇따라 돌면 사냥감이 경계한다 — 판마다 용신석 12%씩, 최대 절반까지 줄어든다.
+   다른 사냥터로 옮기면 바로 풀린다. 다섯 곳을 고루 돌게 하는 장치다(서머너즈워의 요일 던전과 같은 목적) */
+function streak(){ return LS.get('hunt.streak', {id:'', n:0}) || {id:'', n:0}; }
+function streakN(gid){ var k=streak(); return k.id===gid ? k.n : 0; }
+function wary(gid){ return Math.max(0.52, 1 - 0.12*Math.min(4, streakN(gid))); }
+function noteVisit(gid){ var k=streak(); LS.set('hunt.streak', {id:gid, n: k.id===gid ? k.n+1 : 1}); }
 /* 내 조합이 누르는 두 땅(공명) — 용신석 ×1.2. 사주마다 자주 가는 땅이 갈라진다 */
 function isResG(el){ var c=myCombo(); return !!(c && c.strong.indexOf(el)>=0); }
-function lootMul(el){ return (isTodayG(el)?1.5:1)*(isResG(el)?1.2:1); }
-function lootTag(el){ var t=[]; if(isTodayG(el)) t.push('오늘 ×1.5'); if(isResG(el)) t.push('공명 ×1.2'); return t.join(' · '); }
+function lootMul(el,gid){ return (isTodayG(el)?1.5:1)*(isResG(el)?1.2:1)*(gid?wary(gid):1); }
+function lootTag(el,gid){ var t=[]; if(isTodayG(el)) t.push('오늘 ×1.5'); if(isResG(el)) t.push('공명 ×1.2');
+  if(gid && wary(gid)<1) t.push('경계 ×'+(Math.round(wary(gid)*100)/100)); return t.join(' · '); }
 
 /* ===================== 전투 ===================== */
 /* 보는 전투다. 한 번 누르면 끝까지 굴러가고, 사람은 로그를 읽는다.
@@ -872,8 +879,8 @@ function buildFight(){
   var endLine=jn(foe.nm,['이','가'])+' 물러갑니다.';
   push(endLine,'big'); act({t:'end', win:true, text:endLine});
 
-  var loot=Math.round(dropFor(K,n)*lootMul(gEl));
-  var ltext=gEl+' 용신석 '+loot+'개 획득'+(lootTag(gEl)?' ('+lootTag(gEl)+')':'')+(n>1?' — 한 사람에 '+loot+'개씩':'')+'.';
+  var loot=Math.max(1, Math.round(dropFor(K,n)*lootMul(gEl,g.id)));
+  var ltext=gEl+' 용신석 '+loot+'개 획득'+(lootTag(gEl,g.id)?' ('+lootTag(gEl,g.id)+')':'')+(n>1?' — 한 사람에 '+loot+'개씩':'')+'.';
   push(ltext,'big'); act({t:'loot', el:gEl, n:loot, yong:true, text:ltext});
 
   var nxt = K<10 ? TH[K] : null, gapN = nxt ? nxt-P.pow : 0;
@@ -997,7 +1004,7 @@ function playLog(F){
 function endBattle(F){
   if($('b-skip')) $('b-skip').hidden=true;
   paintTeam(F.team.map(function(t){return {hp:t.hp/t.max, down:false}}), F.team);
-  markCleared(CUR.id, F.tier); addStones(F.lootEl, F.loot);
+  markCleared(CUR.id, F.tier); addStones(F.lootEl, F.loot); noteVisit(CUR.id);
   if(window.FP) FP.push();              /* 로그인했으면 계정에 저장 */
   var tn=tOf(F.tier).nm, nx=F.tier+1, cap=tierCap(CUR.el);
   var canNext = nx<=10 && nx<=cap;
@@ -1148,6 +1155,7 @@ function renderGuide(){
     '<li><b>친구와 파티를 하면 더 높은 단을 깰 수 있고</b>, 한 사람이 받는 용신석도 늘어납니다.</li>'+
     '<li>높은 단일수록 용신석이 많이 나옵니다.</li>'+
     '<li><b>오늘의 사냥터</b>는 용신석 ×1.5, 내 사주 조합이 누르는 두 땅(<b>조합 공명</b>)은 ×1.2 — 사주마다 자주 가는 땅이 다릅니다.</li>'+
+    '<li>같은 사냥터를 <b>잇따라 돌면 사냥감이 경계해</b> 용신석이 판마다 12%씩 줄어듭니다(최대 절반). 다른 사냥터로 옮기면 바로 풀립니다.</li>'+
     '<li><b>기단</b>부터는 사주 1·2위 속성이 만난 <b>조합 필살기</b>가 둘째 겨룸에 나갑니다.</li>'+
     '</ul></div>'+ wuxingSVG();
 }
@@ -1166,6 +1174,7 @@ function renderPick(){
     var tags='';
     if(isTodayG(g.el)) tags+='<span class="tag good">오늘의 사냥터 · 용신석 ×1.5</span>';
     if(isResG(g.el)) tags+='<span class="tag res">조합 공명 · 용신석 ×1.2</span>';
+    if(wary(g.id)<1) tags+='<span class="tag warn">연속 '+streakN(g.id)+'판 · 사냥감 경계 ×'+(Math.round(wary(g.id)*100)/100)+'</span>';
     tags+='<span class="tag edge">'+FP.edge(g.el)+' 우세</span>';
     var dn=cleared(g.id);
     var why='내 전투력 <b>'+P0.pow+'</b> · '+(cap<10 ? tOf(cap+1).nm+' 권장 '+rec : '갑단까지 열림')+
@@ -1225,7 +1234,7 @@ function renderTier(){
             : isOpen ? '<span class="rt2 open">열림</span>' : '<span class="rt2 shut">잠김</span>';
     var gap=need-P.pow;
     var why = isOpen
-      ? beastOf(g,t.k)+' · 권장 '+need+' · '+g.el+' '+Math.round(dropFor(t.k,P.n)*lootMul(g.el))+'개'+(lootMul(g.el)>1?' ×'+(Math.round(lootMul(g.el)*10)/10):'')
+      ? beastOf(g,t.k)+' · 권장 '+need+' · '+g.el+' '+Math.max(1,Math.round(dropFor(t.k,P.n)*lootMul(g.el,g.id)))+'개'+(lootMul(g.el,g.id)!==1?' ×'+(Math.round(lootMul(g.el,g.id)*100)/100):'')
       : beastOf(g,t.k)+' · 권장 '+need+' · <b style="color:#e8a33c">'+gap+' 부족</b>';
     html += '<button class="rung'+(t.k===cap&&isOpen&&!isDone?' now':'')+'" data-k="'+t.k+'"'+(isOpen?'':' disabled')+'>'+
       gem(g.col, t.hj, 'gz2 sq')+
@@ -1254,7 +1263,7 @@ function renderParty(){
     '<span><h1>'+g.nm+' '+tOf(TIER).nm+'</h1><span class="hj">'+tOf(TIER).gan+'급 '+preyOf(g,TIER)+'</span></span>';
   var Pp=powerAt(g.el);
   $('gsub').textContent = g.one + ' — 권장 전투력 '+TH[TIER-1]+' · 내 '+(Pp.n>1?'파티 ':'')+'전투력 '+Pp.pow+
-    (lootTag(g.el)?' · 용신석 '+lootTag(g.el):'');
+    (lootTag(g.el,g.id)?' · 용신석 '+lootTag(g.el,g.id):'');
 
   var html='';
   /* 내 자리 */
