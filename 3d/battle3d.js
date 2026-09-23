@@ -19,7 +19,7 @@ const MDL = { 목:'m_mok', 화:'m_hwa', 토:'m_to', 금:'m_geum', 수:'m_su' };
 /* 던전마다 사냥감이 다르다 — 수 늑대 · 토 멧돼지 · 목 사슴 · 화 해태(불을 먹는 짐승) · 금 백호(서쪽의 흰 범) */
 const FOE_BY_EL = { 수: 'm_enemy', 토: 'm_boar', 목: 'm_deer', 화: 'm_haetae', 금: 'm_tiger' };
 const FOE_MDL = el => FOE_BY_EL[el] || 'm_enemy';
-const POSE = { idle:'Idle', attack:'Attack', hit:'Idle_HitReact1', death:'Death', walk:'Walk' };
+const POSE = { idle:'Idle', attack:'Attack', hit:'Idle_HitReact1', death:'Death', walk:'Walk', gallop:'Gallop' };
 
 /* ── 던전 테마 ── (예전 3D 파티전투 원형 34_3D_파티전투_5종.html 에서 옮겨 왔다)
    하늘 3색 · 안개 · 빛 · 바닥 바탕/얼룩 · 바위 · 중경 소품 · 랜드마크 · 떠다니는 입자.
@@ -396,8 +396,9 @@ export async function runBattle(o) {
   const camBase = tall ? new THREE.Vector3(0.6, 1.5, 6.4) : new THREE.Vector3(0.55, 1.78, 5.9);
   const camAim = tall ? new THREE.Vector3(0.6, 0.95, 0) : new THREE.Vector3(0.55, 0.72, 0);
   {                                    /* 단이 높을수록 사냥감이 커진다 — 카메라를 뒤로 빼 몸이 안 잘리게 */
-    const big = Math.max(0, (Math.min(10, o.tier || 1) - 6)) * 0.22;
-    camBase.z += big; camBase.x += big * 0.12; camAim.x += big * 0.1;
+    const Mc = Math.max(1, Math.min(5, o.foeCount || 1));
+    const big = Math.max(0, (Math.min(10, o.tier || 1) - 6)) * 0.22 + (Mc >= 4 ? 1.3 : Mc >= 2 ? 0.6 : 0);
+    camBase.z += big; camBase.x += big * 0.3; camAim.x += big * 0.28; camBase.y += big * 0.15;
   }
   cam.position.copy(camBase); cam.lookAt(camAim);
 
@@ -479,7 +480,9 @@ export async function runBattle(o) {
     /* 몸 반길이 — 코끝이 맞닿는 거리를 재는 데 쓴다. 모델은 +z 를 보고 있다 */
     const half = (Math.max(sz.z, sz.x) * (0.92 / sz.y)) / 2;   /* Tripo 모델은 옆으로 누운 축일 수 있어 긴 쪽 */
     const u = { el, holder, wob, mx, clip, meshes, outlines, glow, shadow: sh, alive: true, pose: null, one: null, flash: 0, lineT: 0,
+                sc: 1, busy: 0, phase: Math.random() * 6.28,
                 half, home: holder.position.clone() };
+    u.bone = {}; holder.traverse(o => { if (o.isBone) u.bone[o.name] = o; });
     pose(u, 'idle');
     return u;
   }
@@ -489,9 +492,29 @@ export async function runBattle(o) {
     const from = u.clip[POSE[u.pose]];
     if (u.pose === p) return;
     u.pose = p; u.one = null;
-    to.reset(); to.setLoop(THREE.LoopRepeat, Infinity); to.timeScale = 1;
+    to.reset(); to.setLoop(THREE.LoopRepeat, Infinity); to.timeScale = p === 'idle' ? 0.06 : 1;   /* 서 있을 땐 발을 구르지 않는다 */
     to.setEffectiveWeight(1).play();
     if (from && from !== to) from.crossFadeTo(to, 0.18, false);
+  }
+  /* 반복 재생(달리기 등). speed 로 발놀림 빠르기를 맞춘다 */
+  function playLoop(u, p, speed, fade) {
+    const a = u.clip[POSE[p]]; if (!a) return;
+    const cur = u.clip[POSE[u.pose]];
+    if (cur && cur !== a) cur.fadeOut(fade || 0.12);
+    a.reset(); a.setLoop(THREE.LoopRepeat, Infinity); a.timeScale = speed || 1;
+    a.setEffectiveWeight(1).fadeIn(fade || 0.12).play();
+    u.pose = p; u.one = null;
+  }
+  /* 클립 중간(from 0~1)부터 한 번 — 공격 클립의 '덮치는' 순간만 뽑아 쓴다 */
+  function playFrom(u, p, from, speed, hold) {
+    const a = u.clip[POSE[p]]; if (!a) return;
+    const cur = u.clip[POSE[u.pose]];
+    if (cur && cur !== a) cur.fadeOut(0.06);
+    const D = a.getClip().duration;
+    a.reset(); a.time = D * from; a.setLoop(THREE.LoopOnce, 1); a.clampWhenFinished = !!hold;
+    a.timeScale = speed || 1; a.setEffectiveWeight(1).fadeIn(0.05).play();
+    u.pose = p; u.one = p;
+    if (!hold) later(() => { if (u.one === p) { u.one = null; u.pose = null; pose(u, 'idle', true); } }, (D * (1 - from) / (speed || 1)) * 1000);
   }
   function once(u, p, dur, hold) {
     const a = u.clip[POSE[p]]; if (!a) return;
@@ -512,40 +535,50 @@ export async function runBattle(o) {
     return build(t.el, MDL[t.el], -1.2 - Math.abs(k) * 0.7 - (k < 0 ? 0.25 : 0), k * 2.5, Math.PI / 2);
   });
   const foeMdl = FOE_MDL(foe.el);
-  const boss = build(foe.el, foeMdl, 2.45 + Math.max(0, (Math.min(10, o.tier || 1) - 6)) * 0.13, 0, -Math.PI / 2);  /* 큰 단일수록 한 걸음 뒤에 선다 */
-  /* 사냥감은 던전 속성 색으로 물들이고, 단이 오를수록 커진다(계단 1.45 → 갑단 1.9).
-     예전엔 다섯 던전 모두 같은 회색 늑대였다 — 롤토체스·서머너즈워는 적마다 생김이 다르다. */
   const tierK = Math.max(1, Math.min(10, o.tier || 1));
-  /* 사슴은 뿔까지 키에 들어가 몸이 작아 보인다 — 조금 키운다 */
-  const bs = (1.45 + (tierK - 1) * 0.05) * (foeMdl === 'm_deer' && !packs[foeMdl].fallback ? 1.18 : 1);
-  boss.wob.scale.setScalar(bs); boss.glow.scale.setScalar(bs); boss.shadow.scale.setScalar(bs); boss.half *= bs;
-  boss.sc = bs;
+  const M = Math.max(1, Math.min(5, o.foeCount || 1));
+  /* 마물은 던전 속성 색으로 물들이고, 단이 오를수록 커진다. 여러 마리면 조금 작게, 부채꼴로 선다 */
+  const bs0 = (1.45 + (tierK - 1) * 0.05) * (foeMdl === 'm_deer' && !packs[foeMdl].fallback ? 1.18 : 1);
+  const bs = bs0 * (M >= 4 ? 0.62 : M === 3 ? 0.72 : M === 2 ? 0.82 : 1);
   const tint = new THREE.Color(COL[foe.el] || 0x888888);
-  /* 백호는 흰 털이 살도록 속성 색 대신 흰빛으로 */
   const white = foeMdl === 'm_tiger' && !packs[foeMdl].fallback;
-  const bodyTint = white ? new THREE.Color(0xf4f6fa) : tint;
-  boss.meshes.forEach(m => eachMat(m, x => {
-    if (x.color) x.color.lerp(bodyTint, white ? 0.55 : 0.45);
-    if (x.emissive) { x.userData.baseEm = tint.clone().multiplyScalar(0.10 + tierK * 0.02); x.emissive.copy(x.userData.baseEm); }
-  }));
-  /* 속성 장식(뿔·가시·잎 갈기…)은 늑대와, 모델을 못 받아 늑대로 대신할 때만.
-     던전마다 짐승이 다른 지금은 생김 자체가 속성을 말한다 */
-  if (foeMdl === 'm_enemy' || packs[foeMdl].fallback) addCrest(boss, foe.el, tierK, tint, sc);
-  /* 갑단 우두머리 — 머리 위로 도는 빛 고리 하나. '○○왕' 이라는 이름이 눈에도 보이게 */
-  if (tierK >= 10) {
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.035, 8, 40),
-      new THREE.MeshBasicMaterial({ color: tint, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false }));
-    ring.rotation.x = Math.PI / 2; ring.position.y = 0.80 * bs;
-    boss.holder.add(ring); boss.crown = ring;
+  const FUR = { 목: 0x1f6b33, 화: 0xa8331c, 토: 0x9a6a22, 수: 0x3a63a8, 금: 0xf4f6fa };
+  const bodyTint = new THREE.Color(white ? FUR.금 : (FUR[foe.el] || 0x666666));
+  const backX = 2.45 + Math.max(0, tierK - 6) * 0.13 - (M >= 4 ? 0.55 : M >= 2 ? 0.2 : 0);
+  const foes = [];
+  /* 무리 대형 — 앞줄이 가운데, 뒷줄은 옆으로 벌려 뒤에. (앞뒤 어긋남, 좌우) 순 */
+  const FORM = { 1: [[0, 0]], 2: [[0, -0.9], [0, 0.9]], 3: [[0, 0], [0.8, -1.4], [0.8, 1.4]],
+                 4: [[0, -0.7], [0, 0.7], [0.95, -1.9], [0.95, 1.9]], 5: [[0, 0], [0.5, -1.25], [0.5, 1.25], [1.1, -2.4], [1.1, 2.4]] }[M];
+  for (let i = 0; i < M; i++) {
+    const fx = backX + FORM[i][0], fz = FORM[i][1];
+    const u = build(foe.el, foeMdl, fx, fz, -Math.PI / 2);
+    u.wob.scale.setScalar(bs); u.glow.scale.setScalar(bs); u.shadow.scale.setScalar(bs); u.half *= bs; u.sc = bs; u.idx = i;
+    u.meshes.forEach(m => eachMat(m, x => {
+      if (x.color) x.color.lerp(bodyTint, white ? 0.55 : 0.62);
+      if (x.emissive) { x.userData.baseEm = bodyTint.clone().multiplyScalar(0.06 + tierK * 0.012); x.emissive.copy(x.userData.baseEm); }
+      if ('roughness' in x) x.roughness = Math.max(x.roughness, 0.85);
+    }));
+    /* 속성 장식(뿔·가시…)은 늑대와, 모델을 못 받아 늑대로 대신할 때만 */
+    if (foeMdl === 'm_enemy' || packs[foeMdl].fallback) addCrest(u, foe.el, tierK, tint, sc);
+    /* 갑단 우두머리 — 앞장선 한 마리 머리 위로 도는 빛 고리 */
+    if (tierK >= 10 && i === Math.floor((M - 1) / 2)) {
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.035, 8, 40),
+        new THREE.MeshBasicMaterial({ color: tint, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false }));
+      ring.rotation.x = Math.PI / 2; ring.position.y = 0.80 * bs;
+      u.holder.add(ring); u.crown = ring;
+    }
+    /* 마물 주위를 도는 속성 기운 */
+    {
+      const n = 26, g = new THREE.BufferGeometry(), p = new Float32Array(n * 3);
+      g.setAttribute('position', new THREE.BufferAttribute(p, 3));
+      const aura = new THREE.Points(g, new THREE.PointsMaterial({ color: tint, size: 0.09, map: sparkTexture(),
+        transparent: true, opacity: 0.8, depthWrite: false, blending: THREE.AdditiveBlending }));
+      u.holder.add(aura); u.aura = aura; u.auraN = n;
+    }
+    foes.push(u);
   }
-  /* 사냥감 주위를 도는 속성 기운 */
-  {
-    const n = 26, g = new THREE.BufferGeometry(), p = new Float32Array(n * 3);
-    g.setAttribute('position', new THREE.BufferAttribute(p, 3));
-    const aura = new THREE.Points(g, new THREE.PointsMaterial({ color: tint, size: 0.09, map: sparkTexture(),
-      transparent: true, opacity: 0.8, depthWrite: false, blending: THREE.AdditiveBlending }));
-    boss.holder.add(aura); boss.aura = aura; boss.auraN = n;
-  }
+  const boss = foes[Math.floor((M - 1) / 2)];          /* 카메라·연출 기준점 */
+  const foeAt = a => foes[Math.min(foes.length - 1, a.foe || 0)];
 
   /* ── 화면 위 글자 (데미지 숫자) ── */
   const lay = document.createElement('div');
@@ -561,7 +594,7 @@ export async function runBattle(o) {
     const fill = document.createElement('i');
     fill.style.cssText = 'display:block;height:100%;width:100%;background:' + col + ';transition:width .25s';
     el.appendChild(fill); lay.appendChild(el);
-    const b = { u, el, fill, hp: 1, y: big ? 1.95 : 1.2 }; bars.push(b); return b;
+    const b = { u, el, fill, hp: 1, y: big ? (u.sc || 1) * 0.66 + 0.1 : 1.2 }; bars.push(b); return b;
   }
   function stepBars() {
     bars.forEach(b => {
@@ -589,8 +622,8 @@ export async function runBattle(o) {
 
   /* ── 연기 ── */
   let stop = 0, shake = 0, zoom = 0, dead = false;
-  mates.forEach(u => { u.bar = hpBar(u, '#' + new THREE.Color(COL[u.el] || 0x7fe08f).getHexString(), false); });
-  boss.bar = hpBar(boss, '#ff6b5b', true);
+  /* 아군 체력은 화면 위 막대(hunt.py)가 맡는다. 마물은 머리 위 빨간 막대 */
+  foes.forEach(u => { u.bar = hpBar(u, '#e8483c', true); });
   const setHp = (u, r) => { if (u.bar) u.bar.fill.style.width = Math.max(0, Math.round(r * 100)) + '%'; };
   function hitFx(u, kind) {
     u.flash = kind === 'big' ? 0.13 : 0.07;
@@ -759,9 +792,9 @@ export async function runBattle(o) {
     later(() => { if (u.mx) u.mx.timeScale = 1; u.meshes.forEach(m => eachMat(m, x => { if (x.userData.fzCol) { delete x.userData.fzCol; if (x.userData.baseEm) x.emissive.copy(x.userData.baseEm); else x.emissive.setScalar(0); } })); }, ms);
   }
   function ultFx(a) {
-    const at = boss.holder.position.clone(); at.y = 0; const c = a.col;
+    const T = foeAt(a); const at = T.holder.position.clone(); at.y = 0; const c = a.col;
     screenTint(c, 500);
-    if (a.fx === 'ice')     { spikes(at, 0xbfefff, 11, 1.5); cloud(at, 0xe8fbff, 40, { size: 0.35, spread: 2, dur: 1.4 }); later(() => freeze(boss, 0x9fe4ff, 1400), 250); }
+    if (a.fx === 'ice')     { spikes(at, 0xbfefff, 11, 1.5); cloud(at, 0xe8fbff, 40, { size: 0.35, spread: 2, dur: 1.4 }); later(() => foes.forEach(F => F.alive && freeze(F, 0x9fe4ff, 1400)), 250); }
     else if (a.fx === 'gas')  { cloud(at, 0x9fd83a, 70, { size: 0.9, spread: 1.1, rise: 0.25, dur: 2.2, op: 0.7, normal: true }); cloud(at, 0xe4ff7a, 30, { size: 0.4, dur: 1.6 }); }
     else if (a.fx === 'crystal') { orbitShards(at, 0xe6b3ff); later(() => spikes(at, 0xd9a8ff, 7, 1.4, 'oct'), 700); }
     else if (a.fx === 'mist') { cloud(at, 0xeef4fa, 80, { size: 1.1, spread: 2.4, dur: 2.2, op: 0.55, normal: true }); }
@@ -791,10 +824,10 @@ export async function runBattle(o) {
      세게 맞으면(상극·도약) 더 멀리, 더 높이 날아가고 한 번 더 휘청인다. */
   function hurt(u, dir, big) {
     if (!u.alive) return;
-    u.lineT = big ? 0.6 : 0.42;
-    const heavy = u === boss ? 0.45 : 1;   /* 사냥감은 몸집이 커서 덜 날아간다 */
+    u.lineT = big ? 0.6 : 0.42; u.busy = 1;
+    const heavy = u.idx != null ? 0.45 : 1;   /* 마물은 몸집이 커서 덜 날아간다 */
     const h = u.home, far = (big ? 0.34 : 0.18) * heavy, up = (big ? 0.16 : 0.07) * heavy, lean = (big ? 0.34 : 0.2) * heavy;
-    const tilt = u === boss ? 1 : 1;      /* 모두 +z 를 보고 서 있어 x 축으로 젖히면 코가 들린다 */
+    const tilt = 1;      /* 모두 +z 를 보고 서 있어 x 축으로 젖히면 코가 들린다 */
     TW.add(0, 1, big ? 0.16 : 0.12, 'out', t => {
       u.holder.position.set(h.x + dir.x * far * t, 0, h.z + dir.z * far * t);
       u.wob.position.y = Math.sin(t * Math.PI * 0.5) * up;
@@ -807,7 +840,7 @@ export async function runBattle(o) {
         const wob = Math.sin(t * Math.PI * (big ? 3 : 2)) * (1 - t);
         u.wob.rotation.x = -lean * tilt * (1 - t) * (1 - t);
         u.wob.rotation.z = wob * (big ? 0.22 : 0.12);
-      }, () => { u.wob.rotation.x = 0; u.wob.rotation.z = 0; u.wob.position.y = 0; });
+      }, () => { u.wob.rotation.x = 0; u.wob.rotation.z = 0; u.wob.position.y = 0; u.busy = 0; });
     });
   }
 
@@ -821,36 +854,61 @@ export async function runBattle(o) {
     const back = h.clone().addScaledVector(dir, -0.22);
     const at = hit.clone().addScaledVector(dir, u.half * 0.9); at.y = 0.55;
     const col = new THREE.Color(COL[u.el] || 0xffffff);
+    const S = u.sc || 1;
     const lerp = (a, b, t) => u.holder.position.set(a.x + (b.x - a.x) * t, 0, a.z + (b.z - a.z) * t);
-    const land = (big) => {
-      burst(at, dir, col, big); onLand();
-      hurt(target, dir, big);
+    const dist = h.distanceTo(hit);
+    /* 발놀림을 이동 속도에 맞춘다 — 질주 클립 한 바퀴(13프레임)에 몸길이 1.1배를 간다고 보고 */
+    const stride = Math.max(0.4, u.half * 2 * 1.1), CYCLE = 13 / 24;
+    const gallopSpeed = (v) => Math.min(2.4, Math.max(0.9, (v / stride) * CYCLE));
+    const land = (big) => { burst(at, dir, col, big); onLand(); hurt(target, dir, big); };
+    /* 착지 찌부 — 닿는 순간 몸이 납작해졌다 펴진다 */
+    const squash = (k0) => TW.add(0, 1, 0.18, 'out', t => { const k = Math.sin(t * Math.PI) * k0;
+      u.wob.scale.set(S * (1 + 0.9 * k), S * (1 - k), S * (1 + 0.5 * k)); }, () => u.wob.scale.setScalar(S));
+    /* 웅크림(예비 동작) — 뒤로 살짝 물러앉으며 코를 낮춘다. 그래야 다음 도약이 읽힌다 */
+    const crouch = (dur, deep, then) => TW.add(0, 1, dur, 'out', t => { const k = Math.sin(t * Math.PI * 0.5);
+      u.wob.position.y = -0.05 * deep * k * S; u.wob.rotation.x = 0.10 * deep * k;
+      u.wob.scale.set(S, S * (1 - 0.08 * deep * k), S); lerp(h, back, k * 0.5); }, then);
+    /* 돌아오기 — 껑충 뛰어 제자리로. 질주 클립을 천천히 돌려 공중 자세를 만든다 */
+    const home = (from, dur) => { playLoop(u, 'gallop', 0.7, 0.08);
+      TW.add(0, 1, dur, 'out', t => { lerp(from, h, t); u.wob.position.y = Math.sin(t * Math.PI) * 0.16 * S; u.wob.rotation.x = -0.12 * Math.sin(t * Math.PI); },
+        () => { u.wob.rotation.y = 0; u.wob.rotation.x = 0; u.wob.position.y = 0; u.busy = 0; u.one = null; u.pose = null; pose(u, 'idle', true); }); };
+    const strike = (big, extra) => {          /* 닿는 순간 — 공격 클립의 덮치는 구간만 빠르게 */
+      playFrom(u, 'attack', 0.32, 1.7, true);
+      later(() => { land(big); squash(big ? 0.14 : 0.10); if (extra) extra(); }, 90);
     };
-    const home = (from, dur) => TW.add(0, 1, dur, 'out', t => lerp(from, h, t), () => { u.wob.rotation.y = 0; u.wob.position.y = 0; });
+    u.busy = 1;
 
-    if (move === 'ram') {                 /* 박치기 — 뒤로 물러섰다가 머리부터 들이받는다 */
-      once(u, 'attack', 0.9);
-      TW.add(0, 1, 0.16, 'out', t => lerp(h, back, t), () =>
-        TW.add(0, 1, 0.2, 'in', t => lerp(back, hit, t), () => {
-          land(kind === 'big');
-          later(() => { if (!dead) home(hit, 0.42); }, 140);      /* 붙은 채로 잠깐 버틴다 */
-        }));
-    } else if (move === 'leap') {         /* 도약 내려찍기 — 높이 뛰어올라 정수리로 떨어진다 */
-      once(u, 'attack', 1.0);
-      TW.add(0, 1, 0.42, 'in', t => {
-        lerp(h, hit, t); u.wob.position.y = Math.sin(t * Math.PI) * (u === boss ? 0.45 : 0.95);
-      }, () => {
-        u.wob.position.y = 0; land(true); shock(hit, col); shake = Math.max(shake, 0.2);
-        later(() => { if (!dead) TW.add(0, 1, 0.4, 'out', t => { lerp(hit, h, t); u.wob.position.y = Math.sin(t * Math.PI) * 0.3; },
-          () => { u.wob.position.y = 0; }); }, 150);
+    if (move === 'ram') {                 /* 박치기 — 웅크렸다가 달려들어 머리부터 들이받는다 */
+      crouch(0.18, 1, () => {
+        const dur = Math.min(0.55, Math.max(0.28, dist / 3.4));
+        playLoop(u, 'gallop', gallopSpeed(dist / dur), 0.08);
+        TW.add(0, 1, dur, 'in', t => { lerp(back, hit, t); u.wob.position.y = 0; u.wob.rotation.x = 0.16 * t; u.wob.scale.setScalar(S); },
+          () => { u.wob.rotation.x = 0.05; strike(kind === 'big'); later(() => { if (!dead) home(hit, 0.42); }, 260); });
+      });
+    } else if (move === 'leap') {         /* 도약 내려찍기 — 깊게 웅크렸다가 높이 뛰어올라 정수리로 떨어진다 */
+      crouch(0.22, 1.5, () => {
+        playFrom(u, 'gallop', 0.02, 0.45, true);         /* 공중에서 몸을 쭉 편 자세 */
+        const H = (u.idx != null ? 0.45 : 0.95) * S;
+        TW.add(0, 1, 0.46, 'in', t => {
+          lerp(back, hit, t); u.wob.position.y = Math.sin(t * Math.PI) * H;
+          u.wob.rotation.x = 0.25 * Math.sin(t * Math.PI) - 0.35 * Math.max(0, t - 0.55);   /* 올라갈 땐 코를 들고 내려올 땐 내리꽂는다 */
+          u.wob.scale.setScalar(S);
+        }, () => {
+          u.wob.position.y = 0; u.wob.rotation.x = 0;
+          strike(true, () => { shock(hit, col); shake = Math.max(shake, 0.2); });
+          later(() => { if (!dead) home(hit, 0.4); }, 300);
+        });
       });
     } else {                              /* 회전 돌진 — 한 바퀴 돌며 달려들어 몸통으로 부딪친다 */
-      once(u, 'attack', 0.9);
-      TW.add(0, 1, 0.34, 'in', t => {
-        lerp(h, hit, t); u.wob.rotation.y = t * Math.PI * 2; u.wob.position.y = Math.sin(t * Math.PI) * 0.12;
-      }, () => {
-        u.wob.rotation.y = 0; u.wob.position.y = 0; land(kind === 'big');
-        later(() => { if (!dead) home(hit, 0.38); }, 110);
+      crouch(0.14, 0.7, () => {
+        const dur = Math.min(0.5, Math.max(0.3, dist / 3.6));
+        playLoop(u, 'gallop', gallopSpeed(dist / dur), 0.08);
+        TW.add(0, 1, dur, 'in', t => {
+          lerp(back, hit, t); u.wob.rotation.y = t * Math.PI * 2; u.wob.position.y = Math.sin(t * Math.PI) * 0.12 * S; u.wob.scale.setScalar(S);
+        }, () => {
+          u.wob.rotation.y = 0; u.wob.position.y = 0;
+          strike(kind === 'big'); later(() => { if (!dead) home(hit, 0.38); }, 240);
+        });
       });
     }
     return move;
@@ -861,15 +919,43 @@ export async function runBattle(o) {
      걸어 나가 하나씩 빨아들인다. 돌을 개에게 걸어가서 밟게 하면 열 개를
      줍는 데 십몇 초가 걸린다 — 개는 한 번만 걸어 나가고, 돌이 개에게 온다. */
   const stones = [];
-  const stoneGeo = new THREE.OctahedronGeometry(0.115, 0);
+  const stoneGeo = new THREE.OctahedronGeometry(0.115, 0);   /* (예전 낱알 — 정리용으로만 남겨 둔다) */
+  /* 용신석 — 결정 덩어리. 굵은 기둥 하나에 잔 결정 몇 개가 붙은 모양. 속성마다 몸색·속빛이 다르다.
+     유리처럼 비치되(physical 재질) 안쪽이 어둡고 겉이 밝아 참고 이미지의 석류석 느낌을 낸다 */
+  const GEM = { 목: [0x2f9d55, 0x0d3d1c], 화: [0xe0452a, 0x5a0f08], 토: [0xf0b62e, 0x6b4308], 금: [0xd6dde8, 0x556173], 수: [0x3b8fe6, 0x0c2e63] };
+  function crystalGeo(seed) {
+    /* 울퉁불퉁한 원석 — 정이십면체 꼭짓점(12개, 공유)을 흔들어 각진 덩어리를 만들고 잔 덩어리를 붙인다. 면마다 법선을 따로 둬 각이 산다 */
+    const g = new THREE.Group(); const rnd = (() => { let x = seed * 9301 + 49297; return () => { x = (x * 233 + 1) % 4093; return x / 4093; }; })();
+    const chunk = (r, sx, sy, sz, px, py, pz) => {
+      const base = new THREE.IcosahedronGeometry(r, 0); const p = base.attributes.position; const seen = new Map();
+      for (let i = 0; i < p.count; i++) { const key = [p.getX(i), p.getY(i), p.getZ(i)].map(v => v.toFixed(4)).join(','); let k = seen.get(key); if (k == null) { k = 0.72 + rnd() * 0.5; seen.set(key, k); }
+        p.setXYZ(i, p.getX(i) * k * sx, p.getY(i) * k * sy, p.getZ(i) * k * sz); }
+      const geo = base.toNonIndexed(); geo.computeVertexNormals(); base.dispose();
+      const m = new THREE.Mesh(geo, null); m.position.set(px, py, pz); m.rotation.set(rnd() * 6, rnd() * 6, rnd() * 6); g.add(m); return m; };
+    chunk(0.13, 1.0, 1.25, 0.9, 0, 0.14, 0);
+    chunk(0.08, 1.1, 1.0, 1.0, 0.11, 0.05, 0.05);
+    chunk(0.065, 0.9, 1.3, 1.0, -0.09, 0.07, -0.04);
+    if (rnd() > 0.5) chunk(0.05, 1, 1, 1, 0.03, 0.03, -0.11);
+    return g;
+  }
+  function crystalMat(el) {
+    const [body, deep] = GEM[el] || GEM.토;
+    return new THREE.MeshPhysicalMaterial({ color: body, emissive: deep, emissiveIntensity: 1.1, roughness: 0.12, metalness: 0.0,
+      clearcoat: 1, clearcoatRoughness: 0.1, flatShading: true, transparent: true, opacity: 0.94 });
+  }
+  function rimMat(el) { const [body] = GEM[el] || GEM.토; return new THREE.MeshBasicMaterial({ color: new THREE.Color(body).lerp(new THREE.Color(0xffffff), 0.55), transparent: true, opacity: 0.18, side: THREE.BackSide, blending: THREE.AdditiveBlending, depthWrite: false }); }
+  function makeCrystal(el, seed) {
+    const g = crystalGeo(seed), mat = crystalMat(el), rm = rimMat(el);
+    g.children.slice().forEach(o => { o.material = mat; const r = o.clone(); r.material = rm; r.scale.multiplyScalar(1.03); g.add(r); });
+    g.userData.mat = mat; g.userData.rim = rm; return g;
+  }
 
   function dropStones(el, howMany, mid) {
     const c = new THREE.Color(COL[el] || 0xffd93d);
     const shown = Math.min(12, howMany);
     for (let i = 0; i < shown; i++) {
-      const m = new THREE.Mesh(stoneGeo, new THREE.MeshStandardMaterial({
-        color: c, emissive: c, emissiveIntensity: 0.85, roughness: 0.25, metalness: 0.6
-      }));
+      const m = makeCrystal(el, i + 1);
+      m.scale.setScalar(0.85 + Math.random() * 0.4); m.rotation.y = Math.random() * 6;
       /* 바닥에 깔린 빛무리 — 돌이 어디 떨어졌는지 멀리서도 보인다 */
       const halo = new THREE.Mesh(new THREE.CircleGeometry(0.2, 18),
         new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: 0.28 }));
@@ -890,7 +976,7 @@ export async function runBattle(o) {
       TW.add(0, 1, 0.55 + Math.random() * 0.18, '', v => {
         holder.position.x = mid.x + (tx - mid.x) * v;
         holder.position.z = mid.z + (tz - mid.z) * v;
-        m.position.y = 0.12 + Math.sin(v * Math.PI) * top;
+        m.position.y = 0.02 + Math.sin(v * Math.PI) * top;
         halo.material.opacity = 0.28 * v;
       });
     }
@@ -909,11 +995,12 @@ export async function runBattle(o) {
         st.holder.position.lerpVectors(from, to, v);
         st.mesh.position.y = y0 + Math.sin(v * Math.PI) * 0.45;
         st.mesh.scale.setScalar(1 - v * 0.55);
-        eachMat(st.mesh, x => { x.emissiveIntensity = 0.85 + v * 2.2; });
+        st.mesh.rotation.y += 0.25;
+        if (st.mesh.userData.mat) st.mesh.userData.mat.emissiveIntensity = 0.9 + v * 2.4;
       }, () => {
         sc.remove(st.holder);
-        st.mesh.geometry === stoneGeo || st.mesh.geometry.dispose();
-        eachMat(st.mesh, x => x.dispose());
+        st.mesh.traverse(o => { if (o.isMesh && o.geometry) o.geometry.dispose(); });
+        if (st.mesh.userData.mat) st.mesh.userData.mat.dispose(); if (st.mesh.userData.rim) st.mesh.userData.rim.dispose();
         st.halo.geometry.dispose(); st.halo.material.dispose();
         if (onIn) onIn();
       });
@@ -980,15 +1067,16 @@ export async function runBattle(o) {
     else if (a.t === 'hit') {
       const u = mates[a.by]; if (!u || !u.alive) return next();
       if (onCaption) onCaption(a.text);
-      attack(u, boss, a.kind, () => {
-        boss.hpNow = a.foeHp;
-        pop(boss, '−' + a.dmg, a.kind);
-        hitFx(boss, a.kind);
-        if (boss.alive && a.foeHp > 0) once(boss, 'hit', 0.5);
-        setHp(boss, a.foeHp);
-        if (o.onFoeHp) o.onFoeHp(a.foeHp);
+      const F = foeAt(a); if (!F.alive) return next();
+      attack(u, F, a.kind, () => {
+        F.hpNow = a.foeHp;
+        pop(F, '−' + a.dmg, a.kind);
+        hitFx(F, a.kind);
+        if (F.alive && a.foeHp > 0) once(F, 'hit', 0.5);
+        setHp(F, a.foeHp);
+        if (o.onFoeHp) o.onFoeHp(a.allHp != null ? a.allHp : a.foeHp);
       });
-      wait = 780;
+      wait = M >= 3 ? 640 : 780;
     }
     else if (a.t === 'ult') {
       const u = mates[a.by]; if (!u || !u.alive) return next();
@@ -997,38 +1085,48 @@ export async function runBattle(o) {
       later(() => ultFx(a), 650);
       /* 연쇄·연타는 숫자가 나눠 뜬다 — 번개 두 번, 칼바람 세 번 */
       const parts = (a.splits && a.splits.length) ? a.splits : [a.dmg];
-      const hp0 = boss.hpNow == null ? 1 : boss.hpNow;
+      const F = foeAt(a);
+      const hp0 = F.hpNow == null ? 1 : F.hpNow;
       let acc = 0;
       parts.forEach((d, k) => later(() => {
-        acc += d; const r = hp0 - (hp0 - a.foeHp) * (acc / a.dmg);
-        boss.hpNow = r; pop(boss, '−' + d, 'ult'); hitFx(boss, 'big');
-        if (k === parts.length - 1 && boss.alive && a.foeHp > 0 && a.fx !== 'ice') once(boss, 'hit', 0.6);
-        setHp(boss, r); if (o.onFoeHp) o.onFoeHp(r);
+        acc += d; const r = hp0 - (hp0 - a.foeHp) * (acc / Math.max(1, a.dmg));
+        F.hpNow = r; pop(F, '−' + d, 'ult'); hitFx(F, 'big');
+        if (k === parts.length - 1 && F.alive && a.foeHp > 0 && a.fx !== 'ice') once(F, 'hit', 0.6);
+        setHp(F, r); if (o.onFoeHp) o.onFoeHp(r);
       }, 1150 + k * 260));
       wait = 2300 + (parts.length - 1) * 260;
     }
+    else if (a.t === 'foedown') {                    /* 마물 한 마리가 쓰러진다 */
+      const F = foeAt(a); if (!F.alive) return next();
+      if (onCaption && a.text) onCaption(a.text);
+      F.alive = false; F.busy = 1; once(F, 'death', 1.0, true);
+      TW.add(0, 1, 1.2, 'in', p => fade(F, p, 0.95));
+      wait = a.text ? 450 : 80;
+    }
     else if (a.t === 'dot') {                        /* 독연·화상 — 사냥감 위로 색 숫자 */
       if (onCaption) onCaption(a.text);
-      boss.hpNow = a.foeHp; pop(boss, '−' + a.dmg, 'dot', a.col); hitFx(boss, '');
-      setHp(boss, a.foeHp); if (o.onFoeHp) o.onFoeHp(a.foeHp);
+      const F = foeAt(a);
+      F.hpNow = a.foeHp; pop(F, '−' + a.dmg, 'dot', a.col); hitFx(F, '');
+      setHp(F, a.foeHp); if (o.onFoeHp) o.onFoeHp(a.foeHp);
       wait = 650;
     }
     else if (a.t === 'foehit') {
       const v = mates[a.to]; if (!v) return next();
       if (onCaption) onCaption(a.text);
-      attack(boss, v, a.kind, () => {
+      const F = foes[Math.min(foes.length - 1, a.from || 0)]; if (!F.alive) return next();
+      attack(F, v, a.kind, () => {
         pop(v, '−' + a.dmg, a.kind === 'big' ? 'bad' : '');
         hitFx(v, a.kind);
         if (v.alive) once(v, 'hit', 0.5);
         (a.hp || []).forEach((h, i) => mates[i] && setHp(mates[i], h));
         if (o.onTeamHp) o.onTeamHp(a.hp);
       });
-      wait = 820;
+      wait = M >= 4 ? 430 : M >= 2 ? 560 : 820;   /* 마물이 많으면 반격이 잦다 — 짧게 끊는다 */
     }
     else if (a.t === 'down') {
       const v = mates[a.i]; if (!v) return next();
       if (onCaption) onCaption(a.text);
-      v.alive = false; once(v, 'death', 0.95, true);
+      v.alive = false; v.busy = 1; once(v, 'death', 0.95, true);
       TW.add(0, 1, 1.2, 'in', p => fade(v, p, 0.92));
       wait = 900;
     }
@@ -1040,8 +1138,7 @@ export async function runBattle(o) {
     else if (a.t === 'end') {
       if (onCaption) onCaption(a.text);
       if (a.win) {
-        boss.alive = false; once(boss, 'death', 1.1, true);
-        TW.add(0, 1, 1.3, 'in', p => fade(boss, p, 0.95));
+        foes.forEach(F => { if (!F.alive) return; F.alive = false; once(F, 'death', 1.1, true); TW.add(0, 1, 1.3, 'in', p => fade(F, p, 0.95)); });
         /* 쓰러지는 걸 본 다음, 필살기 연출이 다 끝난 뒤에 */
         later(() => { const t0 = performance.now();
           (function wv() { if (dead) return; if (fxs.length && performance.now() - t0 < 2500) return requestAnimationFrame(wv); victory(); })(); }, 1050);
@@ -1071,6 +1168,36 @@ export async function runBattle(o) {
   }
   function finish() { if (onDone) onDone(); }
 
+  /* 서 있을 때의 위협 자세 — 몸을 낮추고 고개를 숙인 채 상대를 노려본다.
+     클립은 멈춰 두고(발 구르기 없음) 뼈를 직접 돌린다: 목·머리를 숙이고, 천천히 좌우로 훑고, 숨을 쉰다.
+     mixer.update 뒤에 덧씌우므로 클립 값 위에 더해진다 */
+  const STANCE = { neck: -0.15, head: -0.20, scan: 0.14, breath: 0.010, sink: 0.035 };
+  const _E = new THREE.Euler();
+  /* 서 있을 때의 위협 자세 — 몸을 낮추고 고개를 숙인 채 상대를 노려본다.
+     클립(Idle)은 거의 멈춰 두고, 매 프레임 '클립이 준 뼈 자세' 위에 굽힘을 더한다.
+     더한 값이 쌓이지 않도록 뼈 자세를 먼저 저장해 두고(base) 거기서 출발한다. */
+  function stance(u) {
+    const tt = performance.now() / 1000 + u.phase, S = u.sc || 1, B = u.bone || {};
+    if (!u.base) { u.base = {}; for (const n in B) u.base[n] = B[n].quaternion.clone(); }
+    for (const n in B) B[n].quaternion.copy(u.base[n]);
+    const br = Math.sin(tt * 2.0) * STANCE.breath;
+    u.wob.position.y = -STANCE.sink * S;
+    u.wob.scale.set(S * (1 - br * 0.4), S * (1 + br), S * (1 - br * 0.4));
+    u.wob.rotation.z = 0.015 * Math.sin(tt * 0.6);
+    const R = (n, dx, dy) => { const b = B[n]; if (!b) return; _E.setFromQuaternion(b.quaternion); _E.x += dx; if (dy) _E.y += dy; b.quaternion.setFromEuler(_E); };
+    /* 다리 — 어깨·팔꿈치·무릎을 굽혀 낮게 선다(늑대 아마추어 51본 기준, 없는 뼈는 건너뛴다) */
+    R('FrontShoulderL', -0.30); R('FrontShoulderR', -0.30);
+    R('FrontUpperLegL', 0.50);  R('FrontUpperLegR', 0.50);
+    R('FrontLowerLegL', -0.20); R('FrontLowerLegR', -0.20);
+    R('BackShoulderL', 0.35);   R('BackShoulderR', 0.35);
+    R('BackUpperLegL', -0.50);  R('BackUpperLegR', -0.50);
+    R('BackLowerLegL', 0.30);   R('BackLowerLegR', 0.30);
+    /* 목·머리를 숙이고 천천히 좌우로 훑는다 · 꼬리는 낮게 */
+    R('Neck1', STANCE.neck); R('Neck2', STANCE.neck);
+    R('Head', STANCE.head, Math.sin(tt * 1.1) * STANCE.scan);
+    R('Tail1', -0.10); R('Tail2', -0.10); R('Tail3', -0.10);
+  }
+
   /* ── 매 프레임 ── */
   const clock = new THREE.Clock();
   (function loop() {
@@ -1082,18 +1209,21 @@ export async function runBattle(o) {
     TW.step(dt);
     stepBursts(dt); stepFx(dt);
     stepBars();
-    if (boss.crown) { boss.crown.rotation.z += dt * 1.2; boss.crown.position.y = 0.80 * boss.sc + Math.sin(performance.now() / 700) * 0.05; boss.crown.visible = boss.alive; }
-    if (boss.aura) {
-      const a = boss.aura.geometry.attributes.position.array, t = performance.now() / 1000;
-      for (let i = 0; i < boss.auraN; i++) {
-        const ang = t * 0.9 + i * (Math.PI * 2 / boss.auraN), r = 0.42 + 0.1 * Math.sin(t * 2 + i);
-        a[i*3] = Math.cos(ang) * r; a[i*3+1] = 0.15 + ((t * 0.35 + i / boss.auraN) % 1) * 0.75; a[i*3+2] = Math.sin(ang) * r;
+    foes.forEach(F => {
+      if (F.crown) { F.crown.rotation.z += dt * 1.2; F.crown.position.y = 0.80 * F.sc + Math.sin(performance.now() / 700) * 0.05; F.crown.visible = F.alive; }
+      if (F.aura) {
+        const a = F.aura.geometry.attributes.position.array, t = performance.now() / 1000 + F.idx;
+        for (let i = 0; i < F.auraN; i++) {
+          const ang = t * 0.9 + i * (Math.PI * 2 / F.auraN), r = 0.42 + 0.1 * Math.sin(t * 2 + i);
+          a[i*3] = Math.cos(ang) * r; a[i*3+1] = 0.15 + ((t * 0.35 + i / F.auraN) % 1) * 0.75; a[i*3+2] = Math.sin(ang) * r;
+        }
+        F.aura.geometry.attributes.position.needsUpdate = true; F.aura.visible = F.alive;
       }
-      boss.aura.geometry.attributes.position.needsUpdate = true; boss.aura.visible = boss.alive;
-    }
+    });
     arena.step(dt, performance.now() / 1000);
-    [...mates, boss].forEach(u => {
+    [...mates, ...foes].forEach(u => {
       u.mx.update(dt);
+      if (u.alive && !u.busy && u.pose === 'idle') stance(u); else u.base = null;
       if (u.lineT > 0) u.lineT -= dt;
       const on = u.alive && u.lineT > 0;
       if (u.outlines[0] && u.outlines[0].visible !== on) u.outlines.forEach(o => { o.visible = on; });
