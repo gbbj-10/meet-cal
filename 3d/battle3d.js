@@ -399,6 +399,9 @@ export async function runBattle(o) {
     const Mc = Math.max(1, Math.min(5, o.foeCount || 1));
     const big = Math.max(0, (Math.min(10, o.tier || 1) - 6)) * 0.22 + (Mc >= 4 ? 1.3 : Mc >= 2 ? 0.6 : 0);
     camBase.z += big; camBase.x += big * 0.3; camAim.x += big * 0.28; camBase.y += big * 0.15;
+    /* 무리가 크면 카메라를 더 높이 든다 — 앞뒤로 선 마물이 겹치지 않고 위아래로 펼쳐 보인다 */
+    const hi = Mc >= 4 ? 1.7 : Mc === 3 ? 0.9 : Mc === 2 ? 0.4 : 0;
+    camBase.y += hi; camAim.y += hi * 0.1;
   }
   cam.position.copy(camBase); cam.lookAt(camAim);
 
@@ -547,8 +550,8 @@ export async function runBattle(o) {
   const backX = 2.45 + Math.max(0, tierK - 6) * 0.13 - (M >= 4 ? 0.55 : M >= 2 ? 0.2 : 0);
   const foes = [];
   /* 무리 대형 — 앞줄이 가운데, 뒷줄은 옆으로 벌려 뒤에. (앞뒤 어긋남, 좌우) 순 */
-  const FORM = { 1: [[0, 0]], 2: [[0, -0.9], [0, 0.9]], 3: [[0, 0], [0.8, -1.4], [0.8, 1.4]],
-                 4: [[0, -0.7], [0, 0.7], [0.95, -1.9], [0.95, 1.9]], 5: [[0, 0], [0.5, -1.25], [0.5, 1.25], [1.1, -2.4], [1.1, 2.4]] }[M];
+  const FORM = { 1: [[0, 0]], 2: [[0, -1.1], [0, 1.1]], 3: [[0, 0], [0.55, -1.8], [0.55, 1.8]],
+                 4: [[0, -0.9], [0, 0.9], [0.6, -2.6], [0.6, 2.6]], 5: [[0, 0], [0.35, -1.7], [0.35, 1.7], [0.85, -3.2], [0.85, 3.2]] }[M];
   for (let i = 0; i < M; i++) {
     const fx = backX + FORM[i][0], fz = FORM[i][1];
     const u = build(foe.el, foeMdl, fx, fz, -Math.PI / 2);
