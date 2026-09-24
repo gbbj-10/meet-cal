@@ -479,8 +479,13 @@ var Store = {
     return sb.auth.getUser().then(function(r){
       var u=r.data&&r.data.user; if(!u) return null;
       var m=u.user_metadata||{};
-      return {id:u.id, nick:m.name||m.full_name||m.preferred_username||'이름없음',
+      var o={id:u.id, nick:m.name||m.full_name||m.preferred_username||'이름없음',
               pic:m.avatar_url||m.picture||'', el:null};
+      /* 직접 정한 닉네임(me.js 닉네임 창, nick_set)이 있으면 그 이름 */
+      return sb.from('hunt_players').select('nick,nick_set').eq('user_id',u.id).maybeSingle().then(function(q){
+        if(q&&q.data&&q.data.nick_set&&q.data.nick) o.nick=q.data.nick;
+        return o;
+      },function(){ return o; });
     });
   },
   login:function(){
