@@ -90,6 +90,10 @@ header.site nav a.hl{color:var(--to);font-weight:700}
 .go{width:100%;margin-top:16px;padding:15px;border:0;border-radius:11px;background:var(--acc);
   color:#08101c;font:inherit;font-size:16.5px;font-weight:700;cursor:pointer}
 .go:hover{background:#7db1f6}
+/* 기존 회원 — 이미 만든 캐릭터를 계정에서 불러온다. 게스트에게만 보인다 */
+.go.old{margin-top:10px;background:var(--to);color:#191600}
+.go.old:hover{background:#ffe373}
+.oldn{margin:8px 0 0;font-size:12.5px;color:var(--dim);text-align:center}
 
 /* ── 결과 ── */
 .out{margin-top:26px}
@@ -175,9 +179,11 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 .mine2{margin:26px 0 8px;padding:20px 20px 18px;border-radius:16px;
   border:1px solid rgba(255,217,61,.4);background:rgba(255,217,61,.07)}
 .mine2 .mw{display:flex;align-items:center;gap:16px}
-.mine2 .m2dog{height:230px;margin:10px -8px 0;border-radius:14px;
+.mine2 .m2dog{height:345px;margin:10px -8px 0;border-radius:14px;
   background:radial-gradient(ellipse at 50% 78%,rgba(255,217,61,.10),transparent 62%)}
 .mine2 .m2dog canvas{display:block;width:100%!important;height:100%!important}
+.mine2 .m2dog{position:relative}
+.mine2 .m2dog.ld::after{content:'캐릭터를 불러오는 중…';position:absolute;inset:0;display:grid;place-items:center;font-size:13px;color:var(--dim)}
 .mine2 .orb2{width:62px;height:62px;border-radius:50%;flex:none;display:grid;place-items:center;
   font-size:27px;font-weight:800;color:#0a0f18;font-family:"Noto Serif KR",serif}
 .mine2 .k{font-size:12px;font-weight:700;color:var(--to);letter-spacing:.2px}
@@ -199,8 +205,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 
 <header class="site"><div class="wrap">
   <a class="nm" href="/">__MARK__Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
-  <nav><a href="/iljin/">기운</a><a href="/map/">지도</a>
-       <a class="hl" href="/hunt/">사냥터</a><a href="/ohaeng/">글</a><span data-fp-chip></span></nav>
+  <nav><a href="/ohaeng/">사주 이야기</a><span data-fp-chip></span></nav>
 </div></header>
 
 <main class="wrap">
@@ -240,12 +245,14 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
   </div>
   <p class="hint">시각을 모르면 <b>모름</b>으로 두세요. 여덟 글자 중 여섯 글자로만 계산하고,
      결과에 그 사실을 표시합니다. 아무 시각이나 찍어 넣는 것보다 정확합니다.</p>
-  <button class="go" id="go">내 오행 보기</button>
+  <button class="go" id="go">나의 오행 조회</button>
+  <button class="go old" id="old" type="button" hidden>기존 회원 로그인</button>
+  <p class="oldn" id="old-n" hidden>이미 캐릭터를 만든 적이 있다면 카카오톡으로 로그인해 불러오세요.</p>
 </section>
 
-<!-- 내 오행 보기 다음 화면 — 사주 여덟 글자만 따로 보여 주고, 캐릭터 생성으로 넘어간다 -->
+<!-- 나의 오행 조회 다음 화면 — 사주 여덟 글자만 따로 보여 주고, 캐릭터 생성으로 넘어간다 -->
 <section class="tool sj" id="saju" hidden>
-  <div class="sj-k">내 오행 보기</div>
+  <div class="sj-k">나의 오행 조회</div>
   <h1>당신의 사주 구성</h1>
   <p class="sub" id="dsub"></p>
   <div class="board" id="board"></div>
@@ -262,7 +269,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 </section>
 
 <section class="sec">
-  <div class="h"><h2>계산해서 쓴 글</h2><a href="/ohaeng/">전체 보기 &rarr;</a></div>
+  <div class="h"><h2>사주 이야기</h2><a href="/ohaeng/">전체 보기 &rarr;</a></div>
   __POSTS__
 </section>
 
@@ -395,6 +402,19 @@ $('mk').addEventListener('click', function(){
   if(window.__showMine) window.__showMine(true);
   window.scrollTo(0,0);
 });
+/* 기존 회원 로그인 — 게스트에게만 보인다. 로그인해서 돌아오면 me.js 가 계정의 캐릭터를
+   받아 오고(fp:sync) 프로필이 바로 뜬다. 캐릭터가 없던 계정이면 계산기 그대로 둔다. */
+function paintOld(){
+  var b=$('old'), n=$('old-n'); if(!b) return;
+  if(!window.FP || !FP.online || !FP.online()){ b.hidden=n.hidden=true; return; }
+  FP.user().then(function(u){ b.hidden=n.hidden=!!u; }).catch(function(){ b.hidden=n.hidden=false; });
+}
+$('old').addEventListener('click', function(){
+  if(window.gtag) gtag('event','old_login');
+  if(window.FP) FP.login(location.origin);
+});
+paintOld();
+document.addEventListener('fp:sync', paintOld);
 $('sj-back').addEventListener('click', function(){
   $('saju').hidden=true; $('hero').hidden=false; $('tool').hidden=false; window.scrollTo(0,0);
 });
@@ -426,10 +446,17 @@ $('sj-back').addEventListener('click', function(){
        WebGL 이 없거나 모델을 못 받으면 칸만 조용히 접는다. */
     var dg=$('m2-dog');
     if(dg && !dg.dataset.on){
-      dg.dataset.on='1';
-      import('/3d/profile3d.js').then(function(m){
-        return m.showDog({mount:dg, base:'/3d/', el:me.el, height:230});
-      }).catch(function(){ dg.style.display='none'; });
+      dg.dataset.on='1'; dg.style.display=''; dg.classList.add('ld');
+      /* 모델·three.js 합쳐 2MB 가까이 받는다. 받는 동안 빈칸으로 두지 않고 안내를 띄우고,
+         한 번 실패하면 잠시 뒤 한 번 더 받는다. 두 번 다 안 되면 그때 칸을 접는다. */
+      var tryDog=function(n){
+        return import('/3d/profile3d.js').then(function(m){
+          return m.showDog({mount:dg, base:'/3d/', el:me.el, height:345});
+        }).then(function(r){ if(!r) throw 0; dg.classList.remove('ld'); })
+          .catch(function(){ if(n<1) return new Promise(function(ok){ setTimeout(ok,1500); }).then(function(){ return tryDog(n+1); });
+                             dg.classList.remove('ld'); dg.style.display='none'; });
+      };
+      tryDog(0);
     }
     $('hero').hidden=true;
     $('tool').hidden=true;
