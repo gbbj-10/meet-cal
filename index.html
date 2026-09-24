@@ -431,6 +431,10 @@ $('sj-back').addEventListener('click', function(){
     var dg=$('m2-dog');
     if(dg && !dg.dataset.on){
       dg.dataset.on='1'; dg.style.display=''; dg.classList.add('ld');
+      /* WebGL 이 아예 없는 기기는 기다리지 않고 바로 접는다(루프20 — 3초 동안 '불러오는 중'만 떠 있었다) */
+      var gl=null; try{ var cv=document.createElement('canvas'); gl=cv.getContext('webgl2')||cv.getContext('webgl'); }catch(e){}
+      if(!gl){ dg.classList.remove('ld'); dg.style.display='none'; }
+      else {
       /* 모델·three.js 합쳐 2MB 가까이 받는다. 받는 동안 빈칸으로 두지 않고 안내를 띄우고,
          한 번 실패하면 잠시 뒤 한 번 더 받는다. 두 번 다 안 되면 그때 칸을 접는다. */
       var tryDog=function(n){
@@ -441,6 +445,7 @@ $('sj-back').addEventListener('click', function(){
                              dg.classList.remove('ld'); dg.style.display='none'; });
       };
       tryDog(0);
+      }
     }
     $('hero').hidden=true;
     $('tool').hidden=true;
