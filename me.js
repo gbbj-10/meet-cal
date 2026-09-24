@@ -53,7 +53,7 @@
     /* 헤더의 작은 프로필. 캐릭터가 있을 때만 보인다. 누르면 지도로 간다. */
     chipHTML: function () {
       var m = this.get(); if (!m) return '';
-      return '<a class="fpchip" href="/map/" title="내 캐릭터 — 지도로">' +
+      return '<a class="fpchip" href="/map/" title="내 캐릭터 — 선택목록으로">' +
              '<i style="background:' + (COL[m.el] || '#8e9bb0') + '">' + (HJ[m.el] || '?') + '</i>' +
              '<b>' + m.el + '</b></a>';
     },
