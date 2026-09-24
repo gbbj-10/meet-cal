@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0d1119">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20%3E%3Cpath%20fill%3D%22%23ffd93d%22%20d%3D%22M24%2025.6c7.6%200%2014%205.1%2014%2011.1%200%204.9-4.1%208.3-8.6%208.3-2.6%200-3.8-.9-5.4-.9s-2.8.9-5.4.9C14.1%2045%2010%2041.6%2010%2036.7c0-6%206.4-11.1%2014-11.1z%22%2F%3E%3Cellipse%20cx%3D%2211.06%22%20cy%3D%2221.75%22%20rx%3D%225.3%22%20ry%3D%226.5%22%20transform%3D%22rotate(-30%2011.06%2021.75)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2218.73%22%20cy%3D%2216.18%22%20rx%3D%225.8%22%20ry%3D%227.1%22%20transform%3D%22rotate(-9%2018.73%2016.18)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2229.27%22%20cy%3D%2216.18%22%20rx%3D%225.8%22%20ry%3D%227.1%22%20transform%3D%22rotate(9%2029.27%2016.18)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2236.94%22%20cy%3D%2221.75%22%20rx%3D%225.3%22%20ry%3D%226.5%22%20transform%3D%22rotate(30%2036.94%2021.75)%22%20fill%3D%22%23ffd93d%22%2F%3E%3C%2Fsvg%3E"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><script>window.FPCFG={"sbUrl": "https://ibwgtlzdlbakjihilklq.supabase.co", "sbKey": "sb_publishable_Mpp5qKwA0OXAZqNyMaqC6Q_EAjMpF8w"}</script><script src="/me.js"></script>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+            "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}
+</script>
+<meta name="color-scheme" content="dark">
+<meta name="robots" content="noindex">
+<title>궁합소 — Four Paws</title>
+<meta name="description" content="상대를 카카오톡으로 불러 두 사람의 사주 여덟 글자로 궁합을 봅니다. 두 사람의 오행 댕댕이가 함께 노는 모습도 볼 수 있습니다.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="궁합소 — 두 사람의 오행 궁합">
+<meta property="og:description" content="상대를 카카오톡으로 불러 두 사람의 사주 여덟 글자로 궁합을 봅니다. 두 사람의 오행 댕댕이가 함께 노는 모습도 볼 수 있습니다.">
+<meta property="og:image" content="https://meetcal.co.kr/map/img/spot-gunghap.jpg">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HMSZVTTJMB"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-HMSZVTTJMB');</script>
+<style>
+:root{--bg:#0d1119;--pan:#151b26;--ink:#e9eef6;--mut:#9aa6b8;--dim:#6f7d92;--line:#232c3c;
+  --acc:#5b9bf0;--to:#ffd93d;--rose:#ff7eb0}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  word-break:keep-all;-webkit-text-size-adjust:100%}
+a{color:var(--acc)}
+header.site{border-bottom:1px solid var(--line)}
+header.site .in{max-width:640px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:12px 16px}
+header.site .nm{font-weight:800;font-size:17px;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:8px;min-height:40px}
+.fpchip{display:inline-flex;align-items:center;gap:5px;text-decoration:none;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:999px;padding:3px 9px 3px 3px;font-size:13px;font-weight:700;color:var(--ink)}.fpchip i{width:19px;height:19px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:800;color:#0a0f18;font-family:"Noto Serif KR",serif}@media(max-width:430px){.fpchip b{display:none}.fpchip{padding:3px}}.mk{width:24px;height:24px;flex:none;display:block}header nav a,.bar nav a,.top-bar nav a,footer a{display:inline-flex;align-items:center;min-height:40px}main .h a,main a[data-cta]:not([class]){display:inline-flex;align-items:center;min-height:40px}.bar .mk,.top-bar .mk{width:21px;height:21px}@media(max-width:430px){header.site nav a[href="/"],.bar nav a[href="/"],.top-bar nav a[href="/"]{display:none}header.site nav,.bar nav,.top-bar nav{gap:12px}}
+header.site nav{margin-left:auto;display:flex;gap:14px;align-items:center}
+header.site nav a{font-size:14px;color:var(--mut);text-decoration:none}
+.wrap{max-width:640px;margin:0 auto;padding:18px 16px 40px}
+.hero{position:relative;border-radius:18px;overflow:hidden;padding:26px 20px 22px;
+  border:1.5px solid rgba(255,126,176,.45);background:#141019}
+.hero::before{content:"";position:absolute;inset:0;background:url(/map/img/spot-gunghap.jpg) center 40%/cover;opacity:.40}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,17,25,.1),rgba(13,17,25,.88))}
+.hero > *{position:relative;z-index:1}
+.hero .k{color:var(--rose);font-size:13px;font-weight:800;letter-spacing:.04em}
+.hero h1{margin:6px 0 6px;font-size:28px;letter-spacing:-.02em}
+.hero p{margin:0;color:#cfd7e4;line-height:1.7;font-size:15px}
+.stage{height:280px;margin:14px -8px 0;border-radius:16px;
+  background:radial-gradient(ellipse at 50% 80%,rgba(255,126,176,.14),transparent 64%)}
+.stage canvas{display:block;width:100%!important;height:100%!important}
+.stage.ld{display:grid;place-items:center;color:var(--dim);font-size:13px}
+.card{margin-top:14px;background:var(--pan);border:1px solid #222c3c;border-radius:16px;padding:18px}
+.card h2{margin:0 0 6px;font-size:19px}
+.card p.s{margin:0 0 12px;color:var(--mut);font-size:14px;line-height:1.7}
+.btn{display:block;width:100%;margin-top:12px;padding:15px;border:0;border-radius:12px;font:inherit;
+  font-size:16px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none}
+.btn.kakao{background:#fee500;color:#191600}
+.btn.rose{background:var(--rose);color:#2a0716}
+.btn.ghost{background:#222c3e;color:#c9d2df}
+.btn:disabled{opacity:.6;cursor:default}
+.frow{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:8px}
+.f span{display:block;font-size:12.5px;color:var(--dim);margin-bottom:5px}
+.f input,.f select{width:100%;padding:11px 10px;border:1px solid #2b3546;border-radius:9px;
+  background:#0f141d;color:var(--ink);font:inherit;font-size:16px}
+.f.full{grid-column:1/-1;margin-top:8px}
+.note{margin:10px 0 0;font-size:12.5px;color:var(--dim);line-height:1.6}
+.me{display:flex;gap:10px;align-items:center;margin-bottom:4px}
+.orb{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-weight:800;
+  font-size:18px;color:#0a0f18;background:radial-gradient(circle at 35% 30%,#fff8,transparent 45%),var(--c);flex:none;
+  font-family:"Noto Serif KR",serif}
+.me b{font-size:16px}.me small{display:block;color:var(--mut);font-size:12.5px;margin-top:2px}
+.list{list-style:none;margin:14px 0 0;padding:0}
+.list li{display:flex;align-items:center;gap:10px;padding:11px 0;border-top:1px solid #222c3c;font-size:14.5px}
+.list li .w{flex:1}.list li small{display:block;color:var(--dim);font-size:12px;margin-top:2px}
+.list li button{background:#2a2032;color:var(--rose);border:1px solid rgba(255,126,176,.4);border-radius:9px;
+  padding:7px 12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.list li .wait{color:var(--dim);font-size:12.5px}
+.pair{display:flex;gap:8px;align-items:center}
+.who{flex:1;display:flex;gap:10px;align-items:center;background:#10151f;border:1px solid #243044;border-radius:14px;padding:10px}
+.who .nm{font-weight:800}.who .pl{font-size:12px;color:#cfd7e4;margin-top:2px}
+.x{color:var(--dim)}
+.score{margin:16px 0 4px;display:flex;align-items:baseline;gap:8px}
+.score .n{font-size:52px;font-weight:900;color:var(--rose);line-height:1}.score .u{color:var(--dim)}
+.grade{display:inline-block;background:rgba(255,126,176,.12);border:1px solid rgba(255,126,176,.45);color:var(--rose);
+  padding:5px 12px;border-radius:99px;font-weight:700;font-size:14px}
+.sum{margin:12px 0 14px;line-height:1.75;font-size:15.5px}
+.part{background:#10151f;border:1px solid #1f2837;border-radius:14px;padding:13px 15px;margin-top:10px}
+.ph{display:flex;justify-content:space-between;font-weight:700;font-size:14.5px}.ph span{color:var(--dim);font-weight:600}
+.bar{height:6px;background:#232c3b;border-radius:9px;margin:8px 0 10px;overflow:hidden}.bar i{display:block;height:100%;background:var(--rose);border-radius:9px}
+.part p{margin:0;line-height:1.75;font-size:14.5px;color:#d6deea}
+.dog{margin-top:14px;padding:12px 14px;border-radius:12px;background:rgba(79,185,95,.08);border:1px solid rgba(79,185,95,.3);font-size:14px;line-height:1.7}
+.dis{font-size:12.5px;color:var(--dim);margin-top:10px}
+.foot{max-width:640px;margin:0 auto;padding:6px 16px 34px;display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:center}
+.foot a{color:var(--dim);font-size:13px;text-decoration:none}
+[hidden]{display:none!important}
+</style>
+</head><body>
+<header class="site"><div class="in">
+  <a class="nm" href="/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="mk" aria-hidden="true"><path fill="#ffd93d" d="M24 25.6c7.6 0 14 5.1 14 11.1 0 4.9-4.1 8.3-8.6 8.3-2.6 0-3.8-.9-5.4-.9s-2.8.9-5.4.9C14.1 45 10 41.6 10 36.7c0-6 6.4-11.1 14-11.1z"/><ellipse cx="11.06" cy="21.75" rx="5.3" ry="6.5" transform="rotate(-30 11.06 21.75)" fill="#4fb95f"/><ellipse cx="18.73" cy="16.18" rx="5.8" ry="7.1" transform="rotate(-9 18.73 16.18)" fill="#e8483c"/><ellipse cx="29.27" cy="16.18" rx="5.8" ry="7.1" transform="rotate(9 29.27 16.18)" fill="#8e9bb0"/><ellipse cx="36.94" cy="21.75" rx="5.3" ry="6.5" transform="rotate(30 36.94 21.75)" fill="#3f8fe0"/></svg>Four&nbsp;Paws</a>
+  <nav><a href="/map/">지도</a><a href="/ohaeng/">사주 이야기</a><span data-fp-chip></span></nav>
+</div></header>
+
+<main class="wrap">
+  <section class="hero" id="hero">
+    <div class="k">宮合所</div>
+    <h1>궁합소</h1>
+    <p id="hero-p">상대를 카카오톡으로 불러, 두 사람의 사주 여덟 글자로 궁합을 봅니다.
+       결과 위에서 두 사람의 오행 댕댕이가 같이 놀아요.</p>
+  </section>
+
+  <div class="stage" id="stage" hidden></div>
+
+  <section class="card" id="v-load"><p class="s">불러오는 중…</p></section>
+
+  <section class="card" id="v-off" hidden>
+    <h2>지금은 궁합소를 열 수 없어요</h2>
+    <p class="s">계정 연결이 준비되지 않았습니다. 잠시 뒤에 다시 들어와 주세요.</p>
+  </section>
+
+  <section class="card" id="v-login" hidden>
+    <h2 id="lg-h">카카오톡으로 시작해요</h2>
+    <p class="s" id="lg-p">궁합은 두 사람이 각자 로그인해서 봅니다. 초대한 사람도, 초대받은 사람도 결과를 같이 볼 수 있어요.</p>
+    <button class="btn kakao" id="lg-go">카카오톡 로그인</button>
+  </section>
+
+  <section class="card" id="v-birth" hidden>
+    <h2 id="bh">내 생년월일</h2>
+    <p class="s" id="bp">궁합을 계산할 사주 여덟 글자를 만듭니다.</p>
+    <div class="frow">
+      <label class="f"><span>연도</span><input type="number" id="y" min="1900" max="2100" value="1995" inputmode="numeric"></label>
+      <label class="f"><span>월</span><select id="m"></select></label>
+      <label class="f"><span>일</span><select id="d"></select></label>
+      <label class="f full"><span>태어난 시각</span><select id="h"></select></label>
+    </div>
+    <button class="btn rose" id="bgo">궁합 보기</button>
+    <button class="btn ghost" id="buse" hidden>내 캐릭터 사주로 바로 보기</button>
+    <p class="note">생년월일은 저장하지 않고, 계산한 사주 여덟 글자와 오행 비율만 저장합니다. 시각을 모르면 '모름'으로 두세요.</p>
+  </section>
+
+  <section class="card" id="v-host" hidden>
+    <div class="me" id="host-me"></div>
+    <button class="btn kakao" id="inv">카카오톡으로 상대 초대하기</button>
+    <p class="note">상대가 링크로 들어와 로그인하고 생년월일을 넣으면, 여기에 결과가 생깁니다.</p>
+    <ul class="list" id="pairs"></ul>
+  </section>
+
+  <section class="card" id="v-msg" hidden><h2 id="msg-h"></h2><p class="s" id="msg-p"></p>
+    <a class="btn ghost" href="/gunghap/">궁합소 처음으로</a></section>
+
+  <section class="card" id="v-result" hidden>
+    <div id="res"></div>
+    <a class="btn rose" href="/gunghap/" id="again">다른 사람과도 궁합 보기</a>
+  </section>
+</main>
+<footer class="foot"><a href="/">처음으로</a><a href="/map/">지도</a><a href="/hunt/">사냥터</a><a href="/iljin/">오늘의 기운</a><a href="/ohaeng/">사주 이야기</a></footer>
+
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.8.3/kakao.min.js"></script>
+<script src="/ohaeng/data/saju-calculator.js"></script>
+<script>/* 궁합소 계산 — 규칙 v1 (Game/기획/궁합/궁합_규칙.md). 만세력 엔진 결과만 쓰고 서버·API 없음.
+   원본: gunghap.js(점수) + texts.js(문장). 여기서는 둘을 한 파일로 묶어 브라우저에서 돌린다. */
+(function(){
+/* Four Paws 궁합 규칙 — 만세력 엔진(saju-calculator.js) 결과만으로 계산한다. API·서버 없음.
+ * 100점 = 일간 30 + 일지 25 + 띠 15 + 오행 보완 20 + 주도 기운 10
+ */
+const GAN=['갑','을','병','정','무','기','경','신','임','계'], ZHI=['자','축','인','묘','진','사','오','미','신','유','술','해'];
+const EL = ['목','화','토','금','수'];
+const HJ = {목:'木',화:'火',토:'土',금:'金',수:'水'};
+const SAENG = {목:'화',화:'토',토:'금',금:'수',수:'목'};   // A가 B를 낳는다
+const GEUK  = {목:'토',토:'수',수:'화',화:'금',금:'목'};   // A가 B를 누른다
+const GAN_EL = ['목','목','화','화','토','토','금','금','수','수'];
+const ZHI_EL = ['수','토','목','목','토','화','화','토','금','금','토','수'];
+const HAP_NAME = {0:'갑기합',1:'을경합',2:'병신합',3:'정임합',4:'무계합'};
+const SAMHAP = {0:'신자진 수국',1:'사유축 금국',2:'인오술 화국',3:'해묘미 목국'};
+const TTI = ['쥐','소','호랑이','토끼','용','뱀','말','양','원숭이','닭','개','돼지'];
+
+function elRel(a,b){                 // a 기준 b 와의 관계
+  if(a===b) return 'same';
+  if(SAENG[a]===b) return 'give';    // a 가 b 를 낳음(내가 도와줌)
+  if(SAENG[b]===a) return 'take';    // b 가 a 를 낳음(도움 받음)
+  if(GEUK[a]===b) return 'press';    // a 가 b 를 누름
+  return 'pressed';                  // b 가 a 를 누름
+}
+function zhiRel(a,b){                // 지지 인덱스
+  if(a===b) return 'same';
+  if((a+b)%12===1) return 'yukhap';
+  if(Math.abs(a-b)===6) return 'chung';
+  const WJ=[[0,7],[1,6],[2,9],[3,8],[4,11],[5,10]];
+  if(WJ.some(([x,y])=>(a===x&&b===y)||(a===y&&b===x))) return 'wonjin';
+  if(a%4===b%4) return 'samhap';
+  return 'none';
+}
+function parse(p){ return { gan: GAN.indexOf(p[0]), zhi: ZHI.indexOf(p[1]) }; }
+
+/* 저장된 사주 {p:{year,month,day,hour}, r:{목..수}, tk} → 궁합 계산용 사람 */
+function person(sj, name){
+  const d = parse(sj.p.day), y = parse(sj.p.year), r = sj.r;
+  const dom = EL.reduce((a,b)=> r[a]>=r[b]?a:b);
+  const low = EL.slice().sort((a,b)=>r[a]-r[b])[0];
+  return { name, dayGan:d.gan, dayZhi:d.zhi, yearZhi:y.zhi, me:GAN_EL[d.gan], ratio:r, dom, low, tti:TTI[y.zhi], p:sj.p };
+}
+function gunghap(A,B){
+  const out = { parts: [] };
+  // 1. 일간 (30)
+  let g;
+  if(Math.abs(A.dayGan-B.dayGan)===5) g={k:'hap', pt:30, name:HAP_NAME[Math.min(A.dayGan,B.dayGan)]};
+  else { const r=elRel(A.me,B.me);
+    g = r==='same'?{k:'same',pt:18}: (r==='give'||r==='take')?{k:'saeng',pt:24,dir:r}:{k:'geuk',pt:10,dir:r}; }
+  out.parts.push(Object.assign({part:'ilgan', max:30}, g));
+  // 2. 일지 (25)
+  const zr=zhiRel(A.dayZhi,B.dayZhi);
+  const ZP={yukhap:25,samhap:21,same:15,none:15,wonjin:8,chung:5};
+  out.parts.push({part:'ilji', max:25, k:zr, pt:ZP[zr], sam: zr==='samhap'?SAMHAP[A.dayZhi%4]:null});
+  // 3. 띠 (15)
+  const tr=zhiRel(A.yearZhi,B.yearZhi);
+  const TP={yukhap:15,samhap:13,same:10,none:9,wonjin:5,chung:3};
+  out.parts.push({part:'tti', max:15, k:tr, pt:TP[tr]});
+  // 4. 오행 보완 (20) — 내 가장 적은 오행을 상대가 얼마나 가졌나, 양방향 각 10
+  const fill=(x,y)=> y.ratio[x.low]>=25?10 : y.ratio[x.low]>=13?5 : 0;
+  const fa=fill(A,B), fb=fill(B,A);
+  out.parts.push({part:'bowan', max:20, pt:fa+fb, ab:fa, ba:fb});
+  // 5. 주도 기운 (10)
+  const dr=elRel(A.dom,B.dom);
+  out.parts.push({part:'dom', max:10, k:dr, pt: dr==='same'?6 : (dr==='give'||dr==='take')?10 : 3});
+  out.score = out.parts.reduce((s,p)=>s+p.pt,0);
+  out.grade = out.score>=80?'찰떡':out.score>=65?'잘 맞는 사이':out.score>=50?'맞춰 가는 사이':'노력하면 단단해지는 사이';
+  return out;
+}
+
+
+/* 궁합 풀이 문장 — 미리 써 둔 조각을 결과에 맞춰 이어 붙인다(API 없음).
+ * 말투: 해요체 · 단정하지 않기 · 좋은 점 먼저, 조심할 점은 '이렇게 하면 된다'로 끝내기
+ */
+
+function j(w, a, b){ const c=w.charCodeAt(w.length-1)-0xAC00; return w + ((c>=0&&c%28) ? a : b); }  // 받침 → 조사
+const 은=w=>j(w,'은','는'), 이=w=>j(w,'이','가'), 과=w=>j(w,'과','와'), 을=w=>j(w,'을','를'), 이랑=w=>j(w,'이랑','랑');
+const NATURE={목:'쭉쭉 뻗어 나가는 나무',화:'환하게 타오르는 불',토:'묵직하게 받쳐 주는 흙',금:'단단하고 반듯한 쇠',수:'깊고 유연한 물'};
+const HAPLINE={갑기합:'서로의 부족한 면을 믿고 맡기는 합',을경합:'부드러움과 단단함이 손을 잡는 합',병신합:'밝은 쪽과 깊은 쪽이 서로 끌리는 합',
+  정임합:'따뜻한 불빛과 깊은 물이 만나 정이 드는 합',무계합:'듬직함과 섬세함이 어울리는 합'};
+
+function ilgan(A,B,p){
+  const a=A.me,b=B.me;
+  if(p.k==='hap') return `두 사람의 태어난 날 글자는 **${p.name}**이에요. ${HAPLINE[p.name]}이라, 처음 만났을 때부터 이상하게 편했을 수 있어요. 사주에서 가장 반가운 조합 중 하나예요.`;
+  if(p.k==='same') return `${은(A.name)} ${NATURE[a]}, ${B.name}도 같은 ${a} 기운이에요. 말하지 않아도 속도가 비슷해서 편하지만, 둘 다 같은 쪽으로 쏠리면 고집이 부딪힐 수 있어요. 한 사람이 먼저 '이번엔 네 방식대로'를 말해 주면 금방 풀려요.`;
+  if(p.k==='saeng'){ const [g,t]=p.dir==='give'?[A,B]:[B,A];
+    return `${g.name}의 ${g.me} 기운이 ${t.name}의 ${t.me} 기운을 살려 주는 **상생** 관계예요. ${은(g.name)} 챙겨 주는 쪽, ${은(t.name)} 힘을 얻는 쪽이 되기 쉬워요. 받는 쪽이 고마움을 자주 말로 해 주면 오래 가요.`; }
+  const [p1,p2]=p.dir==='press'?[A,B]:[B,A];
+  return `${p1.name}의 ${p1.me} 기운이 ${p2.name}의 ${p2.me} 기운을 누르는 **상극** 관계예요. ${과(NATURE[p1.me])} ${NATURE[p2.me]}처럼 성질이 반대라 처음엔 '왜 저렇게 하지?' 싶은 순간이 있어요. 대신 서로 없는 걸 가진 사이라, 역할을 나누면 오히려 빈틈이 없어요. ${은(p1.name)} 말의 온도를 한 칸 낮추고, ${은(p2.name)} 서운한 걸 쌓아 두지 않는 게 요령이에요.`;
+}
+function ilji(A,B,p){
+  const M={
+    yukhap:`배우자 자리(태어난 날의 아래 글자)끼리 **육합**이에요. 생활 리듬과 집에서의 모습이 잘 맞물려서, 같이 지낼수록 편해지는 조합이에요.`,
+    samhap:`배우자 자리가 **${p.sam}**의 두 글자로 이어져요. 같은 목표를 보면 힘이 모이는 사이라, 여행 계획이나 저축처럼 '같이 하는 프로젝트'가 있으면 더 가까워져요.`,
+    same:`배우자 자리 글자가 같아요. 생활 방식이 닮아서 편하지만, 둘 다 같은 걸 놓치기도 쉬워요. 서로의 빈 곳을 한 번씩 짚어 주세요.`,
+    none:`배우자 자리끼리는 특별히 당기지도 부딪히지도 않아요. 두 사람이 만들어 가는 대로 모양이 잡히는 담백한 관계예요.`,
+    wonjin:`배우자 자리가 **원진**이에요. 큰 싸움보다는 사소한 말투나 습관에 괜히 서운해지는 조합이라, 서운한 건 그날 가볍게 말하고 넘기는 게 좋아요.`,
+    chung:`배우자 자리가 **충**이에요. 생활 패턴(잠, 식사, 쉬는 방식)이 반대일 수 있어요. 부딪히는 대신 '서로 다른 걸 해 주는 사이'로 나누면 오히려 활기가 돼요.`};
+  return M[p.k];
+}
+function tti(A,B,p){
+  const t=`${A.tti}띠와 ${B.tti}띠`;
+  const M={yukhap:`${t}는 **육합**, 띠끼리 잘 맞는 대표 조합이에요. 가족·친구들과 어울릴 때도 자연스럽게 섞여요.`,
+    samhap:`${t}는 **삼합**으로 이어져요. 서로의 사람들과도 금방 친해지는 편이에요.`,
+    same:`같은 ${A.tti}띠끼리예요. 또래 친구 같은 편안함이 있어요.`,
+    none:`${t}는 띠로 보면 무난한 사이예요.`,
+    wonjin:`${t}는 **원진**이라 첫인상은 조금 어색했을 수 있어요. 알고 나면 괜찮아지는 조합이에요.`,
+    chung:`${t}는 **충**이에요. 서로의 가족·친구 문화가 다를 수 있으니, 처음 만나는 자리에서는 한 사람이 다리 역할을 해 주세요.`};
+  return M[p.k];
+}
+function bowan(A,B,p){
+  const s=[];
+  if(p.ab) s.push(`${A.name}에게 가장 적은 **${A.low}** 기운을 ${이(B.name)} ${B.ratio[A.low]}% 가지고 있어요`);
+  if(p.ba) s.push(`${B.name}에게 가장 적은 **${B.low}** 기운을 ${이(A.name)} ${A.ratio[B.low]}% 가지고 있어요`);
+  if(p.ab&&p.ba) return s.join('. ')+'. 서로의 빈칸을 채워 주는, 궁합에서 가장 실속 있는 부분이에요.';
+  if(s.length) return s[0]+'. 한쪽이 다른 쪽의 빈칸을 채워 주는 모양이에요. 채워 받는 쪽이 그걸 알아봐 주면 균형이 맞아요.';
+  return `두 사람 모두 ${A.low===B.low? `**${A.low}** 기운이 적은 편이라, 같은 빈칸을 공유해요. 그 기운을 채워 주는 활동을 같이 해 보세요` : '서로의 빈칸을 채워 주지는 않지만, 각자 가진 기운이 뚜렷해요'}.`;
+}
+function dom(A,B,p){
+  const a=A.dom,b=B.dom;
+  if(p.k==='same') return `둘 다 **${a}** 기운이 가장 강해요. 좋아하는 것이 비슷해서 함께하는 시간이 즐거워요.`;
+  if(p.k==='give'||p.k==='take') return `가장 강한 기운끼리(${a} · ${b})는 **상생**이에요. 같이 있으면 서로 에너지가 오르는 사이예요.`;
+  const [x,y]=p.k==='press'?[A,B]:[B,A];
+  return `가장 강한 기운끼리는 ${x.dom}이 ${y.dom}을 누르는 관계예요. 결정할 때 ${x.name} 쪽으로 기울기 쉬우니, 큰 결정은 ${y.name}의 의견을 먼저 들어 주세요.`.replace(`${x.dom}이`,이(x.dom)).replace(`${y.dom}을`,을(y.dom));
+}
+const HEAD={찰떡:'말 안 해도 통하는 찰떡 궁합이에요', '잘 맞는 사이':'편하게 잘 맞는 사이예요',
+  '맞춰 가는 사이':'다른 점이 매력이 되는, 맞춰 가는 사이예요', '노력하면 단단해지는 사이':'노력할수록 단단해지는 사이예요'};
+const LABEL={ilgan:'두 사람의 본성 (태어난 날)',ilji:'함께 사는 모습 (배우자 자리)',tti:'띠 궁합',bowan:'서로 채워 주는 기운',dom:'가장 강한 기운끼리'};
+const SHORT={ilgan:'본성',ilji:'생활 모습',tti:'띠',bowan:'서로 채워 주는 기운',dom:'강한 기운끼리'};
+function read(A,B,r){
+  const F={ilgan,ilji,tti,bowan,dom};
+  const parts=r.parts.map(p=>({label:LABEL[p.part],pt:p.pt,max:p.max,text:F[p.part](A,B,p)}));
+  const best=r.parts.slice().sort((x,y)=>y.pt/y.max-x.pt/x.max)[0], worst=r.parts.slice().sort((x,y)=>x.pt/x.max-y.pt/y.max)[0];
+  const summary=`${이랑(A.name)} ${B.name}의 궁합은 **${r.score}점**, ${HEAD[r.grade]}. 가장 좋은 건 '${SHORT[best.part]}', 조금 신경 쓰면 좋은 건 '${SHORT[worst.part]}'${j(SHORT[worst.part],'이에요','예요').slice(SHORT[worst.part].length)}.`;
+  const dog=`오행 댕댕이로 보면, ${A.name}의 ${A.me} 댕댕이와 ${B.name}의 ${B.me} 댕댕이가 같은 파티에 서면 ${r.parts[0].k==='hap'?'합동 필살기 궁합':'서로 다른 속성을 막아 주는 짝'}이에요.`;
+  return {summary,parts,dog,disclaimer:'재미로 보는 궁합이에요. 두 사람의 관계는 사주 여덟 글자보다 서로 나눈 시간이 훨씬 많이 말해 줘요.'};
+}
+
+
+window.GH={person:person,gunghap:gunghap,read:read,HJ:HJ};
+})();
+</script>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+var KAKAO='60b71fcf9ec72aad11e6f5d62358c8db';
+var COL={목:'#4fb95f',화:'#e8483c',토:'#ffd93d',금:'#8e9bb0',수:'#3f8fe0'};
+var HJ={목:'木',화:'火',토:'土',금:'金',수:'水'};
+var ORDER=['목','화','토','금','수'];
+var VIEWS=['v-load','v-off','v-login','v-birth','v-host','v-msg','v-result'];
+function show(v){ VIEWS.forEach(function(x){ $(x).hidden=(x!==v); }); }
+function qs(k){ var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search); return m?decodeURIComponent(m[1]):null; }
+function ev(n,p){ if(window.gtag) gtag('event',n,p||{}); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+function b(s){ return esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>'); }
+var CODE=qs('c'), ME=null, CL=null;
+try{ if(KAKAO && window.Kakao && !Kakao.isInitialized()) Kakao.init(KAKAO); }catch(e){}
+
+/* ── 생년월일 입력 ── */
+var y=$('y'), m=$('m'), d=$('d'), h=$('h');
+for(var i=1;i<=12;i++) m.add(new Option(i+'월', i));
+h.add(new Option('모름',''));
+for(var i=0;i<24;i++) h.add(new Option((i<10?'0':'')+i+':00~'+(i<10?'0':'')+i+':59', i));
+function fillDays(){ var keep=+d.value||1, n=new Date(+y.value||2000, +m.value, 0).getDate();
+  d.innerHTML=''; for(var i=1;i<=n;i++) d.add(new Option(i+'일', i)); d.value=Math.min(keep,n); }
+m.addEventListener('change',fillDays); y.addEventListener('change',fillDays);
+m.value=1; fillDays();
+function birthSaju(){
+  var yy=+y.value, mm=+m.value, dd=+d.value, hh=(h.value===''?null:+h.value);
+  if(!(yy>=1900&&yy<=2100)){ alert('연도를 1900~2100 사이로 넣어 주세요.'); y.focus(); return null; }
+  var r; try{ r=calculateSaju({year:yy,month:mm,day:dd,hour:hh}); }catch(e){ alert('날짜를 확인해 주세요.'); return null; }
+  return {p:r.pillars, r:r.elementRatio, tk:r.timeKnown};
+}
+function elOf(sj){ return ORDER.reduce(function(a,b){ return sj.r[a]>=sj.r[b]?a:b; }); }
+/* 캐릭터를 만들 때 저장해 둔 여덟 글자 */
+function mySaju(){ var c=window.FP&&FP.get(); return (c&&c.pillars&&c.ratio)?{p:c.pillars,r:c.ratio,tk:!!c.timeKnown}:null; }
+/* 새로 넣은 사주를 내 캐릭터에도 남긴다 — 궁합소로 처음 온 사람도 이걸로 캐릭터가 생긴다 */
+function keepMine(sj){
+  var el=elOf(sj), top=sj.r[el], tied=ORDER.filter(function(e){ return sj.r[e]===top; });
+  if(window.FP) FP.set({el:el, tied:tied, top:top, ratio:sj.r, timeKnown:sj.tk, pillars:sj.p});
+}
+function pillStr(sj){ return [sj.p.year,sj.p.month,sj.p.day,sj.p.hour].filter(Boolean).join(' · '); }
+
+/* ── 로그인 ── */
+$('lg-go').onclick=function(){
+  ev('gh_login_try',{invited:!!CODE});
+  try{ localStorage.setItem('fp.next', JSON.stringify({url:location.href, at:Date.now()})); }catch(e){}
+  FP.login(location.origin);         /* 사이트 주소 그대로 — Supabase 허용 목록과 같다. 돌아오면 me.js 가 이 주소로 보낸다 */
+};
+
+/* ── 초대한 사람 화면 ── */
+function hostView(){
+  var sj=mySaju();
+  if(!sj){ birthView('host'); return; }
+  var el=elOf(sj);
+  $('host-me').innerHTML='<span class="orb" style="--c:'+COL[el]+'">'+HJ[el]+'</span>'+
+    '<div><b>'+esc(ME.nick||'나')+'</b><small>'+esc(pillStr(sj))+' · '+el+' 속성</small></div>';
+  show('v-host'); loadPairs();
+}
+function loadPairs(){
+  CL.from('gh_pairs').select('*').or('host_id.eq.'+ME.id+',guest_id.eq.'+ME.id)
+    .order('created_at',{ascending:false}).limit(30).then(function(q){
+    var rows=(q&&q.data)||[];
+    if(!rows.length){ $('pairs').innerHTML='<li><span class="w wait">아직 보낸 초대가 없어요.</span></li>'; return; }
+    $('pairs').innerHTML=rows.map(function(r,i){
+      var mine=r.host_id===ME.id, other=mine?r.guest_nick:r.host_nick;
+      var when=new Date(r.created_at); when=(when.getMonth()+1)+'월 '+when.getDate()+'일';
+      if(!r.guest_saju) return '<li><span class="w">초대 보냄<small>'+when+' · 아직 들어오지 않았어요</small></span>'+
+        '<button data-re="'+esc(r.code)+'">다시 보내기</button></li>';
+      return '<li><span class="orb" style="--c:'+COL[mine?r.guest_el:r.host_el]+';width:30px;height:30px;font-size:14px">'+
+        HJ[mine?r.guest_el:r.host_el]+'</span><span class="w">'+esc(other||'상대')+'님과의 궁합<small>'+when+
+        (mine?' · 내가 초대':' · 초대받음')+'</small></span><button data-i="'+i+'">결과 보기</button></li>';
+    }).join('');
+    [].forEach.call($('pairs').querySelectorAll('[data-i]'),function(bt){ bt.onclick=function(){ result(rows[+bt.getAttribute('data-i')]); }; });
+    [].forEach.call($('pairs').querySelectorAll('[data-re]'),function(bt){ bt.onclick=function(){ share(bt.getAttribute('data-re')); }; });
+  });
+}
+function newCode(){ var a=new Uint8Array(8); crypto.getRandomValues(a);
+  return Array.prototype.map.call(a,function(x){ return 'abcdefghjkmnpqrstuvwxyz23456789'[x%31]; }).join('')+Date.now().toString(36).slice(-3); }
+$('inv').onclick=function(){
+  var sj=mySaju(); if(!sj) return;
+  var bt=$('inv'); bt.disabled=true;
+  var code=newCode();
+  CL.from('gh_pairs').insert({code:code, host_id:ME.id, host_nick:ME.nick||null, host_el:elOf(sj), host_saju:sj}).then(function(q){
+    bt.disabled=false;
+    if(q.error){ alert('초대를 만들지 못했어요. 잠시 뒤 다시 눌러 주세요.'); return; }
+    ev('gh_invite'); share(code); loadPairs();
+  });
+};
+function share(code){
+  var url=location.origin+'/gunghap/?c='+encodeURIComponent(code);
+  var nick=(ME&&ME.nick)||'친구';
+  if(window.Kakao && Kakao.isInitialized && Kakao.isInitialized() && Kakao.Share){
+    try{
+      Kakao.Share.sendDefault({ objectType:'feed',
+        content:{ title:nick+'님이 궁합을 보자고 해요',
+          description:'생년월일만 넣으면 두 사람의 사주로 궁합이 나와요. 오행 댕댕이도 같이 놀아요.',
+          imageUrl:location.origin+'/map/img/spot-gunghap.jpg', link:{mobileWebUrl:url, webUrl:url} },
+        buttons:[{title:'궁합 보러 가기', link:{mobileWebUrl:url, webUrl:url}}] });
+      return;
+    }catch(e){}
+  }
+  if(navigator.share){ navigator.share({title:'궁합소 · Four Paws', text:nick+'님이 궁합을 보자고 해요', url:url}).catch(function(){}); return; }
+  if(navigator.clipboard){ navigator.clipboard.writeText(url).then(function(){ alert('초대 링크를 복사했어요.\n\n'+url); })
+      .catch(function(){ prompt('이 링크를 보내 주세요', url); }); return; }
+  prompt('이 링크를 보내 주세요', url);
+}
+
+/* ── 생년월일 화면 (host: 내 사주 만들기 / guest: 초대받고 들어옴) ── */
+var BMODE=null, PEEK=null;
+function birthView(mode){
+  BMODE=mode;
+  if(mode==='host'){ $('bh').textContent='먼저 내 생년월일을 넣어 주세요';
+    $('bp').textContent='궁합을 보려면 내 사주 여덟 글자가 있어야 해요. 한 번만 넣으면 됩니다.';
+    $('bgo').textContent='저장하고 초대하러 가기'; $('buse').hidden=true; }
+  else { var hn=(PEEK&&PEEK.host_nick)||'상대';
+    $('bh').textContent=hn+'님이 궁합을 보자고 했어요';
+    $('bp').textContent='생년월일을 넣으면 두 사람의 사주로 궁합이 바로 나와요.';
+    $('bgo').textContent='궁합 보기'; $('buse').hidden=!mySaju(); }
+  show('v-birth');
+}
+$('bgo').onclick=function(){ var sj=birthSaju(); if(sj) useSaju(sj, true); };
+$('buse').onclick=function(){ var sj=mySaju(); if(sj) useSaju(sj, false); };
+function useSaju(sj, fresh){
+  if(BMODE==='host'){ keepMine(sj); ev('gh_host_saju'); hostView(); return; }
+  if(fresh && !(window.FP&&FP.has())) keepMine(sj);          /* 처음 온 사람은 이걸로 캐릭터가 생긴다 */
+  else if(fresh && !mySaju()) keepMine(sj);
+  $('bgo').disabled=true;
+  CL.rpc('gh_join',{p_code:CODE, p_nick:(ME.nick||'').slice(0,20), p_el:elOf(sj), p_saju:sj}).then(function(q){
+    $('bgo').disabled=false;
+    var row=q&&q.data&&q.data[0];
+    if(!row){ msg('이 초대에는 들어갈 수 없어요','이미 다른 분이 들어왔거나, 내가 보낸 초대일 수 있어요.'); return; }
+    ev('gh_join'); result(row);
+  });
+}
+function msg(h,p){ $('msg-h').textContent=h; $('msg-p').textContent=p; show('v-msg'); }
+
+/* ── 결과 ── */
+var PAIR3D=null;
+function result(row){
+  var A=GH.person(row.host_saju, row.host_nick||'초대한 사람'), B=GH.person(row.guest_saju, row.guest_nick||'초대받은 사람');
+  var r=GH.gunghap(A,B), t=GH.read(A,B,r);
+  var who=function(P,el){ return '<div class="who"><span class="orb" style="--c:'+COL[el]+'">'+HJ[el]+'</span><div><div class="nm">'+esc(P.name)+
+    '</div><div class="pl">'+esc([P.p.year,P.p.month,P.p.day,P.p.hour].filter(Boolean).join(' · '))+' · '+esc(P.tti)+'띠</div></div></div>'; };
+  $('res').innerHTML='<div class="pair">'+who(A,row.host_el)+'<span class="x">×</span>'+who(B,row.guest_el)+'</div>'+
+    '<div class="score"><span class="n">'+r.score+'</span><span class="u">/ 100</span></div><span class="grade">'+esc(r.grade)+'</span>'+
+    '<p class="sum">'+b(t.summary)+'</p>'+
+    t.parts.map(function(p){ return '<div class="part"><div class="ph">'+esc(p.label)+'<span>'+p.pt+' / '+p.max+'</span></div>'+
+      '<div class="bar"><i style="width:'+(p.pt/p.max*100)+'%"></i></div><p>'+b(p.text)+'</p></div>'; }).join('')+
+    '<div class="dog">'+b(t.dog)+'</div><div class="dis">'+esc(t.disclaimer)+'</div>';
+  $('hero').hidden=true; show('v-result'); window.scrollTo(0,0);
+  ev('gh_view',{score:r.score});
+  var st=$('stage'); st.hidden=false; st.className='stage ld'; st.textContent='두 댕댕이를 불러오는 중…';
+  if(PAIR3D){ try{ PAIR3D.destroy(); }catch(e){} PAIR3D=null; }
+  import('/3d/play3d.js').then(function(mo){
+    return mo.showPair({mount:st, base:'/3d/', elA:row.host_el, elB:row.guest_el, height:280});
+  }).then(function(h){ PAIR3D=h; st.className='stage'; })
+    .catch(function(){ st.hidden=true; });
+}
+
+/* ── 시작 ── */
+function start(){
+  if(!window.FP || !FP.online || !FP.online()){ show('v-off'); return; }
+  FP.ready().then(function(c){
+    CL=c; if(!c){ show('v-off'); return; }
+    var peek = CODE ? c.rpc('gh_peek',{p_code:CODE}).then(function(q){ return q&&q.data&&q.data[0]||null; }) : Promise.resolve(null);
+    /* 닉네임은 me.js 동기화(fp:sync)가 끝나야 정한 이름으로 나온다 — 그 전이면 잠깐 기다린다 */
+    var who = FP.synced ? FP.user() : new Promise(function(res){
+      var done=false, go=function(){ if(done) return; done=true; res(FP.user()); };
+      document.addEventListener('fp:sync', go, {once:true}); setTimeout(go, 2500); });
+    return Promise.all([who, peek]).then(function(v){
+      ME=v[0]; PEEK=v[1];
+      if(CODE && !PEEK){ msg('초대를 찾을 수 없어요','링크가 잘렸거나 지워진 초대예요. 보낸 분께 다시 보내 달라고 해 주세요.'); return; }
+      if(!ME){
+        if(PEEK){ $('lg-h').textContent=(PEEK.host_nick||'상대')+'님이 궁합을 보자고 했어요';
+          $('lg-p').textContent='카카오톡으로 로그인하고 생년월일을 넣으면 두 사람의 궁합이 나와요.'; }
+        show('v-login'); return;
+      }
+      if(!CODE){ hostView(); return; }
+      /* 초대 링크로 들어온 로그인한 사람 — 내 초대인지, 이미 들어간 초대인지, 새로 들어갈 초대인지 */
+      return c.from('gh_pairs').select('*').eq('code',CODE).maybeSingle().then(function(q){
+        var row=q&&q.data;
+        if(row && row.host_id===ME.id){ hostView(); return; }
+        if(row && row.guest_id===ME.id && row.guest_saju){ result(row); return; }
+        if(PEEK.joined){ msg('이미 다른 분이 들어온 초대예요','보낸 분께 새 초대를 부탁해 주세요.'); return; }
+        birthView('guest');
+      });
+    });
+  }).catch(function(){ show('v-off'); });
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', start); else start();
+})();
+</script>
+</body></html>

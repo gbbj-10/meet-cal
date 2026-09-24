@@ -346,7 +346,7 @@ $('go').addEventListener('click', function(){
   $('sj-say').innerHTML='<p class="l">당신의 사주는 '+tied.map(chip).join(' · ')+'입니다</p>'+
     '<p class="d">'+(r.timeKnown?'여덟':'여섯')+' 글자 중 '+tied.join('·')+JGA[tied[tied.length-1]]+' '+cntEl[dom]+'자로 가장 많습니다. '+
     (tied.length>1 ? '같은 수라 한 가지로 정하지 않고 함께 적었습니다.' : SAY[dom])+'</p>';
-  PENDING={el:dom, tied:tied, top:top, ratio:er, timeKnown:r.timeKnown};
+  PENDING={el:dom, tied:tied, top:top, ratio:er, timeKnown:r.timeKnown, pillars:r.pillars};   /* 여덟 글자는 궁합소가 쓴다 */
 
   var notes='';
   var empty=['목','화','토','금','수'].filter(function(e){return !er[e]});
