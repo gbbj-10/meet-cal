@@ -74,6 +74,10 @@ header.site nav a.hl{color:var(--to);font-weight:700}
 .go{width:100%;margin-top:16px;padding:15px;border:0;border-radius:11px;background:var(--acc);
   color:#08101c;font:inherit;font-size:16.5px;font-weight:700;cursor:pointer}
 .go:hover{background:#7db1f6}
+/* 기존 회원 — 이미 만든 캐릭터를 계정에서 불러온다. 게스트에게만 보인다 */
+.go.old{margin-top:10px;background:var(--to);color:#191600}
+.go.old:hover{background:#ffe373}
+.oldn{margin:8px 0 0;font-size:12.5px;color:var(--dim);text-align:center}
 
 /* ── 결과 ── */
 .out{margin-top:26px}
@@ -159,9 +163,11 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 .mine2{margin:26px 0 8px;padding:20px 20px 18px;border-radius:16px;
   border:1px solid rgba(255,217,61,.4);background:rgba(255,217,61,.07)}
 .mine2 .mw{display:flex;align-items:center;gap:16px}
-.mine2 .m2dog{height:230px;margin:10px -8px 0;border-radius:14px;
+.mine2 .m2dog{height:345px;margin:10px -8px 0;border-radius:14px;
   background:radial-gradient(ellipse at 50% 78%,rgba(255,217,61,.10),transparent 62%)}
 .mine2 .m2dog canvas{display:block;width:100%!important;height:100%!important}
+.mine2 .m2dog{position:relative}
+.mine2 .m2dog.ld::after{content:'캐릭터를 불러오는 중…';position:absolute;inset:0;display:grid;place-items:center;font-size:13px;color:var(--dim)}
 .mine2 .orb2{width:62px;height:62px;border-radius:50%;flex:none;display:grid;place-items:center;
   font-size:27px;font-weight:800;color:#0a0f18;font-family:"Noto Serif KR",serif}
 .mine2 .k{font-size:12px;font-weight:700;color:var(--to);letter-spacing:.2px}
@@ -183,8 +189,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 
 <header class="site"><div class="wrap">
   <a class="nm" href="/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="mk" aria-hidden="true"><path fill="#ffd93d" d="M24 25.6c7.6 0 14 5.1 14 11.1 0 4.9-4.1 8.3-8.6 8.3-2.6 0-3.8-.9-5.4-.9s-2.8.9-5.4.9C14.1 45 10 41.6 10 36.7c0-6 6.4-11.1 14-11.1z"/><ellipse cx="11.06" cy="21.75" rx="5.3" ry="6.5" transform="rotate(-30 11.06 21.75)" fill="#4fb95f"/><ellipse cx="18.73" cy="16.18" rx="5.8" ry="7.1" transform="rotate(-9 18.73 16.18)" fill="#e8483c"/><ellipse cx="29.27" cy="16.18" rx="5.8" ry="7.1" transform="rotate(9 29.27 16.18)" fill="#8e9bb0"/><ellipse cx="36.94" cy="21.75" rx="5.3" ry="6.5" transform="rotate(30 36.94 21.75)" fill="#3f8fe0"/></svg>Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
-  <nav><a href="/iljin/">기운</a><a href="/map/">지도</a>
-       <a class="hl" href="/hunt/">사냥터</a><a href="/ohaeng/">글</a><span data-fp-chip></span></nav>
+  <nav><a href="/ohaeng/">사주 이야기</a><span data-fp-chip></span></nav>
 </div></header>
 
 <main class="wrap">
@@ -224,12 +229,14 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
   </div>
   <p class="hint">시각을 모르면 <b>모름</b>으로 두세요. 여덟 글자 중 여섯 글자로만 계산하고,
      결과에 그 사실을 표시합니다. 아무 시각이나 찍어 넣는 것보다 정확합니다.</p>
-  <button class="go" id="go">내 오행 보기</button>
+  <button class="go" id="go">나의 오행 조회</button>
+  <button class="go old" id="old" type="button" hidden>기존 회원 로그인</button>
+  <p class="oldn" id="old-n" hidden>이미 캐릭터를 만든 적이 있다면 카카오톡으로 로그인해 불러오세요.</p>
 </section>
 
-<!-- 내 오행 보기 다음 화면 — 사주 여덟 글자만 따로 보여 주고, 캐릭터 생성으로 넘어간다 -->
+<!-- 나의 오행 조회 다음 화면 — 사주 여덟 글자만 따로 보여 주고, 캐릭터 생성으로 넘어간다 -->
 <section class="tool sj" id="saju" hidden>
-  <div class="sj-k">내 오행 보기</div>
+  <div class="sj-k">나의 오행 조회</div>
   <h1>당신의 사주 구성</h1>
   <p class="sub" id="dsub"></p>
   <div class="board" id="board"></div>
@@ -246,7 +253,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 </section>
 
 <section class="sec">
-  <div class="h"><h2>계산해서 쓴 글</h2><a href="/ohaeng/">전체 보기 &rarr;</a></div>
+  <div class="h"><h2>사주 이야기</h2><a href="/ohaeng/">전체 보기 &rarr;</a></div>
   <a class="card" href="/ohaeng/ttibyeol-ohaeng.html" data-cta="post"><img src="/ohaeng/img/ttibyeol-ohaeng-띠별우세오행.png" alt="" loading="lazy" width="112" height="72"><div><div class="t">띠별 오행, 26만 건으로 검산했습니다 — 절반은 틀립니다</div><div class="d">띠로 오행을 맞히면 얼마나 맞을까. 26만 건을 전수 계산해 12띠 전부 검산했습니다. 맞히는 비율은 30~55%였고, 여덟 띠는 절반도 못 맞혔습니다.</div><div class="m">2026-09-23</div></div></a><a class="card" href="/ohaeng/useh-ohaeng-to.html" data-cta="post"><img src="/ohaeng/img/useh-ohaeng-to-우세오행분포.png" alt="" loading="lazy" width="112" height="72"><div><div class="t">가장 흔한 오행은 토(土) 35.9% — 2위와 두 배 차이</div><div class="d">26만 건을 전수 계산해 우세 오행 분포를 냈습니다. 토가 35.9%로 1위였고, 계산을 처음 돌렸을 때는 55%가 나왔습니다. 그 차이가 왜 생겼는지까지 적었습니다.</div><div class="m">2026-09-20</div></div></a><a class="card" href="/ohaeng/ki-yeonbong.html" data-cta="post"><img src="/ohaeng/img/ki-yeonbong.png" alt="" loading="lazy" width="112" height="72"><div><div class="t">키 10cm는 연봉 두 칸 — 제 계산기를 제가 뜯어봤습니다</div><div class="d">이성 조건 계산기의 점수표를 직접 계산해 키와 연봉의 교환비를 뽑았습니다. 그리고 평균 이상은 아무 보상이 없다는 것도 같이 나왔습니다.</div><div class="m">2026-09-19</div></div></a><a class="card" href="/ohaeng/buljokhan-ohaeng.html" data-cta="post"><img src="/ohaeng/img/choeyak-ohaeng-분포.png" alt="" loading="lazy" width="112" height="72"><div><div class="t">사주에 부족한 오행, 나는 어느 방향일까 — 10명 중 7명은 하나가 비어 있습니다</div><div class="d">262,980건을 계산했더니 69.5%는 오행 다섯 중 하나가 아예 0%였습니다. 생년월일만 넣으면 내 약한 오행과 방향이 바로 나옵니다.</div><div class="m">2026-09-18</div></div></a>
 </section>
 
@@ -379,6 +386,19 @@ $('mk').addEventListener('click', function(){
   if(window.__showMine) window.__showMine(true);
   window.scrollTo(0,0);
 });
+/* 기존 회원 로그인 — 게스트에게만 보인다. 로그인해서 돌아오면 me.js 가 계정의 캐릭터를
+   받아 오고(fp:sync) 프로필이 바로 뜬다. 캐릭터가 없던 계정이면 계산기 그대로 둔다. */
+function paintOld(){
+  var b=$('old'), n=$('old-n'); if(!b) return;
+  if(!window.FP || !FP.online || !FP.online()){ b.hidden=n.hidden=true; return; }
+  FP.user().then(function(u){ b.hidden=n.hidden=!!u; }).catch(function(){ b.hidden=n.hidden=false; });
+}
+$('old').addEventListener('click', function(){
+  if(window.gtag) gtag('event','old_login');
+  if(window.FP) FP.login(location.origin);
+});
+paintOld();
+document.addEventListener('fp:sync', paintOld);
 $('sj-back').addEventListener('click', function(){
   $('saju').hidden=true; $('hero').hidden=false; $('tool').hidden=false; window.scrollTo(0,0);
 });
@@ -410,10 +430,17 @@ $('sj-back').addEventListener('click', function(){
        WebGL 이 없거나 모델을 못 받으면 칸만 조용히 접는다. */
     var dg=$('m2-dog');
     if(dg && !dg.dataset.on){
-      dg.dataset.on='1';
-      import('/3d/profile3d.js').then(function(m){
-        return m.showDog({mount:dg, base:'/3d/', el:me.el, height:230});
-      }).catch(function(){ dg.style.display='none'; });
+      dg.dataset.on='1'; dg.style.display=''; dg.classList.add('ld');
+      /* 모델·three.js 합쳐 2MB 가까이 받는다. 받는 동안 빈칸으로 두지 않고 안내를 띄우고,
+         한 번 실패하면 잠시 뒤 한 번 더 받는다. 두 번 다 안 되면 그때 칸을 접는다. */
+      var tryDog=function(n){
+        return import('/3d/profile3d.js').then(function(m){
+          return m.showDog({mount:dg, base:'/3d/', el:me.el, height:345});
+        }).then(function(r){ if(!r) throw 0; dg.classList.remove('ld'); })
+          .catch(function(){ if(n<1) return new Promise(function(ok){ setTimeout(ok,1500); }).then(function(){ return tryDog(n+1); });
+                             dg.classList.remove('ld'); dg.style.display='none'; });
+      };
+      tryDog(0);
     }
     $('hero').hidden=true;
     $('tool').hidden=true;
