@@ -107,6 +107,8 @@ header.site nav a{font-size:14px;color:var(--mut);text-decoration:none}
 .part p{margin:0;line-height:1.75;font-size:14.5px;color:#d6deea}
 .dog{margin-top:14px;padding:12px 14px;border-radius:12px;background:rgba(79,185,95,.08);border:1px solid rgba(79,185,95,.3);font-size:14px;line-height:1.7}
 .dis{font-size:12.5px;color:var(--dim);margin-top:10px}
+.foot{max-width:640px;margin:0 auto;padding:6px 16px 34px;display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:center}
+.foot a{color:var(--dim);font-size:13px;text-decoration:none}
 [hidden]{display:none!important}
 </style>
 </head><body>
@@ -167,6 +169,7 @@ header.site nav a{font-size:14px;color:var(--mut);text-decoration:none}
     <a class="btn rose" href="/gunghap/" id="again">다른 사람과도 궁합 보기</a>
   </section>
 </main>
+<footer class="foot"><a href="/">처음으로</a><a href="/map/">지도</a><a href="/hunt/">사냥터</a><a href="/iljin/">오늘의 기운</a><a href="/ohaeng/">사주 이야기</a></footer>
 
 <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.8.3/kakao.min.js"></script>
 <script src="/ohaeng/data/saju-calculator.js"></script>

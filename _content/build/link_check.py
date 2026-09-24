@@ -32,7 +32,7 @@ def stage():
     """배포본 + 정적 페이지를 실제 사이트와 같은 모양으로 임시 폴더에 편다."""
     root = tempfile.mkdtemp(prefix='linkcheck-')
     shutil.copy(os.path.join(DEPLOY, 'index.html'), root)
-    for d in ('ohaeng', 'map', 'iljin', 'hunt'):
+    for d in ('ohaeng', 'map', 'iljin', 'hunt', 'gunghap'):
         src = os.path.join(DEPLOY, d)
         if os.path.isdir(src):
             shutil.copytree(src, os.path.join(root, d))
