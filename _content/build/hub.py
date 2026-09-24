@@ -205,7 +205,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
   </div>
   <div class="m2dog" id="m2-dog"></div>
   <div id="m2-bars"></div>
-  <a class="mgo" href="/map/?new=1" data-cta="mine_map">지도로 들어가기</a>
+  <a class="mgo" href="/map/?new=1" data-cta="mine_map">시작하기</a>
   <div id="m2-acc"></div>
   <button class="medit" id="m2-edit">오행 다시 계산</button>
 </section>
@@ -250,7 +250,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 
     <a class="hcta" href="/map/?new=1" data-cta="result_map">
       <span class="k">캐릭터가 만들어졌습니다</span>
-      <span class="t">지도로 들어가기</span>
+      <span class="t">시작하기</span>
       <span class="d">사냥터·기운·글은 전부 지도에서 갑니다. 이 캐릭터가 그대로 따라갑니다.</span>
     </a>
 
