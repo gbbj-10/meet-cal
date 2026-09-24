@@ -211,9 +211,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 
 <header class="site"><div class="wrap">
   <a class="nm" href="/">__MARK__Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
-  <nav><a href="/">계산기</a><a href="/iljin/" aria-current="page">기운</a>
-       <a href="/map/">지도</a><a class="hl" href="/hunt/">사냥터</a>
-       <a href="/ohaeng/">글</a><span data-fp-chip></span></nav>
+  <nav><a href="/map/">선택목록</a><a href="/ohaeng/">사주 이야기</a><span data-fp-chip></span></nav>
 </div></header>
 
 <main class="wrap">
@@ -286,7 +284,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 </main>
 
 <footer class="site"><div class="wrap">
-  <a href="/">계산기</a><a href="/map/">지도</a><a href="/hunt/">사냥터</a>
+  <a href="/">계산기</a><a href="/map/">선택목록</a><a href="/hunt/">사냥터</a>
   <a href="/ohaeng/">글</a><a href="/love/">이성 조건 계산기</a>
 </div></footer>
 

@@ -57,9 +57,16 @@ CSS = (CHIP +
        'header nav a,.bar nav a,.top-bar nav a,footer a{display:inline-flex;align-items:center;min-height:40px}'
        'main .h a,main a[data-cta]:not([class]){display:inline-flex;align-items:center;min-height:40px}'
        '.bar .mk,.top-bar .mk{width:21px;height:21px}'
+       # 상단 탭은 '선택목록 · 사주 이야기' 두 개 + 캐릭터 칩(2026-09-24). 줄바꿈되면 로고가 둘째 줄로
+       # 떨어진다(루프19, 390px 에서 칩이 붙는 순간) → 탭은 한 줄로 두고, 좁은 화면에서 글자·간격을 줄인다.
+       'body header.site nav,body .bar nav,body .top-bar nav{flex-wrap:nowrap;white-space:nowrap}'
+       'body header.site .wrap,body .bar{flex-wrap:nowrap}'
+       'header.site .nm,.bar .nm,.top-bar .nm{flex:none}'
        '@media(max-width:430px){'
        'header.site nav a[href="/"],.bar nav a[href="/"],.top-bar nav a[href="/"]{display:none}'
-       'header.site nav,.bar nav,.top-bar nav{gap:12px}}')
+       'body header.site nav,body .bar nav,body .top-bar nav{gap:10px}'
+       'body header.site nav a,body .bar nav a,body .top-bar nav a{font-size:13.5px}'
+       'body .bar .me{display:none}}')
 
 # 내 오행 캐릭터는 모든 페이지가 같은 파일에서 읽는다. 페이지마다 따로
 # 물어보면 사용자는 같은 걸 세 번 입력하게 된다.

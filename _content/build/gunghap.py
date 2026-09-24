@@ -114,7 +114,7 @@ header.site nav a{font-size:14px;color:var(--mut);text-decoration:none}
 </head><body>
 <header class="site"><div class="in">
   <a class="nm" href="/">__MARK__Four&nbsp;Paws</a>
-  <nav><a href="/map/">지도</a><a href="/ohaeng/">사주 이야기</a><span data-fp-chip></span></nav>
+  <nav><a href="/map/">선택목록</a><a href="/ohaeng/">사주 이야기</a><span data-fp-chip></span></nav>
 </div></header>
 
 <main class="wrap">
@@ -169,7 +169,7 @@ header.site nav a{font-size:14px;color:var(--mut);text-decoration:none}
     <a class="btn rose" href="/gunghap/" id="again">다른 사람과도 궁합 보기</a>
   </section>
 </main>
-<footer class="foot"><a href="/">처음으로</a><a href="/map/">지도</a><a href="/hunt/">사냥터</a><a href="/iljin/">오늘의 기운</a><a href="/ohaeng/">사주 이야기</a></footer>
+<footer class="foot"><a href="/">처음으로</a><a href="/map/">선택목록</a><a href="/hunt/">사냥터</a><a href="/iljin/">오늘의 기운</a><a href="/ohaeng/">사주 이야기</a></footer>
 
 <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.8.3/kakao.min.js"></script>
 <script src="/ohaeng/data/saju-calculator.js"></script>

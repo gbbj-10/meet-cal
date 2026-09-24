@@ -410,16 +410,14 @@ gtag('js',new Date());gtag('config','{SITE['ga']}');</script>"""
   <a class="nm" href="/">{brand.MARK}Four&nbsp;Paws</a>
   <span class="tl"><a href="blog.html">{SITE['name']}</a></span>
   <nav>
-    <a href="/" data-cta="nav_saju">계산기</a><a href="/iljin/" data-cta="nav_iljin">기운</a>
-    <a href="/map/" data-cta="nav_map">지도</a><a class="hl" href="/hunt/" data-cta="nav_hunt">사냥터</a>
-    <a href="blog.html" data-cta="nav_blog">글</a><span data-fp-chip></span>
+    <a href="/map/" data-cta="nav_map">선택목록</a><a class="hl" href="blog.html" data-cta="nav_blog">사주 이야기</a><span data-fp-chip></span>
   </nav>
 </div></header>"""
 
 FOOT = f"""<footer class="site"><div class="wrap">
   <b style="color:var(--mut)">Four&nbsp;Paws</b> · 오행 댕댕이 키우기<br>
   <nav>
-    <a href="/">사주 계산기</a><a href="/iljin/">오늘의 기운</a><a href="/map/">지도</a>
+    <a href="/">사주 계산기</a><a href="/iljin/">오늘의 기운</a><a href="/map/">선택목록</a>
     <a href="/hunt/">사냥터</a><a href="/love/">이성 조건 계산기</a><a href="blog.html">글 목록</a>
   </nav>
   {SITE['name']} · 사주 계산은 직접 만든 만세력 엔진을 씁니다.<br>

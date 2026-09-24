@@ -2,7 +2,7 @@
 """사냥터 — 카카오 로그인 뒤에 열리는 오행 사냥터 선택·파티 화면.
 
   content/hunt/index.html  하나로 세 화면을 갈아 끼운다.
-    0. 잠김   — 카카오로 시작하기
+    0. 로그인 확인 — 로그인 안 돼 있으면 잠금 화면 없이 곧장 카카오톡 로그인(2026-09-24)
     1. 선택   — 오행 사냥터 다섯 곳 (오늘의 기운·내 사주로 추천)
     2. 파티   — 다섯 자리, 빈 자리는 카카오톡 초대 링크로 채운다
 
@@ -117,6 +117,8 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 
 /* 0. 잠김 */
 .lock{max-width:460px;margin:8vh auto 0;text-align:center}
+.foot{max-width:720px;margin:0 auto;padding:18px 16px 30px;display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:center}
+.foot a{color:var(--dim);font-size:13px;text-decoration:none}
 .lock .seal{width:96px;height:96px;margin:0 auto 20px;border-radius:50%;
   border:1px solid #2a3a52;display:grid;place-items:center;font-size:40px;
   background:radial-gradient(circle at 50% 35%,#1b2536,#0d131d);border-color:#2a3a52}
@@ -417,27 +419,19 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 <header class="bar">
   <a class="nm" href="/">__MARK__Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
   <nav>
-    <a href="/">계산기</a><a href="/iljin/">기운</a><a href="/map/">지도</a>
-    <a href="/ohaeng/">글</a><span data-fp-chip></span>
+    <a href="/map/">선택목록</a><a href="/ohaeng/">사주 이야기</a><span data-fp-chip></span>
     <span class="me" id="me" hidden></span>
   </nav>
 </header>
 
 <div class="wrap">
 
-  <!-- 0. 잠김 -->
+  <!-- 0. 로그인 확인 — 잠금 화면은 없앴다(2026-09-24). 로그인은 홈·선택목록에서 이미 하고 들어온다.
+       로그인 안 된 채로 바로 온 사람(초대 링크 등)은 여기서 곧장 카카오톡 로그인으로 넘긴다. -->
   <section class="view on" id="v-lock">
     <div class="lock">
-      <div class="seal">封</div>
-      <h1>사냥터는 잠겨 있습니다</h1>
-      <p>카카오 계정으로 들어오시면 열립니다.</p>
-      <ul>
-        <li>내 캐릭터와 사냥 기록을 저장해야 합니다</li>
-        <li>친구를 부르려면 보낼 사람이 누구인지 알아야 합니다</li>
-        <li>혼자서도 들어갈 수 있고, 최대 다섯까지 함께 갑니다</li>
-      </ul>
-      <button class="kbtn" id="btn-login">카카오로 시작하기</button>
-      <p class="mini">닉네임과 프로필 사진만 받습니다. 친구 목록은 보지 않습니다.</p>
+      <p id="lock-msg">사냥터를 여는 중…</p>
+      <button class="kbtn" id="btn-login" hidden>카카오톡 로그인</button>
     </div>
   </section>
 
@@ -497,6 +491,7 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
   </section>
 
 </div>
+<footer class="foot"><a href="/">처음으로</a><a href="/map/">선택목록</a><a href="/iljin/">오늘의 기운</a><a href="/gunghap/">궁합소</a><a href="/ohaeng/">사주 이야기</a></footer>
 
 <div class="mask" id="mask">
   <div class="modal">
@@ -1438,7 +1433,7 @@ function qs(k){ var m=new RegExp('[?&]'+k+'=([^&]*)').exec(location.search); ret
 
 function afterLogin(me){
   ME=me;
-  if(!ME){ show('v-lock'); return; }
+  if(!ME){ autoLogin(); return; }
   $('me').hidden=false;
   /* 로그아웃은 프로필(홈 카드 · 지도 사주각)에서만 한다 */
   $('me').innerHTML=(ME.pic?'<img src="'+esc(ME.pic)+'" alt="">':'')+esc(ME.nick);
@@ -1472,11 +1467,31 @@ function afterLogin(me){
   else renderPick();
 }
 
+/* 로그인이 안 돼 있으면 잠금 화면 없이 곧장 카카오톡 로그인으로 보낸다.
+   다만 방금(1분 안) 보냈는데 로그인 없이 돌아왔다면(취소 등) 다시 보내지 않고 버튼을 보여 준다 — 무한 왕복 방지. */
+function autoLogin(){
+  var k='hunt.autoLogin', t=0; try{ t=+sessionStorage.getItem(k)||0; }catch(e){}
+  if(Date.now()-t < 60000){
+    $('lock-msg').textContent = qs('invite') ? '초대를 받으셨습니다. 카카오톡으로 로그인하면 그 자리에 앉습니다.'
+                                             : '카카오톡으로 로그인하면 사냥터가 열립니다.';
+    $('btn-login').hidden=false; show('v-lock'); return;
+  }
+  try{ sessionStorage.setItem(k, String(Date.now())); }catch(e){}
+  $('lock-msg').textContent='카카오톡 로그인으로 이동합니다…';
+  show('v-lock');
+  ev('hunt_login_auto',{mode:MODE, invited:!!qs('invite')});
+  /* 카카오 로그인은 페이지를 떠나며 돌아온다. signInWithOAuth 가 돌려주는 값({data,error})은 사용자가 아니다 —
+     그걸 사용자로 받아 afterLogin 하면 떠나기 직전 로그인 안 된 사냥터가 잠깐 열린다(루프19 발견). 데모만 바로 들어간다. */
+  Promise.resolve(Store.login()).then(function(me){
+    if(MODE==='demo'){ if(me) afterLogin(me); else $('btn-login').hidden=false; }
+  }).catch(function(){ $('btn-login').hidden=false; });
+}
+
 (function init(){
   try{ if(CFG.kakaoKey && window.Kakao && !Kakao.isInitialized()) Kakao.init(CFG.kakaoKey); }catch(e){}
   $('btn-login').onclick=function(){
     ev('hunt_login_try',{mode:MODE});
-    Promise.resolve(Store.login()).then(function(me){ if(me) afterLogin(me); });
+    Promise.resolve(Store.login()).then(function(me){ if(MODE==='demo' && me) afterLogin(me); });
   };
   $('btn-back').onclick=function(){ stopBattle(); renderTier(); };
   $('btn-back-t').onclick=function(){ stopBattle(); renderPick(); };
@@ -1490,16 +1505,8 @@ function afterLogin(me){
 
   Promise.resolve(Store.me()).then(function(me){
     if(me) afterLogin(me);
-    else {
-      /* 초대 링크로 처음 온 사람에게는 왜 로그인해야 하는지 먼저 보여 준다 */
-      var host=qs('invite');
-      if(host){
-        $('v-lock').querySelector('h1').textContent='초대를 받으셨습니다';
-        $('v-lock').querySelector('p').textContent='사냥터에 한 자리가 비어 있습니다. 카카오로 들어오시면 그 자리에 앉습니다.';
-      }
-      show('v-lock');
-    }
-  }).catch(function(){ show('v-lock'); });
+    else autoLogin();
+  }).catch(function(){ autoLogin(); });
 })();
 """
 

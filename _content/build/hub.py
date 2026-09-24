@@ -192,8 +192,8 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 .mine2 .mgo{display:block;margin-top:16px;padding:14px;border-radius:12px;background:var(--to);
   color:#191600;font-weight:800;font-size:16px;text-align:center;text-decoration:none}
 .fpguest{margin:8px 0 0!important;font-size:12.5px!important;color:#ffd93d!important;text-align:center}
-.mine2 .medit{display:block;margin:10px auto 0;background:0;border:0;color:var(--dim);
-  font:inherit;font-size:12.5px;cursor:pointer;text-decoration:underline;padding:4px}
+.mine2 .medit{display:block;min-height:40px;margin:6px auto 0;background:0;border:0;color:var(--dim);
+  font:inherit;font-size:12.5px;cursor:pointer;text-decoration:underline;padding:4px 14px}   /* 누름 영역 40px (루프19) */
 @media(max-width:430px){
   .hero h1{font-size:26px}
   .cell .hj{font-size:23px}
@@ -205,7 +205,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 
 <header class="site"><div class="wrap">
   <a class="nm" href="/">__MARK__Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
-  <nav><a href="/ohaeng/">사주 이야기</a><span data-fp-chip></span></nav>
+  <nav><a href="/map/">선택목록</a><a href="/ohaeng/">사주 이야기</a><span data-fp-chip></span></nav>
 </div></header>
 
 <main class="wrap">
@@ -277,7 +277,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 </main>
 
 <footer class="site"><div class="wrap">
-  <a href="/iljin/">기운</a><a href="/map/">지도</a><a href="/hunt/">사냥터</a>
+  <a href="/iljin/">기운</a><a href="/map/">선택목록</a><a href="/hunt/">사냥터</a>
   <a href="/ohaeng/">오행 이야기</a>
   <a href="/love/">이성 조건 계산기</a>
   <p style="margin:10px 0 0">사주 해석은 통계적 사실이 아니라 전통 해석입니다. 재미로 봐 주세요.</p>
@@ -438,7 +438,7 @@ $('sj-back').addEventListener('click', function(){
     $('m2-orb').classList.add('fpgem');
     $('m2-orb').style.setProperty('--c', FP.COL[me.el]||'#8e9bb0');
     $('m2-t').textContent=me.el+' 속성'+(me.top?' ('+me.top+'%)':'');
-    $('m2-d').textContent=(SAY2[me.el]||'')+' 지도·사냥터·기운이 이 캐릭터로 이어집니다.';
+    $('m2-d').textContent=(SAY2[me.el]||'')+' 사냥터·궁합소·기운이 이 캐릭터로 이어집니다.';
     if(FP.barsHTML) $('m2-bars').innerHTML=FP.barsHTML({});
     if(FP.accountHTML){ $('m2-acc').innerHTML=FP.accountHTML(); FP.paintAccount(); }
     $('mine2').hidden=false;

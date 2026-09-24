@@ -13,9 +13,9 @@ import html
 import json
 
 SITE_ROOT = 'https://meetcal.co.kr'
-TITLE = '지도 — Four Paws'
+TITLE = '선택목록 — Four Paws'
 DESC  = ('사주각·궁합소·십이지 궁·십간의 기록·연의 저울·명식의 탑. '
-         '사주 여덟 글자로 만든 캐릭터로 돌아다니는 오행 세계의 지도입니다.')
+         '사주 여덟 글자로 만든 캐릭터로 들어가는 오행 세계의 선택목록입니다.')
 
 COL = {'목': '#6fd07d', '화': '#f2634f', '토': '#ffd93d',
        '금': '#b3c0d2', '수': '#5aa6ee', '합': '#ff7eb0'}
@@ -89,7 +89,7 @@ __HEAD__
 <meta name="description" content="__DESC__">
 <link rel="canonical" href="__ROOT__/map/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="오행 세계의 지도">
+<meta property="og:title" content="오행 세계 선택목록">
 <meta property="og:description" content="__DESC__">
 <meta property="og:url" content="__ROOT__/map/">
 <meta property="og:image" content="__ROOT__/ohaeng/img/og-ohaeng.png">
@@ -140,7 +140,9 @@ __MKCSS__
 .tile.locked .ta{color:#8a97ab}
 #t-gunghap .ta::after{content:"NEW";margin-left:6px;font-size:10.5px;font-weight:800;color:#0a0f18;
   background:var(--c);border-radius:5px;padding:1px 5px;vertical-align:1px}
-.hint{text-align:center;color:var(--dim);font-size:13.5px;padding:8px 18px 26px;margin:0}
+.hint{text-align:center;color:var(--dim);font-size:13.5px;padding:8px 18px 10px;margin:0}
+.foot{max-width:720px;margin:0 auto;padding:4px 16px 30px;display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:center}
+.foot a{color:var(--dim);font-size:13px;text-decoration:none}
 
 .hello{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;
   align-items:center;justify-content:center;text-align:center;padding:24px;
@@ -177,17 +179,17 @@ __MKCSS__
   <h1 id="hello-h">사주 여덟 글자가<br>내 캐릭터가 됩니다</h1>
   <p id="hello-p">태어난 해·달·날·시각 네 기둥을 계산해서<br>목·화·토·금·수 다섯 속성 중 하나를 찾아 드립니다.</p>
   <button id="start">시작하기</button>
-  <button class="skip" id="skip">바로 지도 보기</button>
+  <button class="skip" id="skip">바로 선택목록 보기</button>
 </div>
 
 <div class="bar">
   <a class="nm" href="/">__MARK__Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
-  <nav><a href="/">계산기</a><a href="/iljin/">기운</a>
-       <a class="hl" href="/hunt/">사냥터</a><a href="/ohaeng/">글</a><span data-fp-chip></span></nav>
+  <nav><a class="hl" href="/map/" aria-current="page">선택목록</a><a href="/ohaeng/">사주 이야기</a><span data-fp-chip></span></nav>
 </div>
 
 __TILES__
 <p class="hint">버튼을 누르면 바로 들어갑니다. 아직 문이 열리지 않은 곳도 있습니다.</p>
+<footer class="foot"><a href="/">처음으로</a><a href="/hunt/">사냥터</a><a href="/iljin/">오늘의 기운</a><a href="/gunghap/">궁합소</a><a href="/ohaeng/">사주 이야기</a></footer>
 
 <script>
 (function(){
@@ -210,7 +212,7 @@ if(MYEL){
   $('hello-h').innerHTML='<span class="el"><i style="background:'+(COL[MYEL]||'#8e9bb0')+'">'+
     HJ[MYEL]+'</i>'+MYEL+' 속성</span><br>오행 캐릭터가 준비됐습니다';
   $('hello-p').textContent=SAY[MYEL]+' 궁합소·사냥터·기운·글로 갑니다.';
-  $('start').textContent='지도 보기';
+  $('start').textContent='선택목록 보기';
   $('skip').hidden=true;
   import('/3d/profile3d.js').then(function(m){
     return m.showDog({mount:$('dog'), base:'/3d/', el:MYEL});
