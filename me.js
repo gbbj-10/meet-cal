@@ -239,7 +239,9 @@
         return c.auth.getSession().then(function (r) {
           var u = r.data && r.data.session && r.data.session.user; if (!u) return null;
           var m = u.user_metadata || {};
-          return { id: u.id, nick: m.name || m.full_name || m.preferred_username || m.nickname || '이름없음',
+          var kakao = m.name || m.full_name || m.preferred_username || m.nickname || '이름없음';
+          var mine = lsGet('fp.nick', null);          /* 직접 정한 닉네임 (서버 hunt_players.nick_set) */
+          return { id: u.id, kakao: kakao, nick: (mine && mine.id === u.id && mine.nick) || kakao,
                    pic: m.avatar_url || m.picture || '' };
         });
       }).catch(function () { return null; });
@@ -259,7 +261,7 @@
           var kill = [];
           for (var i = 0; i < localStorage.length; i++) {
             var k = localStorage.key(i);
-            if (k === KEY || k === OLD || k === 'hunt.me' || k === 'hunt.stones' || /^hunt\.(tier|last|party|friends)\./.test(k)) kill.push(k);
+            if (k === KEY || k === OLD || k === 'fp.nick' || k === 'fp.next' || k === 'hunt.me' || k === 'hunt.stones' || /^hunt\.(tier|last|party|friends)\./.test(k)) kill.push(k);
           }
           kill.forEach(function (k) { lsSet(k, null); });
           me.paint();
@@ -288,6 +290,9 @@
         var c = me._c;
         return c.from('hunt_players').select('*').eq('user_id', u.id).maybeSingle().then(function (q) {
           var row = q && q.data, changed = false;
+          /* 닉네임 — 사용자가 정한 적이 있으면(nick_set) 그 이름, 아니면 카카오 이름 */
+          if (row && row.nick_set && row.nick) { me.nickSet = true; u.nick = row.nick; lsSet('fp.nick', { id: u.id, nick: row.nick }); }
+          else { me.nickSet = false; lsSet('fp.nick', null); u.nick = u.kakao || u.nick; }
           if (row && row.dominant_element) {
             var cur = me.get() || {};
             var srv = { el: row.dominant_element, ratio: row.ratio || cur.ratio || null,
@@ -308,7 +313,7 @@
             if (all[g] !== (st[g] || 0)) changed = true;
             lsSet('hunt.tier.' + g, all[g]);
           });
-          if (!row || row.nick !== u.nick) changed = true;
+          if (!row || (!me.nickSet && row.nick !== u.nick)) changed = true;
           me.synced = true;
           if (changed) return me.pushNow().then(function () { return u; });
           return u;
@@ -340,6 +345,72 @@
       }).catch(function () {});
     },
 
+    /* ── 닉네임 (2026-09-24) ──
+       카카오톡으로 처음 들어오면 닉네임을 정한다. 정한 이름은 hunt_players.nick 에 nick_set=true 로 남고,
+       그 뒤로는 카카오 이름으로 덮어쓰지 않는다. 사냥터·친구 초대에 이 이름이 보인다. */
+    nickSet: false,
+    cleanNick: function (n) { return String(n || '').replace(/[<>&"'`]/g, '').replace(/\s+/g, ' ').trim().slice(0, 10); },
+    setNick: function (n) {
+      var me = this; n = this.cleanNick(n);
+      if (n.length < 2) return Promise.reject(new Error('2자 이상'));
+      return this.user().then(function (u) {
+        if (!u || !me._c) throw new Error('로그인이 필요합니다');
+        return me._c.from('hunt_players').upsert({ user_id: u.id, nick: n, nick_set: true, updated_at: new Date().toISOString() })
+          .then(function (r) {
+            if (r && r.error) throw r.error;
+            me.nickSet = true; lsSet('fp.nick', { id: u.id, nick: n });
+            if (me.who) me.who.nick = n;
+            me.paintWho(); me.paintAccount();
+            return n;
+          });
+      });
+    },
+    /* 닉네임 정하기 창 */
+    askNick: function (def, then) {
+      var me = this;
+      if (document.getElementById('fpnick')) return;
+      var w = document.createElement('div'); w.id = 'fpnick';
+      w.innerHTML = '<form class="fpn-box" autocomplete="off">' +
+        '<div class="fpn-k">카카오톡 로그인 완료</div>' +
+        '<h3>닉네임을 정해 주세요</h3>' +
+        '<p>사냥터와 친구 초대에 이 이름이 보입니다. 2~10자, 나중에 바꿀 수 있습니다.</p>' +
+        '<input id="fpn-in" maxlength="10" value="' + this.cleanNick(def) + '" aria-label="닉네임">' +
+        '<div class="fpn-err" id="fpn-err"></div>' +
+        '<button type="submit" class="fpn-go">이 이름으로 시작</button>' +
+        '</form>';
+      document.body.appendChild(w);
+      var inp = w.querySelector('#fpn-in'), err = w.querySelector('#fpn-err'), btn = w.querySelector('.fpn-go');
+      setTimeout(function () { try { inp.focus(); inp.select(); } catch (e) {} }, 60);
+      w.querySelector('form').onsubmit = function (e) {
+        e.preventDefault();
+        var n = me.cleanNick(inp.value);
+        if (n.length < 2) { err.textContent = '두 글자 이상 적어 주세요.'; return; }
+        btn.disabled = true; btn.textContent = '저장 중…';
+        me.setNick(n).then(function () {
+          w.remove(); if (then) then(n);
+        }).catch(function () {
+          btn.disabled = false; btn.textContent = '이 이름으로 시작';
+          err.textContent = '저장하지 못했습니다. 잠시 뒤 다시 눌러 주세요.';
+        });
+      };
+    },
+    /* 로그인 전에 누른 '시작하기'의 목적지로 보낸다 (10분 안에 돌아온 경우만) */
+    goNext: function (changed) {
+      var n = lsGet('fp.next', null); lsSet('fp.next', null);
+      if (n && n.url && Date.now() - (n.at || 0) < 600000) { location.href = n.url; return; }
+      if (changed && /^\/hunt\//.test(location.pathname)) location.reload();   /* 사냥터는 이름을 다시 읽는다 */
+    },
+    /* 프로필 맨 위 — 로그인 전 '게스트', 로그인 뒤 닉네임 */
+    paintWho: function () {
+      var els = document.querySelectorAll('[data-fp-who]'); if (!els.length) return;
+      var put = function (n) {
+        for (var i = 0; i < els.length; i++) { els[i].textContent = n || '게스트'; els[i].classList.toggle('on', !!n); }
+      };
+      if (!this.online()) return put(null);
+      var c = lsGet('fp.nick', null); put(c && c.nick);           /* 먼저 기억해 둔 이름 — 깜빡임 없이 */
+      this.user().then(function (u) { put(u ? u.nick : null); });
+    },
+
     /* 프로필 자리에 붙는 계정 줄 — 로그인/로그아웃 */
     accountHTML: function () {
       if (!this.online()) return '';
@@ -353,7 +424,8 @@
           var el = els[i];
           if (u) {
             el.innerHTML = (u.pic ? '<img src="' + u.pic + '" alt="">' : '<i class="fpacc-k">K</i>') +
-              '<span class="fpacc-t"><b>' + u.nick.replace(/[<>&"]/g, '') + '</b> · 카카오 계정에 저장 중</span>' +
+              '<span class="fpacc-t"><b>' + u.nick.replace(/[<>&"]/g, '') + '</b> · 카카오톡 계정에 저장 중 ' +
+              '<button type="button" class="fpacc-nk" data-fp-nick>이름 바꾸기</button></span>' +
               '<button type="button" class="fpacc-b" data-fp-out>로그아웃</button>';
           } else {
             el.innerHTML = '<span class="fpacc-t">카카오톡으로 로그인하면 <b>다른 기기에서도</b> 이 캐릭터가 이어집니다.</span>' +
@@ -365,6 +437,9 @@
         });
         [].forEach.call(document.querySelectorAll('[data-fp-in]'), function (b) {
           b.onclick = function () { me.login(); };
+        });
+        [].forEach.call(document.querySelectorAll('[data-fp-nick]'), function (b) {
+          b.onclick = function () { me.askNick(u && u.nick, function () { me.goNext(true); }); };
         });
       });
     }
@@ -412,16 +487,57 @@
       '.fpacc .fpacc-t b{color:var(--ink,#e8edf5)}' +
       '.fpacc .fpacc-b{margin-left:auto;border:1px solid rgba(255,255,255,.18);background:transparent;color:var(--mut,#b4c0d2);' +
         'border-radius:9px;padding:7px 12px;font:inherit;font-size:12.5px;cursor:pointer}' +
-      '.fpacc .fpacc-b.in{background:#FEE500;color:#191600;border:0;font-weight:700}';
+      '.fpacc .fpacc-b.in{background:#FEE500;color:#191600;border:0;font-weight:700}' +
+      '.fpacc .fpacc-nk{background:0;border:0;padding:0 2px;color:var(--dim,#8b96a8);font:inherit;font-size:12px;text-decoration:underline;cursor:pointer}' +
+      '[data-fp-who]{display:inline-flex;align-items:center;gap:6px;margin:0 0 12px;padding:4px 11px 4px 9px;border-radius:999px;' +
+        'font-size:12.5px;font-weight:700;color:var(--dim,#8b96a8);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12)}' +
+      '[data-fp-who]::before{content:"";width:7px;height:7px;border-radius:50%;background:#6b7789}' +
+      '[data-fp-who].on{color:#191600;background:#ffd93d;border-color:#ffd93d}' +
+      '[data-fp-who].on::before{background:#191600}' +
+      '#fpnick{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:20px;background:rgba(5,8,14,.72);backdrop-filter:blur(3px)}' +
+      '#fpnick .fpn-box{width:100%;max-width:360px;padding:24px 22px 20px;border-radius:18px;background:#141b27;' +
+        'border:1px solid rgba(255,217,61,.35);box-shadow:0 20px 60px rgba(0,0,0,.5);color:var(--ink,#e8edf5);font-family:inherit}' +
+      '#fpnick .fpn-k{font-size:12px;font-weight:700;color:#191600;background:#FEE500;display:inline-block;padding:3px 9px;border-radius:999px}' +
+      '#fpnick h3{margin:12px 0 6px;font-size:20px;letter-spacing:-.02em}' +
+      '#fpnick p{margin:0 0 14px;font-size:13px;color:var(--mut,#b4c0d2);line-height:1.6}' +
+      '#fpnick input{width:100%;box-sizing:border-box;padding:13px 14px;border-radius:11px;border:1px solid rgba(255,255,255,.18);' +
+        'background:#0d1119;color:#fff;font:inherit;font-size:17px;font-weight:700}' +
+      '#fpnick input:focus{outline:2px solid #ffd93d;outline-offset:1px}' +
+      '#fpnick .fpn-err{min-height:18px;margin:6px 0 4px;font-size:12.5px;color:#f08a80}' +
+      '#fpnick .fpn-go{width:100%;padding:14px;border:0;border-radius:12px;background:#ffd93d;color:#191600;font:inherit;font-size:16px;font-weight:800;cursor:pointer}' +
+      '#fpnick .fpn-go:disabled{opacity:.6}';
     (document.head || document.documentElement).appendChild(c);
   })();
 
   window.FP = FP;
   function boot() {
     FP.paint();
-    /* 로그인한 상태로 들어오면 한 번 맞춘다. 끝나면 fp:sync 가 난다. */
-    if (FP.online()) FP.sync().then(function () { FP.paintAccount(); });
+    FP.paintWho();
+    /* 로그인한 상태로 들어오면 한 번 맞춘다. 끝나면 fp:sync 가 난다.
+       처음 로그인한 사람(닉네임을 정한 적 없음)은 여기서 닉네임을 정한다. */
+    if (FP.online()) FP.sync().then(function (u) {
+      FP.paintAccount(); FP.paintWho();
+      if (!u) return;
+      if (!FP.nickSet) FP.askNick(u.kakao || u.nick, function () { FP.goNext(true); });
+      else FP.goNext(false);
+    });
   }
+  /* '시작하기' — 로그인 전이면 카카오톡 로그인부터. 돌아오면 닉네임 → 원래 가려던 곳 */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest ? e.target.closest('[data-fp-start]') : null;
+    if (!a || !FP.online()) return;
+    e.preventDefault();
+    var url = a.getAttribute('href') || '/map/';
+    FP.user().then(function (u) {
+      if (u) {
+        if (FP.synced && !FP.nickSet) FP.askNick(u.kakao || u.nick, function () { location.href = url; });
+        else location.href = url;
+      } else {
+        lsSet('fp.next', { url: url, at: Date.now() });
+        FP.login(location.origin);            /* 사이트 주소 그대로 — Supabase 허용 목록과 같다 */
+      }
+    });
+  });
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
 })();
