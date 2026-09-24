@@ -50,6 +50,8 @@ jobs:
           cp -r _content/deploy/iljin iljin              # 오늘의 일진 (매일 갱신)
           rm -rf hunt
           cp -r _content/deploy/hunt hunt                # 사냥터 (카카오 로그인 뒤 열림)
+          rm -rf gunghap
+          cp -r _content/deploy/gunghap gunghap          # 궁합소 (카카오 로그인 + 초대 링크, 2026-09-24)
           cp _content/deploy/sitemap.xml sitemap.xml
 
       - name: 확인 — 글이 실제로 생겼나
@@ -59,6 +61,9 @@ jobs:
           test -f map/index.html    || { echo "::error::map/index.html 이 없습니다"; exit 1; }
           test -f iljin/index.html  || { echo "::error::iljin/index.html 이 없습니다"; exit 1; }
           test -f hunt/index.html   || { echo "::error::hunt/index.html 이 없습니다"; exit 1; }
+          test -f gunghap/index.html || { echo "::error::gunghap/index.html 이 없습니다"; exit 1; }
+          grep -q 'noindex' gunghap/index.html \
+            || { echo "::error::궁합소에 noindex 가 빠졌습니다"; exit 1; }
           grep -q 'noindex' hunt/index.html \
             || { echo "::error::사냥터에 noindex 가 빠졌습니다"; exit 1; }
           h=$(grep -o '"id":"' hunt/index.html | wc -l)
@@ -69,14 +74,12 @@ jobs:
           grep -q "$kd" iljin/index.html \
             || { echo "::error::일진 페이지의 날짜가 오늘($kd)이 아닙니다"; exit 1; }
           echo "일진 날짜: $kd"
-          # 지도에 건물이 다섯 채 다 있어야 한다
-          # 지도는 화면을 재서 그리므로 건물은 데이터로 들어 있다.
-          # 자바스크립트가 못 돌 때 쓰는 목록(li)도 같은 수여야 한다.
-          b=$(grep -o '"id":"' map/index.html | wc -l)
-          l=$(grep -o '<li><i style' map/index.html | wc -l)
-          echo "지도 건물: 데이터 $b · 대체목록 $l"
-          test "$b" -ge 5 || { echo "::error::지도 건물 데이터가 모자랍니다 ($b)"; exit 1; }
-          test "$l" -ge 5 || { echo "::error::대체 목록이 모자랍니다 ($l)"; exit 1; }
+          # 지도는 2열 버튼이다(2026-09-24). 건물 버튼 여섯 개(궁합소 포함)가 다 있어야 한다.
+          # 버튼이 그냥 링크라서 자바스크립트가 못 돌 때의 대체 목록은 따로 없다.
+          t=$(grep -o 'class="tile' map/index.html | wc -l)
+          echo "지도 버튼: $t 개"
+          test "$t" -ge 6 || { echo "::error::지도 버튼이 모자랍니다 ($t)"; exit 1; }
+          grep -q 'href="/gunghap/"' map/index.html || { echo "::error::지도에 궁합소 버튼이 없습니다"; exit 1; }
           n=$(ls ohaeng/*.html | wc -l)
           echo "생성된 HTML: $n 개"
           test "$n" -ge 2 || { echo "::error::글이 너무 적습니다"; exit 1; }
@@ -98,7 +101,7 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add ohaeng map iljin hunt index.html sitemap.xml
+          git add ohaeng map iljin hunt gunghap index.html sitemap.xml
           if git diff --staged --quiet; then
             echo "바뀐 것 없음 — 커밋 생략"
           else
