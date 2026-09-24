@@ -82,11 +82,11 @@ const HAPLINE={갑기합:'서로의 부족한 면을 믿고 맡기는 합',을�
 function ilgan(A,B,p){
   const a=A.me,b=B.me;
   if(p.k==='hap') return `두 사람의 태어난 날 글자는 **${p.name}**이에요. ${HAPLINE[p.name]}이라, 처음 만났을 때부터 이상하게 편했을 수 있어요. 사주에서 가장 반가운 조합 중 하나예요.`;
-  if(p.k==='same') return `${은(A.name)} ${NATURE[a]}, ${B.name}도 같은 ${a} 기운이에요. 말하지 않아도 속도가 비슷해서 편하지만, 둘 다 같은 쪽으로 쏠리면 고집이 부딪힐 수 있어요. 한 사람이 먼저 '이번엔 네 방식대로'를 말해 주면 금방 풀려요.`;
+  if(p.k==='same') return `두 사람 모두 날 기운이 ${j(a,'이에요','예요')}. ${NATURE[a]} 같은 성질이라 말하지 않아도 속도가 비슷해서 편하지만, 둘 다 같은 쪽으로 쏠리면 고집이 부딪힐 수 있어요. 한 사람이 먼저 '이번엔 네 방식대로'를 말해 주면 금방 풀려요.`;
   if(p.k==='saeng'){ const [g,t]=p.dir==='give'?[A,B]:[B,A];
-    return `${g.name}의 ${g.me} 기운이 ${t.name}의 ${t.me} 기운을 살려 주는 **상생** 관계예요. ${은(g.name)} 챙겨 주는 쪽, ${은(t.name)} 힘을 얻는 쪽이 되기 쉬워요. 받는 쪽이 고마움을 자주 말로 해 주면 오래 가요.`; }
+    return `${g.name}의 날 기운(${g.me})이 ${t.name}의 날 기운(${t.me})을 살려 주는 **상생** 관계예요. ${은(g.name)} 챙겨 주는 쪽, ${은(t.name)} 힘을 얻는 쪽이 되기 쉬워요. 받는 쪽이 고마움을 자주 말로 해 주면 오래 가요.`; }
   const [p1,p2]=p.dir==='press'?[A,B]:[B,A];
-  return `${p1.name}의 ${p1.me} 기운이 ${p2.name}의 ${p2.me} 기운을 누르는 **상극** 관계예요. ${과(NATURE[p1.me])} ${NATURE[p2.me]}처럼 성질이 반대라 처음엔 '왜 저렇게 하지?' 싶은 순간이 있어요. 대신 서로 없는 걸 가진 사이라, 역할을 나누면 오히려 빈틈이 없어요. ${은(p1.name)} 말의 온도를 한 칸 낮추고, ${은(p2.name)} 서운한 걸 쌓아 두지 않는 게 요령이에요.`;
+  return `${p1.name}의 날 기운(${p1.me})이 ${p2.name}의 날 기운(${p2.me})을 누르는 **상극** 관계예요. ${과(NATURE[p1.me])} ${NATURE[p2.me]}처럼 성질이 반대라 처음엔 '왜 저렇게 하지?' 싶은 순간이 있어요. 대신 서로 없는 걸 가진 사이라, 역할을 나누면 오히려 빈틈이 없어요. ${은(p1.name)} 말의 온도를 한 칸 낮추고, ${은(p2.name)} 서운한 걸 쌓아 두지 않는 게 요령이에요.`;
 }
 function ilji(A,B,p){
   const M={
@@ -132,7 +132,7 @@ function read(A,B,r){
   const parts=r.parts.map(p=>({label:LABEL[p.part],pt:p.pt,max:p.max,text:F[p.part](A,B,p)}));
   const best=r.parts.slice().sort((x,y)=>y.pt/y.max-x.pt/x.max)[0], worst=r.parts.slice().sort((x,y)=>x.pt/x.max-y.pt/y.max)[0];
   const summary=`${이랑(A.name)} ${B.name}의 궁합은 **${r.score}점**, ${HEAD[r.grade]}. 가장 좋은 건 '${SHORT[best.part]}', 조금 신경 쓰면 좋은 건 '${SHORT[worst.part]}'${j(SHORT[worst.part],'이에요','예요').slice(SHORT[worst.part].length)}.`;
-  const dog=`오행 댕댕이로 보면, ${A.name}의 ${A.me} 댕댕이와 ${B.name}의 ${B.me} 댕댕이가 같은 파티에 서면 ${r.parts[0].k==='hap'?'합동 필살기 궁합':'서로 다른 속성을 막아 주는 짝'}이에요.`;
+  const dog=`오행 댕댕이로 보면, ${A.name}의 ${A.dom} 댕댕이와 ${B.name}의 ${B.dom} 댕댕이가 같은 파티에 서면 ${r.parts[0].k==='hap'?'합동 필살기 궁합':'서로 다른 속성을 막아 주는 짝'}이에요.`;
   return {summary,parts,dog,disclaimer:'재미로 보는 궁합이에요. 두 사람의 관계는 사주 여덟 글자보다 서로 나눈 시간이 훨씬 많이 말해 줘요.'};
 }
 
