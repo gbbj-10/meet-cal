@@ -93,6 +93,18 @@ header.site nav a.hl{color:var(--to);font-weight:700}
 
 /* ── 결과 ── */
 .out{margin-top:26px}
+/* 프로필의 로그인 권유 칸은 뺀다 — 로그인은 '시작하기'(게임 시작) 때 한 번만 묻는다. 로그인한 뒤의 계정 줄은 둔다 */
+.mine2 .fpacc:has(.fpacc-b.in){display:none}
+.sj{margin-top:4px}
+.sj .sj-k{font-size:12.5px;font-weight:700;color:var(--to);letter-spacing:.2px}
+.sj h1{font-size:26px;letter-spacing:-.02em;margin:4px 0 6px}
+.sj .sub{color:var(--mut);font-size:14px;margin:0 0 16px}
+.sj-say{margin:20px 0 4px;padding:16px 18px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+.sj-say .l{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:0 0 6px}
+.sj-say .l b{padding:1px 9px;border-radius:8px;color:#0a0f18}
+.sj-say .d{font-size:14px;color:var(--mut);line-height:1.65;margin:0}
+.sj-go{background:var(--to)!important;color:#191600!important;font-size:17px}
+.sj-back{display:block;margin:12px auto 0;background:0;border:0;color:var(--dim);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer;padding:6px}
 .out h2{font-size:20px;margin:0 0 4px;letter-spacing:-.01em}
 .out .sub{color:var(--mut);font-size:14px;margin:0 0 16px}
 .board{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
@@ -218,7 +230,6 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
   <p>사주 여덟 글자를 직접 계산해서, 내 오행이 어디에 몰려 있고 무엇이 비어 있는지 보여 드립니다.</p>
 </section>
 
-<div id="m2-login" style="margin:0 0 14px"></div>
 <section class="tool" id="tool">
   <div class="lab">태어난 날</div>
   <div class="frow">
@@ -230,41 +241,23 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
   <p class="hint">시각을 모르면 <b>모름</b>으로 두세요. 여덟 글자 중 여섯 글자로만 계산하고,
      결과에 그 사실을 표시합니다. 아무 시각이나 찍어 넣는 것보다 정확합니다.</p>
   <button class="go" id="go">내 오행 보기</button>
+</section>
 
-  <div class="out" id="out" hidden>
-    <h2>사주 여덟 글자</h2>
-    <p class="sub" id="dsub"></p>
-    <div class="board" id="board"></div>
-
-    <h2 style="margin-top:26px">오행 비율</h2>
-    <p class="sub" id="rsub"></p>
-    <div class="bars" id="bars"></div>
-
-    <div data-fp-who style="margin-top:22px">게스트</div>
-    <div class="me" id="me">
-      <div class="pics" id="me-pics"></div>
-      <div>
-        <div class="k">내 대표 속성</div>
-        <div class="t" id="me-t"></div>
-        <div class="d" id="me-d"></div>
-      </div>
-    </div>
-
-    <div id="notes"></div>
-
-    <a class="hcta" href="/map/?new=1" data-cta="result_map" data-fp-start>
-      <span class="k">캐릭터가 만들어졌습니다</span>
-      <span class="t">시작하기</span>
-      <span class="d">사냥터·기운·글은 전부 지도에서 갑니다. 이 캐릭터가 그대로 따라갑니다.</span>
-      <span class="d fpguest" data-fp-guest hidden>카카오톡으로 로그인하고 닉네임을 정하면 바로 시작합니다.</span>
-    </a>
-
-    <div class="cad">
-      <div class="cad-l">광고</div>
-      <ins class="adsbygoogle" style="display:block"
-           data-ad-client="__ADCLIENT__" data-ad-slot="__ADSLOT__"
-           data-ad-format="auto" data-full-width-responsive="true"></ins>
-    </div>
+<!-- 내 오행 보기 다음 화면 — 사주 여덟 글자만 따로 보여 주고, 캐릭터 생성으로 넘어간다 -->
+<section class="tool sj" id="saju" hidden>
+  <div class="sj-k">내 오행 보기</div>
+  <h1>당신의 사주 구성</h1>
+  <p class="sub" id="dsub"></p>
+  <div class="board" id="board"></div>
+  <div class="sj-say" id="sj-say"></div>
+  <button class="go sj-go" id="mk">캐릭터 생성</button>
+  <button class="sj-back" id="sj-back" type="button">생년월일 다시 입력</button>
+  <div id="notes"></div>
+  <div class="cad">
+    <div class="cad-l">광고</div>
+    <ins class="adsbygoogle" style="display:block"
+         data-ad-client="__ADCLIENT__" data-ad-slot="__ADSLOT__"
+         data-ad-format="auto" data-full-width-responsive="true"></ins>
   </div>
 </section>
 
@@ -348,37 +341,21 @@ $('go').addEventListener('click', function(){
   $('dsub').textContent=yy+'년 '+mm+'월 '+dd+'일'+(hh===null?' · 시각 모름':' · '+hh+'시')+
     ' · 네 기둥 × 천간·지지';
 
-  var er=r.elementRatio, cnt=r.timeKnown?8:6;
-  $('rsub').textContent=r.timeKnown?'여덟 글자를 오행으로 세었습니다':
-    '시각을 몰라 여섯 글자만 세었습니다';
-  var bars='';
-  ['목','화','토','금','수'].forEach(function(e){
-    var v=er[e]||0;
-    bars+='<div class="bar"><span class="n" style="color:'+COL[e]+'">'+e+'</span>'+
-      '<span class="t"><i style="width:'+v+'%;background:'+COL[e]+'"></i></span>'+
-      '<span class="v">'+v+'%</span></div>';
-  });
-  $('bars').innerHTML=bars;
-
+  var er=r.elementRatio;
   // 최고 비율이 둘 이상이면 하나로 정하지 않는다 — 있는 그대로 보여 준다
   var all=['목','화','토','금','수'];
   var top=Math.max.apply(null, all.map(function(e){return er[e]||0}));
   var tied=all.filter(function(e){return (er[e]||0)===top});
   var dom=tied[0];
-  var px=[104,74,58,48,42][Math.min(tied.length,5)-1];
-  $('me-pics').innerHTML=tied.map(function(e){
-    return '<img src="/ohaeng/img/char-'+IMG[e]+'.png" alt="'+e+' 속성 캐릭터" loading="lazy"'+
-           ' style="width:'+px+'px;height:'+px+'px">';
-  }).join('');
-  if(tied.length>1){
-    var last=tied[tied.length-1];
-    $('me-t').textContent=tied.join('·')+' 속성 (각 '+top+'%)';
-    $('me-d').textContent=tied.join('·')+JGA[last]+' 같은 비율이라 대표 속성이 '+
-      '하나로 정해지지 않습니다.'+(r.timeKnown?'':' 태어난 시각을 넣으면 갈릴 수 있습니다.');
-  }else{
-    $('me-t').textContent=dom+' 속성 ('+top+'%)';
-    $('me-d').textContent=SAY[dom];
-  }
+  /* 글자 수 — 여덟(모르면 여섯) 칸 중 몇 칸이 그 오행인가 */
+  var cntEl={목:0,화:0,토:0,금:0,수:0};
+  order.forEach(function(o){ if(!o[1]) return;
+    cntEl[GANE[GAN.indexOf(o[1][0])]]++; cntEl[ZHIE[ZHI.indexOf(o[1][1])]]++; });
+  var chip=function(e){ return '<b style="background:'+COL[e]+'">'+e+'</b>'; };
+  $('sj-say').innerHTML='<p class="l">당신의 사주는 '+tied.map(chip).join(' · ')+'입니다</p>'+
+    '<p class="d">'+(r.timeKnown?'여덟':'여섯')+' 글자 중 '+tied.join('·')+JGA[tied[tied.length-1]]+' '+cntEl[dom]+'자로 가장 많습니다. '+
+    (tied.length>1 ? '같은 수라 한 가지로 정하지 않고 함께 적었습니다.' : SAY[dom])+'</p>';
+  PENDING={el:dom, tied:tied, top:top, ratio:er, timeKnown:r.timeKnown};
 
   var notes='';
   var empty=['목','화','토','금','수'].filter(function(e){return !er[e]});
@@ -396,17 +373,30 @@ $('go').addEventListener('click', function(){
   }
   $('notes').innerHTML=notes;
 
-  /* ★ 만든 캐릭터를 사이트 전체가 쓰는 자리에 저장한다.
-     여기서 저장하지 않아서, 홈으로 돌아오거나 사냥터에 가면 같은 걸 또 물어봤다. */
-  if(window.FP) FP.set({el:dom, tied:tied, top:top, ratio:er, timeKnown:r.timeKnown});
-
-  $('out').hidden=false;
+  /* 입력 화면을 접고 '당신의 사주 구성' 페이지를 연다 */
+  $('hero').hidden=true; $('tool').hidden=true; $('saju').hidden=false;
   try{
     (adsbygoogle=window.adsbygoogle||[]).push({});
   }catch(e){}
   if(window.gtag) gtag('event','saju_run',
     {dominant:tied.join(''), time_known:r.timeKnown, empty:empty.join('')||'none'});
-  $('out').scrollIntoView({behavior:'smooth', block:'start'});
+  window.scrollTo(0,0);
+});
+
+/* 캐릭터 생성 — 여기서 저장하고 프로필로 간다.
+   ★ 사이트 전체가 쓰는 자리(FP)에 저장해야 지도·사냥터에서 다시 묻지 않는다. */
+var PENDING=null;
+$('mk').addEventListener('click', function(){
+  if(!PENDING) return;
+  if(window.FP) FP.set(PENDING);
+  if(window.gtag) gtag('event','char_create',{el:PENDING.el});
+  $('saju').hidden=true;
+  var dg=$('m2-dog'); if(dg){ dg.dataset.on=''; dg.innerHTML=''; }   /* 속성이 바뀌었을 수 있다 — 3D 개를 새로 */
+  if(window.__showMine) window.__showMine(true);
+  window.scrollTo(0,0);
+});
+$('sj-back').addEventListener('click', function(){
+  $('saju').hidden=true; $('hero').hidden=false; $('tool').hidden=false; window.scrollTo(0,0);
 });
 
 /* 이미 캐릭터가 있으면 계산기를 접고 '내 캐릭터' 카드를 먼저 보여 준다.
@@ -414,14 +404,15 @@ $('go').addEventListener('click', function(){
 (function(){
   var SAY2={목:'뻗어 나가는 성질입니다.',화:'퍼지는 성질입니다.',토:'품는 성질입니다.',
             금:'가르는 성질입니다.',수:'스미는 성질입니다.'};
-  function showMine(){
+  function showMine(force){
     if(!window.FP) return;
     var me=FP.get();
     var edit=/[?&]edit=1/.test(location.search);
     /* 캐릭터가 없는 기기 — 이미 만든 사람이 계정으로 불러올 수 있게 로그인 줄을 계산기 위에 둔다 */
     var nl=$('m2-login');
     if(nl){ nl.innerHTML = (!me && FP.online && FP.online()) ? FP.accountHTML() : ''; if(!me) FP.paintAccount(); }
-    if(!me || edit){ $('mine2').hidden=true; return; }
+    if(!me || (edit && !force)){ $('mine2').hidden=true; return; }
+    if(!$('saju').hidden) return;          /* 사주 구성 화면을 보는 중이면 그대로 둔다 */
     shownEl=me.el;
     $('m2-orb').textContent=FP.HJ[me.el]||'?';
     $('m2-orb').classList.add('fpgem');
@@ -451,6 +442,7 @@ $('go').addEventListener('click', function(){
     showMine();
   });
 
+  window.__showMine=showMine;
   $('m2-edit').addEventListener('click', function(){
     $('mine2').hidden=true; $('hero').hidden=false; $('tool').hidden=false;
     $('tool').scrollIntoView({behavior:'smooth', block:'start'});
