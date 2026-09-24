@@ -9,12 +9,12 @@
             "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}
 </script>
 <meta name="color-scheme" content="dark">
-<title>지도 — Four Paws</title>
-<meta name="description" content="사주각·궁합소·십이지 궁·십간의 기록·연의 저울·명식의 탑. 사주 여덟 글자로 만든 캐릭터로 돌아다니는 오행 세계의 지도입니다.">
+<title>선택목록 — Four Paws</title>
+<meta name="description" content="사주각·궁합소·십이지 궁·십간의 기록·연의 저울·명식의 탑. 사주 여덟 글자로 만든 캐릭터로 들어가는 오행 세계의 선택목록입니다.">
 <link rel="canonical" href="https://meetcal.co.kr/map/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="오행 세계의 지도">
-<meta property="og:description" content="사주각·궁합소·십이지 궁·십간의 기록·연의 저울·명식의 탑. 사주 여덟 글자로 만든 캐릭터로 돌아다니는 오행 세계의 지도입니다.">
+<meta property="og:title" content="오행 세계 선택목록">
+<meta property="og:description" content="사주각·궁합소·십이지 궁·십간의 기록·연의 저울·명식의 탑. 사주 여덟 글자로 만든 캐릭터로 들어가는 오행 세계의 선택목록입니다.">
 <meta property="og:url" content="https://meetcal.co.kr/map/">
 <meta property="og:image" content="https://meetcal.co.kr/ohaeng/img/og-ohaeng.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -30,7 +30,7 @@ a{color:var(--acc)}
 .bar{display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--line)}
 .bar .nm{font-weight:800;font-size:17px;color:var(--ink);text-decoration:none;
   letter-spacing:-.02em;display:flex;align-items:center;gap:8px;min-height:40px}
-.fpchip{display:inline-flex;align-items:center;gap:5px;text-decoration:none;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:999px;padding:3px 9px 3px 3px;font-size:13px;font-weight:700;color:var(--ink)}.fpchip i{width:19px;height:19px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:800;color:#0a0f18;font-family:"Noto Serif KR",serif}@media(max-width:430px){.fpchip b{display:none}.fpchip{padding:3px}}.mk{width:24px;height:24px;flex:none;display:block}header nav a,.bar nav a,.top-bar nav a,footer a{display:inline-flex;align-items:center;min-height:40px}main .h a,main a[data-cta]:not([class]){display:inline-flex;align-items:center;min-height:40px}.bar .mk,.top-bar .mk{width:21px;height:21px}@media(max-width:430px){header.site nav a[href="/"],.bar nav a[href="/"],.top-bar nav a[href="/"]{display:none}header.site nav,.bar nav,.top-bar nav{gap:12px}}
+.fpchip{display:inline-flex;align-items:center;gap:5px;text-decoration:none;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:999px;padding:3px 9px 3px 3px;font-size:13px;font-weight:700;color:var(--ink)}.fpchip i{width:19px;height:19px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:800;color:#0a0f18;font-family:"Noto Serif KR",serif}@media(max-width:430px){.fpchip b{display:none}.fpchip{padding:3px}}.mk{width:24px;height:24px;flex:none;display:block}header nav a,.bar nav a,.top-bar nav a,footer a{display:inline-flex;align-items:center;min-height:40px}main .h a,main a[data-cta]:not([class]){display:inline-flex;align-items:center;min-height:40px}.bar .mk,.top-bar .mk{width:21px;height:21px}body header.site nav,body .bar nav,body .top-bar nav{flex-wrap:nowrap;white-space:nowrap}body header.site .wrap,body .bar{flex-wrap:nowrap}header.site .nm,.bar .nm,.top-bar .nm{flex:none}@media(max-width:430px){header.site nav a[href="/"],.bar nav a[href="/"],.top-bar nav a[href="/"]{display:none}body header.site nav,body .bar nav,body .top-bar nav{gap:10px}body header.site nav a,body .bar nav a,body .top-bar nav a{font-size:13.5px}body .bar .me{display:none}}
 .bar .tl{font-size:12px;color:var(--dim);margin-left:-3px}
 @media(max-width:560px){.bar .tl{display:none}}
 .bar nav{margin-left:auto;display:flex;gap:14px;flex-wrap:wrap}
@@ -64,7 +64,9 @@ a{color:var(--acc)}
 .tile.locked .ta{color:#8a97ab}
 #t-gunghap .ta::after{content:"NEW";margin-left:6px;font-size:10.5px;font-weight:800;color:#0a0f18;
   background:var(--c);border-radius:5px;padding:1px 5px;vertical-align:1px}
-.hint{text-align:center;color:var(--dim);font-size:13.5px;padding:8px 18px 26px;margin:0}
+.hint{text-align:center;color:var(--dim);font-size:13.5px;padding:8px 18px 10px;margin:0}
+.foot{max-width:720px;margin:0 auto;padding:4px 16px 30px;display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:center}
+.foot a{color:var(--dim);font-size:13px;text-decoration:none}
 
 .hello{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;
   align-items:center;justify-content:center;text-align:center;padding:24px;
@@ -101,17 +103,17 @@ a{color:var(--acc)}
   <h1 id="hello-h">사주 여덟 글자가<br>내 캐릭터가 됩니다</h1>
   <p id="hello-p">태어난 해·달·날·시각 네 기둥을 계산해서<br>목·화·토·금·수 다섯 속성 중 하나를 찾아 드립니다.</p>
   <button id="start">시작하기</button>
-  <button class="skip" id="skip">바로 지도 보기</button>
+  <button class="skip" id="skip">바로 선택목록 보기</button>
 </div>
 
 <div class="bar">
   <a class="nm" href="/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="mk" aria-hidden="true"><path fill="#ffd93d" d="M24 25.6c7.6 0 14 5.1 14 11.1 0 4.9-4.1 8.3-8.6 8.3-2.6 0-3.8-.9-5.4-.9s-2.8.9-5.4.9C14.1 45 10 41.6 10 36.7c0-6 6.4-11.1 14-11.1z"/><ellipse cx="11.06" cy="21.75" rx="5.3" ry="6.5" transform="rotate(-30 11.06 21.75)" fill="#4fb95f"/><ellipse cx="18.73" cy="16.18" rx="5.8" ry="7.1" transform="rotate(-9 18.73 16.18)" fill="#e8483c"/><ellipse cx="29.27" cy="16.18" rx="5.8" ry="7.1" transform="rotate(9 29.27 16.18)" fill="#8e9bb0"/><ellipse cx="36.94" cy="21.75" rx="5.3" ry="6.5" transform="rotate(30 36.94 21.75)" fill="#3f8fe0"/></svg>Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
-  <nav><a href="/">계산기</a><a href="/iljin/">기운</a>
-       <a class="hl" href="/hunt/">사냥터</a><a href="/ohaeng/">글</a><span data-fp-chip></span></nav>
+  <nav><a class="hl" href="/map/" aria-current="page">선택목록</a><a href="/ohaeng/">사주 이야기</a><span data-fp-chip></span></nav>
 </div>
 
 <div class="grid" id="grid"><a class="tile" id="t-sajugak" href="/" data-cta="tile_sajugak" style="--c:#ffd93d;--img:url(img/spot-to.jpg)" aria-label="사주각 — 생년월일시를 넣으면 내 오행 캐릭터가 나옵니다"><i class="hj">土</i><b class="tn">사주각</b><span class="ta">캐릭터 생성</span></a><a class="tile" id="t-gunghap" href="/gunghap/" data-cta="tile_gunghap" style="--c:#ff7eb0;--img:url(img/spot-gunghap.jpg)" aria-label="궁합소 — 상대를 카카오톡으로 불러 두 사람의 궁합을 봅니다"><i class="hj">合</i><b class="tn">궁합소</b><span class="ta">궁합 보기</span></a><a class="tile" id="t-gung" href="/hunt/" data-cta="tile_gung" style="--c:#f2634f;--img:url(img/spot-hwa.jpg)" aria-label="십이지 궁 — 친구 넷과 함께 오행 사냥터로 들어갑니다"><i class="hj">火</i><b class="tn">십이지 궁</b><span class="ta">사냥하기</span></a><a class="tile" id="t-jeondang" href="/ohaeng/" data-cta="tile_jeondang" style="--c:#5aa6ee;--img:url(img/spot-su.jpg)" aria-label="십간의 기록 — 사주를 계산해서 쓴 글을 읽습니다"><i class="hj">水</i><b class="tn">십간의 기록</b><span class="ta">사주 이야기</span></a><a class="tile" id="t-jeoul" href="/love/" data-cta="tile_jeoul" style="--c:#6fd07d;--img:url(img/spot-mok.jpg)" aria-label="연의 저울 — 내 조건으로 만날 수 있는 이성의 조건을 봅니다"><i class="hj">木</i><b class="tn">연의 저울</b><span class="ta">이성 매칭 계산기</span></a><span class="tile locked" id="t-tap" data-cta="tile_tap" style="--c:#b3c0d2;--img:url(img/spot-geum.jpg)" aria-label="명식의 탑 — 사냥터에서 올린 기록으로 순위를 봅니다"><i class="hj">金</i><b class="tn">명식의 탑</b><span class="ta">랭킹 조회 · 준비 중</span></span></div>
 <p class="hint">버튼을 누르면 바로 들어갑니다. 아직 문이 열리지 않은 곳도 있습니다.</p>
+<footer class="foot"><a href="/">처음으로</a><a href="/hunt/">사냥터</a><a href="/iljin/">오늘의 기운</a><a href="/gunghap/">궁합소</a><a href="/ohaeng/">사주 이야기</a></footer>
 
 <script>
 (function(){
@@ -134,7 +136,7 @@ if(MYEL){
   $('hello-h').innerHTML='<span class="el"><i style="background:'+(COL[MYEL]||'#8e9bb0')+'">'+
     HJ[MYEL]+'</i>'+MYEL+' 속성</span><br>오행 캐릭터가 준비됐습니다';
   $('hello-p').textContent=SAY[MYEL]+' 궁합소·사냥터·기운·글로 갑니다.';
-  $('start').textContent='지도 보기';
+  $('start').textContent='선택목록 보기';
   $('skip').hidden=true;
   import('/3d/profile3d.js').then(function(m){
     return m.showDog({mount:$('dog'), base:'/3d/', el:MYEL});
