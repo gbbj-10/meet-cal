@@ -403,8 +403,12 @@
     /* 프로필 맨 위 — 로그인 전 '게스트', 로그인 뒤 닉네임 */
     paintWho: function () {
       var els = document.querySelectorAll('[data-fp-who]'); if (!els.length) return;
+      var me = this;
       var put = function (n) {
         for (var i = 0; i < els.length; i++) { els[i].textContent = n || '게스트'; els[i].classList.toggle('on', !!n); }
+        /* 게스트에게만 — '시작하기' 가 카카오톡 로그인으로 이어진다는 안내 */
+        var gs = document.querySelectorAll('[data-fp-guest]');
+        for (var j = 0; j < gs.length; j++) gs[j].hidden = !(me.online() && !n);
       };
       if (!this.online()) return put(null);
       var c = lsGet('fp.nick', null); put(c && c.nick);           /* 먼저 기억해 둔 이름 — 깜빡임 없이 */
