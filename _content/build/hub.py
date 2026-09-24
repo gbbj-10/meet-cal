@@ -195,6 +195,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 <!-- 이미 캐릭터가 있으면 이것이 먼저 뜨고, 아래 계산기는 접힌다.
      같은 사람에게 같은 걸 두 번 물어보지 않는다. -->
 <section class="mine2" id="mine2" hidden>
+  <div data-fp-who>게스트</div>
   <div class="mw">
     <div class="orb2" id="m2-orb"></div>
     <div class="mt">
@@ -205,7 +206,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
   </div>
   <div class="m2dog" id="m2-dog"></div>
   <div id="m2-bars"></div>
-  <a class="mgo" href="/map/?new=1" data-cta="mine_map">시작하기</a>
+  <a class="mgo" href="/map/?new=1" data-cta="mine_map" data-fp-start>시작하기</a>
   <div id="m2-acc"></div>
   <button class="medit" id="m2-edit">오행 다시 계산</button>
 </section>
@@ -237,6 +238,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
     <p class="sub" id="rsub"></p>
     <div class="bars" id="bars"></div>
 
+    <div data-fp-who style="margin-top:22px">게스트</div>
     <div class="me" id="me">
       <div class="pics" id="me-pics"></div>
       <div>
@@ -248,7 +250,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 
     <div id="notes"></div>
 
-    <a class="hcta" href="/map/?new=1" data-cta="result_map">
+    <a class="hcta" href="/map/?new=1" data-cta="result_map" data-fp-start>
       <span class="k">캐릭터가 만들어졌습니다</span>
       <span class="t">시작하기</span>
       <span class="d">사냥터·기운·글은 전부 지도에서 갑니다. 이 캐릭터가 그대로 따라갑니다.</span>
