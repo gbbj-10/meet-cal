@@ -860,7 +860,7 @@ function buildFight(){
   var nxt = K<10 ? TH[K] : null, gapN = nxt ? nxt-P.pow : 0;
   var why = !win ? '권장 전투력 '+need+'에 '+(need-P.pow)+' 모자랍니다 — '+FP.edge(gEl)+' 용신석 '+Math.ceil((need-P.pow)/1.5)+'개쯤이면 넘습니다.'
           : !nxt ? '갑단 정복 — 이 사냥터의 끝까지 올랐습니다.'
-          : gapN<=0 ? '여유 있게 이겼습니다. '+tOf(K+1).nm+'이 이미 열려 있습니다.'
+          : gapN<=0 ? '여유 있게 이겼습니다. '+tOf(K+1).nm+'이 열렸고, 권장 전투력도 이미 넘었습니다.'
           : tOf(K+1).nm+'까지 전투력 '+gapN+' 남았습니다 — '+FP.edge(gEl)+' 용신석이 가장 빨리 채워 줍니다.';
 
   return {log:L, acts:A, win:win, turns:T, standing:team.filter(function(x){return !x.down}).length, total:n, why:why,
@@ -1150,7 +1150,7 @@ function renderPick(){
     tags+='<span class="tag edge">'+FP.edge(g.el)+' 우세</span>';
     var dn=cleared(g.id), nx=Math.min(10,topCleared()+1), nd=TH[nx-1];
     var why='내 전투력 <b>'+P0.pow+'</b> · 다음 '+tOf(nx).nm+' 권장 '+nd+
-            (P0.pow<nd ? ' <b style="color:#e8483c">('+g.el+' 용신석 '+Math.ceil((nd-P0.pow)/1.5)+'개 더)</b>' : '')+
+            (P0.pow<nd ? ' <b style="color:#e8483c">('+FP.edge(g.el)+' 용신석 '+Math.ceil((nd-P0.pow)/1.5)+'개 더)</b>' : '')+
             (dn ? ' · '+tOf(dn).nm+' 정복' : '');
     html += '<button class="card'+(isTodayG(g.el)?' best':'')+'" data-g="'+g.id+'" '+
       'style="--bg:url(/img/dungeon/'+g.id+'.webp)">'+ gem(g.col, g.elhj) +
@@ -1208,7 +1208,7 @@ function renderTier(){
     var gap=need-P.pow;
     var cnt=foeCount(t.k);
     var why = beastOf(g,t.k)+(cnt>1?' '+cnt+'마리':'')+' · 권장 '+need+
-      (weak ? ' · <b style="color:#e8483c">'+g.el+' 용신석 '+Math.ceil(gap/1.5)+'개 더</b>'
+      (weak ? ' · <b style="color:#e8483c">'+FP.edge(g.el)+' 용신석 '+Math.ceil(gap/1.5)+'개 더</b>'
             : ' · '+g.el+' '+Math.max(1,Math.round(dropFor(t.k,P.n)*lootMul(g.el,g.id)))+'개'+(lootMul(g.el,g.id)!==1?' ×'+(Math.round(lootMul(g.el,g.id)*100)/100):''));
     html += '<button class="rung'+(t.k===top+1&&isOpen?' now':'')+(weak&&isOpen?' weak':'')+'" data-k="'+t.k+'"'+(isOpen?'':' disabled')+'>'+
       gem(g.col, t.hj, 'gz2 sq')+
