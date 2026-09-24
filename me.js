@@ -200,8 +200,8 @@
       }).join('');
       return '<div class="fpbars">' + rows +
         (o.note === false ? '' :
-        '<p class="fnote">진한 부분은 타고난 몫, 빗금은 용신석으로 올린 몫' +
-        (anyToday ? ', <b style="color:#ffd93d">노란 부분은 오늘의 기운으로 오른 몫</b>' : '') + '입니다.</p>') +
+        '<p class="fnote">진한 부분 = 타고난 힘<br>빗금 부분 = 용신석 힘' +
+        (anyToday ? '<br><b style="color:#ffd93d">노란 부분 = 오늘의 기운</b>' : '') + '</p>') +
         '</div>';
     },
 
@@ -356,8 +356,8 @@
               '<span class="fpacc-t"><b>' + u.nick.replace(/[<>&"]/g, '') + '</b> · 카카오 계정에 저장 중</span>' +
               '<button type="button" class="fpacc-b" data-fp-out>로그아웃</button>';
           } else {
-            el.innerHTML = '<span class="fpacc-t">카카오로 로그인하면 <b>다른 기기에서도</b> 이 캐릭터가 이어집니다.</span>' +
-              '<button type="button" class="fpacc-b in" data-fp-in>카카오로 로그인</button>';
+            el.innerHTML = '<span class="fpacc-t">카카오톡으로 로그인하면 <b>다른 기기에서도</b> 이 캐릭터가 이어집니다.</span>' +
+              '<button type="button" class="fpacc-b in" data-fp-in>카카오톡 로그인</button>';
           }
         }
         [].forEach.call(document.querySelectorAll('[data-fp-out]'), function (b) {
