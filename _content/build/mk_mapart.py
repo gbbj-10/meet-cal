@@ -41,6 +41,13 @@ PROMPT = {
          'arena palace ringed by twelve tall stone pillars, each crowned with a different '
          'carved zodiac animal statue, dark red and black lacquered gatehouse at the front, '
          'burning braziers, embers, volcanic red glow from below, stormy sky.',
+ 'gunghap': '궁합소 宮合所 — "House of Matched Hearts": an intimate twin pavilion — two small '
+         'curved-roof pavilions joined by a covered wooden bridge, two ancient trees on either side '
+         'whose branches intertwine into one canopy above the roofs, a long red silk thread tied '
+         'between two stone lanterns, paired rose-pink and peach paper lanterns glowing, cherry '
+         'blossom petals drifting, a small still pond reflecting a pink-violet twilight sky with a '
+         'crescent moon, warm romantic glow.',
+ # ↑ 2026-09-24 ChatGPT 로 뽑음(Flow 는 확장 권한 거부). 받은 그림 가운데를 잘라 480px 로 썼다.
  'mok':  '연의 저울 緣 — "Pavilion of the Scale of Fate": a small elegant green-roofed '
          'pavilion in a lush bamboo grove, a large ornate golden balance scale with two '
          'hanging brass pans suspended beneath its eaves, blossoming branches, moss-covered '

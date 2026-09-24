@@ -17,6 +17,7 @@ import hub as HUB
 import map as MAP
 import iljin as ILJIN
 import hunt as HUNT
+import gunghap as GUNGHAP
 
 SITE_ROOT = 'https://meetcal.co.kr'         # www 는 여기로 리다이렉트된다 (GitHub Pages CNAME = apex)
 BASE      = SITE_ROOT + '/ohaeng'
@@ -140,6 +141,11 @@ def main():
     # /hunt/ — 사냥터. 카카오 로그인 뒤에 열린다. 검색에는 안 잡히게 noindex.
     HUNT.build(os.path.join(OUT, 'hunt'), site_root=SITE_ROOT, ga=ga,
                kakao_js_key=KAKAO_JS_KEY, supabase=SUPABASE)
+
+    # /gunghap/ — 궁합소. 카카오 로그인 + 초대 링크. 계산은 브라우저(gh_core.js)에서, noindex.
+    os.makedirs(os.path.join(OUT, 'gunghap'), exist_ok=True)
+    open(os.path.join(OUT, 'gunghap', 'index.html'), 'w', encoding='utf-8').write(
+        GUNGHAP.render(ga, kakao_js_key=KAKAO_JS_KEY, site_root=SITE_ROOT))
 
     # 지도 그림은 완성본 .jpg 만. img/map/src/ 의 생성 원본 PNG 는 배포에서 뺀다.
     mimg = os.path.join(OUT, 'map', 'img')
