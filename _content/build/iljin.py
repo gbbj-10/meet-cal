@@ -273,10 +273,10 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
   기준입니다. 운세 API 를 부르지 않고 직접 셉니다.</p>
 
   <a class="tile" href="/" data-cta="iljin_to_hub">
-    <span class="k">사주각</span><span class="t">내 오행 캐릭터 만들기</span>
+    <span class="k">사주각</span><span class="t">내 오행 캐릭터 생성</span>
     <span class="d">생년월일시로 사주 여덟 글자와 내 속성을 봅니다 &rarr;</span></a>
   <a class="tile" href="/ohaeng/" data-cta="iljin_to_blog">
-    <span class="k">십간의 기록</span><span class="t">계산해서 쓴 글</span>
+    <span class="k">십간의 기록</span><span class="t">사주 이야기</span>
     <span class="d">26만 명분을 직접 세어 본 오행 통계 &rarr;</span></a>
 
   <p class="disc">사주 해석은 통계적 사실이 아니라 전통 해석입니다. 재미로 봐 주세요.
@@ -284,8 +284,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 </main>
 
 <footer class="site"><div class="wrap">
-  <a href="/">계산기</a><a href="/map/">선택목록</a><a href="/hunt/">사냥터</a>
-  <a href="/ohaeng/">글</a><a href="/love/">이성 조건 계산기</a>
+  <a href="/">처음으로</a><a href="/map/">선택목록</a><a href="/hunt/">사냥터</a><a href="/gunghap/">궁합소</a><a href="/ohaeng/">사주 이야기</a><a href="/love/">이성 조건 계산기</a>
 </div></footer>
 
 <script src="/ohaeng/data/saju-calculator.js"></script>

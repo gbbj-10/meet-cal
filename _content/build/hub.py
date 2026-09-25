@@ -223,9 +223,10 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
     </div>
   </div>
   <div class="m2dog" id="m2-dog"></div>
-  <div id="m2-bars"></div>
+  <!-- 루프21: 시작하기를 3D 바로 아래로 — 390×844 첫 화면 안에 들어오게(전에는 막대 아래 977px) -->
   <a class="mgo" href="/map/?new=1" data-cta="mine_map" data-fp-start>시작하기</a>
   <p class="fpguest" data-fp-guest hidden>카카오톡으로 로그인하고 닉네임을 정하면 바로 시작합니다.</p>
+  <div id="m2-bars" style="margin-top:18px"></div>
   <div id="m2-acc"></div>
   <button class="medit" id="m2-edit">오행 다시 계산</button>
 </section>
@@ -277,9 +278,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 </main>
 
 <footer class="site"><div class="wrap">
-  <a href="/iljin/">기운</a><a href="/map/">선택목록</a><a href="/hunt/">사냥터</a>
-  <a href="/ohaeng/">오행 이야기</a>
-  <a href="/love/">이성 조건 계산기</a>
+  <a href="/map/">선택목록</a><a href="/hunt/">사냥터</a><a href="/gunghap/">궁합소</a><a href="/iljin/">오늘의 기운</a><a href="/ohaeng/">사주 이야기</a><a href="/love/">이성 조건 계산기</a>
   <p style="margin:10px 0 0">사주 해석은 통계적 사실이 아니라 전통 해석입니다. 재미로 봐 주세요.</p>
 </div></footer>
 

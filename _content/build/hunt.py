@@ -147,6 +147,7 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 .mine a{cursor:pointer}
 
 .grid{display:grid;gap:12px}
+.grid + .guide{margin-top:18px}
 @media(min-width:900px){.grid{grid-template-columns:1fr 1fr}}
 .card{display:grid;grid-template-columns:64px 1fr;gap:14px;align-items:center;
   background:var(--pan);border:1px solid var(--line);border-radius:16px;
@@ -443,6 +444,7 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
   <section class="view" id="v-pick">
     <h1>어느 사냥터로 갈까</h1>
     <p class="sub">다섯 곳 중 하나를 고르세요. 오늘의 기운과 내 사주로 유리한 곳을 표시해 뒀습니다.</p>
+    <p class="mine" id="mine"></p>
     <div class="hero2">
       <div class="hcard">
         <div class="hdog" id="hdog"></div>
@@ -451,12 +453,12 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
       </div>
       <details class="hbars" id="hbarsw"><summary>내 속성 수치</summary><div id="hbars"></div></details>
     </div>
-    <p class="mine" id="mine"></p>
+    <!-- 루프21: 사냥터 목록을 안내(접힌 '강해지는 법')보다 먼저 — 고르는 화면에서 고를 것이 먼저 보이게. 알림(#mine)은 제목 바로 아래로 -->
+    <div class="grid" id="grid"></div>
     <details class="guide" id="guide-wrap">
       <summary>사냥터에서 강해지는 법</summary>
       <div class="gbody" id="guide"></div>
     </details>
-    <div class="grid" id="grid"></div>
     <noscript>__FALLBACK__</noscript>
     <div class="demo" id="demo-note" hidden></div>
   </section>
@@ -477,8 +479,9 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
     <div class="gh" id="gh"></div>
     <p class="sub" id="gsub"></p>
     <div class="slots" id="slots"></div>
-    <div class="syn" id="syn"></div>
+    <!-- 루프21: 들어가기 버튼을 시너지 상자 위로 — 390×844 첫 화면 안에 들어오게(전에는 860px) -->
     <button class="go" id="btn-go" disabled>사냥 시작</button>
+    <div class="syn" id="syn"></div>
     <p class="note" id="note"></p>
   </section>
 
@@ -495,13 +498,13 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
   </section>
 
 </div>
-<footer class="foot"><a href="/">처음으로</a><a href="/map/">선택목록</a><a href="/iljin/">오늘의 기운</a><a href="/gunghap/">궁합소</a><a href="/ohaeng/">사주 이야기</a></footer>
+<footer class="foot"><a href="/">처음으로</a><a href="/map/">선택목록</a><a href="/gunghap/">궁합소</a><a href="/iljin/">오늘의 기운</a><a href="/ohaeng/">사주 이야기</a><a href="/love/">이성 조건 계산기</a></footer>
 
 <div class="mask" id="mask">
   <div class="modal">
     <h3 id="fl-h">친구 목록</h3>
     <p class="s" id="fl-s">친구를 골라 자리에 넣으세요. 이 사냥터에서의 전투력이 높은 순입니다. 새 친구는 카카오톡으로 초대하세요.</p>
-    <button class="kbtn" id="btn-invite2" style="margin:10px 0 12px">카카오톡으로 친구 초대</button>
+    <button class="kbtn" id="btn-invite2" style="margin:10px 0 12px">카카오톡으로 친구 초대하기</button>
     <ul class="flist2" id="friends"></ul>
     <button class="x" id="btn-close">닫기</button>
   </div>
@@ -1324,6 +1327,7 @@ function renderTier(){
     '<b>바로 전 단을 깨면 다음 단이 열립니다</b>(어느 사냥터에서 깼든). 권장 전투력을 넘으면 반드시 깨고, <b style="color:#e8483c">붉은 글씨</b>가 뜬 단은 들어갈 수는 있지만 집니다. '+TIERS.map(function(t){return t.nm+' '+TH[t.k-1]}).join(' · ')+'.<br>'+
     '<b>'+g.el+' 용신석</b>은 이곳에서 나고 '+g.el+' 수치를 올립니다. 모든 사냥터의 전투력에 조금씩 보탬이 됩니다. '+
     '친구와 오면 파티 수치가 오르고, 각자 받는 돌도 늘어납니다(다섯이면 두 배).';
+  var seatedNow=!!SEATED;
   if(SEATED){
     $('tsub').innerHTML = '<b class="seated">'+esc(SEATED.nick)+'님'+(SEATED.full?'은 자리가 다 차서 앉지 못했습니다 — 파티에서 한 명을 빼고 친구 목록에서 앉혀 주세요.':'이 궁합소에서 함께 와 파티 자리에 앉았습니다.')+'</b><br>'+$('tsub').innerHTML;
     SEATED=null;
@@ -1332,7 +1336,8 @@ function renderTier(){
   show('v-tier');
   /* 서머너즈워 층 선택처럼 — 들어오면 지금 도전할 단이 먼저 보이게 */
   var now=$('ladder').querySelector('.rung.now') || [].filter.call($('ladder').querySelectorAll('.rung'),function(r){return !r.disabled}).pop();
-  if(now) setTimeout(function(){ now.scrollIntoView({block:'center'}); }, 30);
+  /* 궁합 상대가 방금 앉았으면 그 알림(맨 위)이 보이게 스크롤하지 않는다(루프21) */
+  if(now && !seatedNow) setTimeout(function(){ now.scrollIntoView({block:'center'}); }, 30);
 }
 
 function renderParty(){
@@ -1404,7 +1409,7 @@ function renderParty(){
     (weak && !tooHigh ? '<span style="color:#e8483c;font-weight:700">전투력이 권장 '+TH[TIER-1]+'에 '+(TH[TIER-1]-Pp2.pow)+' 모자랍니다 — '+FP.edge(g.el)+' 용신석 '+Math.ceil((TH[TIER-1]-Pp2.pow)/1.5)+'개 더 모으면 넘습니다. 지금 들어가면 집니다.</span><br>' : '')+
     (danger ? '<span style="color:#f0a0a0">이 사냥터는 내 기운을 누릅니다. '+
               '적은 인원으로는 버티기 어렵습니다.</span><br>' : '')+
-    '빈 자리의 <b>친구 초대</b>를 누르면 친구 목록이 열립니다. 카카오톡으로 초대한 친구가 들어오면 여기서 자리에 앉힙니다.';
+    '빈 자리(<b>＋</b>)를 누르면 친구 목록이 열립니다. 앉은 친구는 <b>바꾸기</b>·<b>빼기</b>로 바꿀 수 있고, 새 친구는 목록에서 카카오톡으로 초대합니다.';
   if($('a-tier')) $('a-tier').onclick=function(e){ e.preventDefault(); renderTier(); };
   show('v-party');
 }
