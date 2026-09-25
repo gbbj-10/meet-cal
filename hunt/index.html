@@ -248,6 +248,9 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 .slot.empty .av{background:#1a2333;color:#44536e;font-size:26px}
 .slot .add{background:#FEE500;color:#191600;border:0;border-radius:9px;padding:7px 11px;
   font:inherit;font-size:12.5px;font-weight:800;cursor:pointer}
+.slot.empty{cursor:pointer}.slot.empty:hover,.slot.empty:focus-visible{border-color:#FEE500;outline:none}
+.slot .sbtn{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.slot .add{display:inline-block}
 .slot .pick{background:#1b2740;color:#9cc3f7;border:1px solid #2c4a7a;border-radius:9px;
   padding:7px 11px;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
 .syn{background:var(--pan);border:1px solid var(--line);border-radius:14px;
@@ -323,7 +326,7 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
   border-bottom:1px solid var(--line)}
 .flist2 .av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
   font-weight:800;color:#0a0f18;font-size:15px;font-family:"Noto Serif KR",serif;flex:none}
-.flist2 b{flex:1;font-size:14.5px}
+.flist2 b{flex:1;font-size:14.5px}.flist2 b small{display:block;font-size:12px;font-weight:400;color:var(--dim);margin-top:2px}
 .flist2 button{background:#1b2740;color:#9cc3f7;border:1px solid #2c4a7a;border-radius:8px;
   padding:6px 12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
 .flist2 .none{color:var(--dim);font-size:14px;padding:16px 4px;border:0}
@@ -422,8 +425,8 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 
 <div class="mask" id="mask">
   <div class="modal">
-    <h3>친구 목록</h3>
-    <p class="s">내 초대 링크로 들어온 친구가 보입니다. 새 친구는 카카오톡으로 초대하세요.</p>
+    <h3 id="fl-h">친구 목록</h3>
+    <p class="s" id="fl-s">친구를 골라 자리에 넣으세요. 이 사냥터에서의 전투력이 높은 순입니다. 새 친구는 카카오톡으로 초대하세요.</p>
     <button class="kbtn" id="btn-invite2" style="margin:10px 0 12px">카카오톡으로 친구 초대</button>
     <ul class="flist2" id="friends"></ul>
     <button class="x" id="btn-close">닫기</button>
@@ -557,13 +560,8 @@ var Store = {
       return sb.from('hunt_parties').upsert({user_id:u.id, ground:gid, members:members});
     });
   },
-  myCode:function(me){ return (me && me.id) ? String(me.id).slice(0,8) : ''; },
-  /* 내가 올라가 있는 친구 목록들(hunt_invites, joined_id=나)의 수치를 지금 값으로 — 궁합 상대·초대한 친구가 내 최신 전투력을 본다 */
-  refreshMine:function(me){
-    if(MODE!=='supabase' || !me || !MYEL) return Promise.resolve();
-    return sb.from('hunt_invites').update({joined_nick:me.nick, joined_element:MYEL, joined_stats:myVals()})
-             .eq('joined_id',me.id).then(null,function(){});
-  }
+  myCode:function(me){ return (me && me.id) ? String(me.id).slice(0,8) : ''; }
+  /* 전투력은 내 화면의 지금 파티원으로만 계산한다 — 상대 쪽 목록의 내 수치를 따로 갱신하지 않는다(9/25 사용자 결정) */
 };
 
 /* ===================== 오늘의 일진 ===================== */
@@ -1279,18 +1277,23 @@ function renderParty(){
       html += '<div class="slot"><span class="av gem" style="--c:'+colOf(p.el)+'">'+
               (({목:'木',화:'火',토:'土',금:'金',수:'水'})[p.el]||'?')+'</span>'+
               '<span class="nm2">'+esc(p.nick)+'</span>'+
-              '<span class="rl">'+(p.el||'?')+'</span>'+
-              '<button class="pick" data-drop="'+i+'">빼기</button></div>';
+              '<span class="rl">'+(p.el||'?')+' · 전투력 '+FP.powerOf(valsOf(p), g.el)+'</span>'+
+              '<span class="sbtn"><button class="pick" data-swap="'+i+'">바꾸기</button>'+
+              '<button class="pick" data-drop="'+i+'">빼기</button></span></div>';
     } else {
-      html += '<div class="slot empty"><span class="av">＋</span>'+
+      html += '<div class="slot empty" data-pick="'+i+'" role="button" tabindex="0" aria-label="빈 자리에 친구 넣기"><span class="av">＋</span>'+
               '<span class="rl">빈 자리</span>'+
-              '<button class="add" data-pick="'+i+'">친구 초대</button></div>';
+              '<span class="add">친구 넣기</span></div>';
     }
   }
   $('slots').innerHTML=html;
   [].forEach.call($('slots').querySelectorAll('[data-invite]'),function(b){ b.onclick=invite; });
   [].forEach.call($('slots').querySelectorAll('[data-pick]'),function(b){
     b.onclick=function(){ openFriends(+b.dataset.pick); };
+    b.onkeydown=function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openFriends(+b.dataset.pick); } };
+  });
+  [].forEach.call($('slots').querySelectorAll('[data-swap]'),function(b){
+    b.onclick=function(){ openFriends(+b.dataset.swap); };
   });
   [].forEach.call($('slots').querySelectorAll('[data-drop]'),function(b){
     b.onclick=function(){ PARTY[+b.dataset.drop]=null; Store.saveParty(CUR.id,PARTY); renderParty(); };
@@ -1360,20 +1363,26 @@ function invite(){
   prompt('이 링크를 보내 주세요', url);
 }
 
+/* 친구 목록 — 빈 자리(＋)를 누르면 넣을 친구를, 앉은 자리의 '바꾸기'를 누르면 바꿔 넣을 친구를 고른다.
+   이미 다른 자리에 앉은 친구는 빼고 보여 준다. 이 사냥터 기준 전투력이 높은 순. */
 function openFriends(slot){
+  var cur=PARTY[slot];
+  $('fl-h').textContent = cur ? cur.nick+' 대신 넣을 친구' : '빈 자리에 넣을 친구';
   Store.friends().then(function(list){
     var used={}; PARTY.forEach(function(p){ if(p) used[p.id]=1; });
-    var free=list.filter(function(f){ return !used[f.id]; });
-    $('friends').innerHTML = free.length ? free.map(function(f){
+    var free=list.filter(function(f){ return !used[f.id]; })
+                 .map(function(f){ return {f:f, pw:FP.powerOf(valsOf(f), CUR.el)}; })
+                 .sort(function(x,y){ return y.pw-x.pw; });
+    $('friends').innerHTML = free.length ? free.map(function(o){ var f=o.f;
       return '<li><span class="av gem" style="--c:'+colOf(f.el)+'">'+
         (({목:'木',화:'火',토:'土',금:'金',수:'水'})[f.el]||'?')+'</span>'+
-        '<b>'+esc(f.nick)+'</b><button data-id="'+esc(f.id)+'">앉히기</button></li>';
-    }).join('') : '<li class="none">아직 들어온 친구가 없습니다. 위 버튼으로 초대해 보세요.</li>';
+        '<b>'+esc(f.nick)+'<small>'+(f.el||'?')+' · 전투력 '+o.pw+'</small></b><button data-id="'+esc(f.id)+'">'+(cur?'바꿔 넣기':'넣기')+'</button></li>';
+    }).join('') : '<li class="none">'+(list.length ? '다른 친구가 모두 자리에 앉아 있습니다.' : '아직 들어온 친구가 없습니다.')+' 카카오톡으로 친구를 초대해 보세요.</li>';
     $('btn-invite2').onclick=invite;
     [].forEach.call($('friends').querySelectorAll('button'),function(b){
       b.onclick=function(){
-        var f=free.filter(function(x){return String(x.id)===b.dataset.id})[0];
-        if(f){ PARTY[slot]=f; Store.saveParty(CUR.id,PARTY); }
+        var o=free.filter(function(x){return String(x.f.id)===b.dataset.id})[0];
+        if(o){ PARTY[slot]=o.f; Store.saveParty(CUR.id,PARTY); ev('hunt_party_'+(cur?'swap':'add'),{ground:CUR.nm}); }
         $('mask').classList.remove('on'); renderParty();
       };
     });
@@ -1399,7 +1408,6 @@ function afterLogin(me){
   }
   MYEL = myElement();
   if(MYEL) Store.saveEl(MYEL);
-  Store.refreshMine(ME);
 
   var host=qs('invite');
   if(host && host!==Store.myCode(ME)){
