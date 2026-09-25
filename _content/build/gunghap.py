@@ -75,6 +75,7 @@ header.site nav a{font-size:14px;color:var(--mut);text-decoration:none}
 .btn.rose{background:var(--rose);color:#2a0716}
 .btn.ghost{background:#222c3e;color:#c9d2df}
 .btn.hunt{background:#58e08f;color:#06210f}
+.hsub{margin:6px 2px 0;font-size:13px;color:var(--dim);text-align:center}
 .btn:disabled{opacity:.6;cursor:default}
 .frow{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:8px}
 .f span{display:block;font-size:12.5px;color:var(--dim);margin-bottom:5px}
@@ -168,6 +169,7 @@ header.site nav a{font-size:14px;color:var(--mut);text-decoration:none}
   <section class="card" id="v-result" hidden>
     <div id="res"></div>
     <a class="btn hunt" href="/hunt/" id="hunt-go">같이 사냥하러 가기</a>
+    <p class="hsub" id="hunt-sub"></p>
     <a class="btn rose" href="/gunghap/" id="again">다른 사람과도 궁합 보기</a>
   </section>
 </main>
@@ -207,6 +209,7 @@ function birthSaju(){
   var r; try{ r=calculateSaju({year:yy,month:mm,day:dd,hour:hh}); }catch(e){ alert('날짜를 확인해 주세요.'); return null; }
   return {p:r.pillars, r:r.elementRatio, tk:r.timeKnown};
 }
+function myStats(){ var st=window.FP&&FP.stats?FP.stats():null; if(!st) return null; var v={}; ORDER.forEach(function(e){ v[e]=st[e].now; }); return v; }
 function elOf(sj){ return ORDER.reduce(function(a,b){ return sj.r[a]>=sj.r[b]?a:b; }); }
 /* 캐릭터를 만들 때 저장해 둔 여덟 글자 */
 function mySaju(){ var c=window.FP&&FP.get(); return (c&&c.pillars&&c.ratio)?{p:c.pillars,r:c.ratio,tk:!!c.timeKnown}:null; }
@@ -326,7 +329,17 @@ function result(row){
     '<div class="dog">'+b(t.dog)+'</div><div class="dis">'+esc(t.disclaimer)+'</div>';
   $('hero').hidden=true; show('v-result'); window.scrollTo(0,0);
   ev('gh_view',{score:r.score});
-  $('hunt-go').onclick=function(){ ev('gh_to_hunt',{score:r.score}); };
+  /* 궁합 상대를 사냥터 친구로 서로 올리고(gh_link), 버튼을 누르면 사냥터 파티 자리에 바로 앉힌다 */
+  var mine=!!(ME&&row.host_id===ME.id), pid=mine?row.guest_id:row.host_id,
+      pnick=(mine?row.guest_nick:row.host_nick)||'상대', pel=mine?row.guest_el:row.host_el;
+  $('hunt-sub').textContent=pnick+'님이 사냥터 파티 자리에 바로 앉아요';
+  var LINK=(CL&&ME&&row.code&&pid) ? Promise.resolve(CL.rpc('gh_link',{p_code:row.code, p_stats:myStats()})).then(null,function(){}) : Promise.resolve();
+  $('hunt-go').onclick=function(e){
+    e.preventDefault(); ev('gh_to_hunt',{score:r.score});
+    try{ localStorage.setItem('hunt.seatWith', JSON.stringify({id:pid, nick:pnick, el:pel, at:Date.now()})); }catch(x){}
+    var go=function(){ location.href='/hunt/'; };
+    Promise.race([LINK, new Promise(function(ok){ setTimeout(ok,2500); })]).then(go,go);
+  };
   var st=$('stage'); st.hidden=false; st.className='stage ld'; st.textContent='두 댕댕이를 불러오는 중…';
   if(PAIR3D){ try{ PAIR3D.destroy(); }catch(e){} PAIR3D=null; }
   import('/3d/play3d.js').then(function(mo){

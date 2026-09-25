@@ -142,6 +142,7 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 .today .tx{font-size:14px;color:var(--mut)}
 .today .tx b{color:var(--ink)}
 .mine{font-size:13.5px;color:var(--dim);margin:0 0 20px;padding-left:2px}
+.seated{color:#58e08f}
 .mine b{color:var(--ink)}
 .mine a{cursor:pointer}
 
@@ -635,7 +636,13 @@ var Store = {
       return sb.from('hunt_parties').upsert({user_id:u.id, ground:gid, members:members});
     });
   },
-  myCode:function(me){ return (me && me.id) ? String(me.id).slice(0,8) : ''; }
+  myCode:function(me){ return (me && me.id) ? String(me.id).slice(0,8) : ''; },
+  /* 내가 올라가 있는 친구 목록들(hunt_invites, joined_id=나)의 수치를 지금 값으로 — 궁합 상대·초대한 친구가 내 최신 전투력을 본다 */
+  refreshMine:function(me){
+    if(MODE!=='supabase' || !me || !MYEL) return Promise.resolve();
+    return sb.from('hunt_invites').update({joined_nick:me.nick, joined_element:MYEL, joined_stats:myVals()})
+             .eq('joined_id',me.id).then(null,function(){});
+  }
 };
 
 /* ===================== 오늘의 일진 ===================== */
@@ -1235,6 +1242,9 @@ function renderPick(){
   });
   $('grid').innerHTML=html;
   renderGuide();
+  var sw=seatWith();
+  if(sw && ME && MYEL){ $('mine').hidden=false;
+    $('mine').innerHTML='<b class="seated">'+esc(sw.nick)+'님과 함께 왔습니다</b> — 사냥터를 고르면 '+esc(sw.nick)+'님이 파티 자리에 바로 앉습니다.'; }
   [].forEach.call($('grid').querySelectorAll('.card'),function(b){
     b.onclick=function(){ openGround(b.dataset.g); };
   });
@@ -1253,7 +1263,25 @@ function openGround(id){
   ev('hunt_enter',{ground:CUR.nm, element:CUR.el});
   Store.party(CUR.id).then(function(m){
     PARTY = (m && m.length===4) ? m : [null,null,null,null];
-    renderTier();
+    return seatPartner();
+  }).then(renderTier, renderTier);
+}
+
+/* ---- 궁합소에서 온 상대 바로 앉히기 ----
+   궁합 결과의 '같이 사냥하러 가기'가 localStorage 'hunt.seatWith' 에 상대를 적고, 서버(gh_link)가 서로를 친구 목록에 올려 둔다.
+   처음 들어가는 사냥터의 빈 자리에 앉히고 표시를 지운다(파티는 사냥터마다 따로라 한 곳에만). 하루 지나면 무시. */
+var SEATED=null;
+function seatWith(){ var w=LS.get('hunt.seatWith',null); return (w && w.id && Date.now()-(+w.at||0) < 86400000) ? w : null; }
+function seatPartner(){
+  var w=seatWith(); if(!w || !ME || String(w.id)===String(ME.id)) return Promise.resolve();
+  if(PARTY.some(function(p){ return p && String(p.id)===String(w.id); })){ LS.set('hunt.seatWith',null); return Promise.resolve(); }
+  return Store.friends().then(function(list){
+    var f=list.filter(function(x){ return String(x.id)===String(w.id); })[0];
+    if(!f) return;                                   /* 아직 친구 목록에 없다 — 표시는 남겨 두고 다음에 다시 */
+    var i=PARTY.indexOf(null);
+    if(i<0){ SEATED={nick:f.nick, full:true}; return; }
+    PARTY[i]=f; Store.saveParty(CUR.id,PARTY); LS.set('hunt.seatWith',null);
+    SEATED={nick:f.nick}; ev('hunt_seat_gunghap',{ground:CUR.nm});
   });
 }
 
@@ -1298,6 +1326,10 @@ function renderTier(){
     '<b>바로 전 단을 깨면 다음 단이 열립니다</b>(어느 사냥터에서 깼든). 권장 전투력을 넘으면 반드시 깨고, <b style="color:#e8483c">붉은 글씨</b>가 뜬 단은 들어갈 수는 있지만 집니다. '+TIERS.map(function(t){return t.nm+' '+TH[t.k-1]}).join(' · ')+'.<br>'+
     '<b>'+g.el+' 용신석</b>은 이곳에서 나고 '+g.el+' 수치를 올립니다. 모든 사냥터의 전투력에 조금씩 보탬이 됩니다. '+
     '친구와 오면 파티 수치가 오르고, 각자 받는 돌도 늘어납니다(다섯이면 두 배).';
+  if(SEATED){
+    $('tsub').innerHTML = '<b class="seated">'+esc(SEATED.nick)+'님'+(SEATED.full?'은 자리가 다 차서 앉지 못했습니다 — 파티에서 한 명을 빼고 친구 목록에서 앉혀 주세요.':'이 궁합소에서 함께 와 파티 자리에 앉았습니다.')+'</b><br>'+$('tsub').innerHTML;
+    SEATED=null;
+  }
   ev('hunt_tier_view',{ground:g.nm, done:done, cap:cap, pow:P.pow});
   show('v-tier');
   /* 서머너즈워 층 선택처럼 — 들어오면 지금 도전할 단이 먼저 보이게 */
@@ -1446,6 +1478,7 @@ function afterLogin(me){
   }
   MYEL = myElement();
   if(MYEL) Store.saveEl(MYEL);
+  Store.refreshMine(ME);
 
   var host=qs('invite');
   if(host && host!==Store.myCode(ME)){

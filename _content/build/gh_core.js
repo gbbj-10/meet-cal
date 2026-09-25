@@ -3,6 +3,9 @@
 (function(){
 /* Four Paws 궁합 규칙 — 만세력 엔진(saju-calculator.js) 결과만으로 계산한다. API·서버 없음.
  * 100점 = 일간 30 + 일지 25 + 띠 15 + 오행 보완 20 + 주도 기운 10
+ * 규칙 v2 (2026-09-25): 점수 범위 31~100. 각 항목의 가장 낮은 값을 올려 합계 최저가 31점이 되게 했다(최고는 그대로 100).
+ *   일간 상극 10→12 · 일지 원진 8→10, 충 5→7 · 띠 원진 5→6, 충 3→5 · 오행 보완 못 채운 쪽 0→1(양쪽 합 최저 2) · 주도 기운 상극 3→5
+ *   최저 = 12+7+5+2+5 = 31, 최고 = 30+25+15+20+10 = 100
  */
 const GAN=['갑','을','병','정','무','기','경','신','임','계'], ZHI=['자','축','인','묘','진','사','오','미','신','유','술','해'];
 const EL = ['목','화','토','금','수'];
@@ -46,23 +49,23 @@ function gunghap(A,B){
   let g;
   if(Math.abs(A.dayGan-B.dayGan)===5) g={k:'hap', pt:30, name:HAP_NAME[Math.min(A.dayGan,B.dayGan)]};
   else { const r=elRel(A.me,B.me);
-    g = r==='same'?{k:'same',pt:18}: (r==='give'||r==='take')?{k:'saeng',pt:24,dir:r}:{k:'geuk',pt:10,dir:r}; }
+    g = r==='same'?{k:'same',pt:18}: (r==='give'||r==='take')?{k:'saeng',pt:24,dir:r}:{k:'geuk',pt:12,dir:r}; }
   out.parts.push(Object.assign({part:'ilgan', max:30}, g));
   // 2. 일지 (25)
   const zr=zhiRel(A.dayZhi,B.dayZhi);
-  const ZP={yukhap:25,samhap:21,same:15,none:15,wonjin:8,chung:5};
+  const ZP={yukhap:25,samhap:21,same:15,none:15,wonjin:10,chung:7};
   out.parts.push({part:'ilji', max:25, k:zr, pt:ZP[zr], sam: zr==='samhap'?SAMHAP[A.dayZhi%4]:null});
   // 3. 띠 (15)
   const tr=zhiRel(A.yearZhi,B.yearZhi);
-  const TP={yukhap:15,samhap:13,same:10,none:9,wonjin:5,chung:3};
+  const TP={yukhap:15,samhap:13,same:10,none:9,wonjin:6,chung:5};
   out.parts.push({part:'tti', max:15, k:tr, pt:TP[tr]});
   // 4. 오행 보완 (20) — 내 가장 적은 오행을 상대가 얼마나 가졌나, 양방향 각 10
   const fill=(x,y)=> y.ratio[x.low]>=25?10 : y.ratio[x.low]>=13?5 : 0;
   const fa=fill(A,B), fb=fill(B,A);
-  out.parts.push({part:'bowan', max:20, pt:fa+fb, ab:fa, ba:fb});
+  out.parts.push({part:'bowan', max:20, pt:(fa||1)+(fb||1), ab:fa, ba:fb});   // 못 채운 쪽도 1점(v2)
   // 5. 주도 기운 (10)
   const dr=elRel(A.dom,B.dom);
-  out.parts.push({part:'dom', max:10, k:dr, pt: dr==='same'?6 : (dr==='give'||dr==='take')?10 : 3});
+  out.parts.push({part:'dom', max:10, k:dr, pt: dr==='same'?6 : (dr==='give'||dr==='take')?10 : 5});
   out.score = out.parts.reduce((s,p)=>s+p.pt,0);
   out.grade = out.score>=80?'찰떡':out.score>=65?'잘 맞는 사이':out.score>=50?'맞춰 가는 사이':'노력하면 단단해지는 사이';
   return out;
