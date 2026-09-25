@@ -81,7 +81,7 @@ GAME = """<!DOCTYPE html>
     <a href="/hunt/" data-cta="pending_hunt">사냥터</a> ·
     <a href="/iljin/" data-cta="pending_iljin">오늘의 기운</a> ·
     <a href="/map/" data-cta="pending_map">지도</a> ·
-    <a href="index.html" data-cta="pending_back">오행 이야기</a></p>
+    <a href="index.html" data-cta="pending_back">사주 이야기</a></p>
 </main>
 <script>
 if(window.gtag) gtag('event','pending_view',{page:location.pathname,ref:document.referrer});

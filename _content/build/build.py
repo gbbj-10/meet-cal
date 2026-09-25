@@ -11,10 +11,10 @@ import markdown, yaml
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # content/
 DRAFT, POSTS = os.path.join(ROOT,'draft'), os.path.join(ROOT,'posts')
 SITE = {
-    'name':  '오행 이야기',
+    'name':  '사주 이야기',
     'tagline': '사주를 직접 계산해서 씁니다',
     'base':  'https://meetcal.co.kr/ohaeng',   # GitHub Pages 가 www→apex 로 리다이렉트하므로 non-www 가 정본
-    'author':'오행 이야기',
+    'author':'사주 이야기',
     'ga':    'G-HMSZVTTJMB',              # meetcal.co.kr GA4 속성 (2026-09-19 생성)
 }
 # 애드센스 — 승인 전에는 on=False (자리표시자만 보입니다)
