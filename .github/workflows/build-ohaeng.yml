@@ -52,6 +52,9 @@ jobs:
           cp -r _content/deploy/hunt hunt                # 사냥터 (카카오 로그인 뒤 열림)
           rm -rf gunghap
           cp -r _content/deploy/gunghap gunghap          # 궁합소 (카카오 로그인 + 초대 링크, 2026-09-24)
+          rm -rf privacy about
+          cp -r _content/deploy/privacy privacy          # 개인정보처리방침 (2026-09-25, 애드센스 준비)
+          cp -r _content/deploy/about about              # 소개·문의 (문의 양식)
           cp _content/deploy/sitemap.xml sitemap.xml
 
       - name: 확인 — 글이 실제로 생겼나
@@ -62,6 +65,9 @@ jobs:
           test -f iljin/index.html  || { echo "::error::iljin/index.html 이 없습니다"; exit 1; }
           test -f hunt/index.html   || { echo "::error::hunt/index.html 이 없습니다"; exit 1; }
           test -f gunghap/index.html || { echo "::error::gunghap/index.html 이 없습니다"; exit 1; }
+          test -f privacy/index.html || { echo "::error::privacy/index.html 이 없습니다"; exit 1; }
+          test -f about/index.html   || { echo "::error::about/index.html 이 없습니다"; exit 1; }
+          test -f ads.txt || echo "::warning::ads.txt 가 없습니다 — 애드센스 수익 손실 경고 대상"
           grep -q 'noindex' gunghap/index.html \
             || { echo "::error::궁합소에 noindex 가 빠졌습니다"; exit 1; }
           grep -q 'noindex' hunt/index.html \
@@ -101,7 +107,7 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add ohaeng map iljin hunt gunghap index.html sitemap.xml
+          git add ohaeng map iljin hunt gunghap privacy about index.html sitemap.xml
           if git diff --staged --quiet; then
             echo "바뀐 것 없음 — 커밋 생략"
           else
