@@ -101,7 +101,7 @@ header.site nav a{font-size:14px;color:var(--mut);text-decoration:none}
   <section class="hero" id="hero">
     <div class="k">宮合所</div>
     <h1>궁합소</h1>
-    <p id="hero-p">상대를 카카오톡으로 불러, 두 사람의 사주 여덟 글자로 궁합을 봅니다.
+    <p id="hero-p">상대를 카카오톡으로 불러, 두 사람의 사주 여덟 글자로 궁합을 봐요.
        결과 위에서 두 사람의 오행 댕댕이가 같이 놀아요.</p>
   </section>
 
@@ -111,18 +111,18 @@ header.site nav a{font-size:14px;color:var(--mut);text-decoration:none}
 
   <section class="card" id="v-off" hidden>
     <h2>지금은 궁합소를 열 수 없어요</h2>
-    <p class="s">계정 연결이 준비되지 않았습니다. 잠시 뒤에 다시 들어와 주세요.</p>
+    <p class="s">계정 연결이 아직 준비되지 않았어요. 잠시 뒤에 다시 들어와 주세요.</p>
   </section>
 
   <section class="card" id="v-login" hidden>
     <h2 id="lg-h">카카오톡으로 시작해요</h2>
-    <p class="s" id="lg-p">궁합은 두 사람이 각자 로그인해서 봅니다. 초대한 사람도, 초대받은 사람도 결과를 같이 볼 수 있어요.</p>
+    <p class="s" id="lg-p">궁합은 두 사람이 각자 로그인해서 봐요. 초대한 사람도, 초대받은 사람도 결과를 같이 볼 수 있어요.</p>
     <button class="btn kakao" id="lg-go">카카오톡 로그인</button>
   </section>
 
   <section class="card" id="v-birth" hidden>
     <h2 id="bh">내 생년월일</h2>
-    <p class="s" id="bp">궁합을 계산할 사주 여덟 글자를 만듭니다.</p>
+    <p class="s" id="bp">궁합을 계산할 사주 여덟 글자를 만들어요.</p>
     <div class="frow">
       <label class="f"><span>연도</span><input type="number" id="y" min="1900" max="2100" value="1995" inputmode="numeric"></label>
       <label class="f"><span>월</span><select id="m"></select></label>
@@ -131,13 +131,13 @@ header.site nav a{font-size:14px;color:var(--mut);text-decoration:none}
     </div>
     <button class="btn rose" id="bgo">궁합 보기</button>
     <button class="btn ghost" id="buse" hidden>내 캐릭터 사주로 바로 보기</button>
-    <p class="note">생년월일은 저장하지 않고, 계산한 사주 여덟 글자와 오행 비율만 저장합니다. 시각을 모르면 '모름'으로 두세요.</p>
+    <p class="note">생년월일은 저장하지 않고, 계산한 사주 여덟 글자와 오행 비율만 저장해요. 시각을 모르면 '모름'으로 두세요.</p>
   </section>
 
   <section class="card" id="v-host" hidden>
     <div class="me" id="host-me"></div>
     <button class="btn kakao" id="inv">카카오톡으로 상대 초대하기</button>
-    <p class="note">상대가 링크로 들어와 로그인하고 생년월일을 넣으면, 여기에 결과가 생깁니다.</p>
+    <p class="note">상대가 링크로 들어와 로그인하고 생년월일을 넣으면, 여기에 결과가 생겨요.</p>
     <ul class="list" id="pairs"></ul>
   </section>
 
@@ -151,7 +151,7 @@ header.site nav a{font-size:14px;color:var(--mut);text-decoration:none}
     <a class="btn rose" href="/gunghap/" id="again">다른 사람과도 궁합 보기</a>
   </section>
 </main>
-<footer class="foot"><a href="/">처음으로</a><a href="/map/">선택목록</a><a href="/hunt/">사냥터</a><a href="/iljin/">오늘의 기운</a><a href="/ohaeng/">사주 이야기</a></footer>
+<footer class="foot"><a href="/">처음으로</a><a href="/map/">선택목록</a><a href="/hunt/">사냥터</a><a href="/iljin/">오늘의 기운</a><a href="/ohaeng/">사주 이야기</a><a href="/love/">이성 조건 계산기</a></footer>
 
 <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.8.3/kakao.min.js"></script>
 <script src="/ohaeng/data/saju-calculator.js"></script>
@@ -412,7 +412,7 @@ var BMODE=null, PEEK=null;
 function birthView(mode){
   BMODE=mode;
   if(mode==='host'){ $('bh').textContent='먼저 내 생년월일을 넣어 주세요';
-    $('bp').textContent='궁합을 보려면 내 사주 여덟 글자가 있어야 해요. 한 번만 넣으면 됩니다.';
+    $('bp').textContent='궁합을 보려면 내 사주 여덟 글자가 있어야 해요. 한 번만 넣으면 돼요.';
     $('bgo').textContent='저장하고 초대하러 가기'; $('buse').hidden=true; }
   else { var hn=(PEEK&&PEEK.host_nick)||'상대';
     $('bh').textContent=hn+'님이 궁합을 보자고 했어요';
