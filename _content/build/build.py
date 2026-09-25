@@ -417,7 +417,7 @@ gtag('js',new Date());gtag('config','{SITE['ga']}');</script>"""
 FOOT = f"""<footer class="site"><div class="wrap">
   <b style="color:var(--mut)">Four&nbsp;Paws</b> · 오행 댕댕이 키우기<br>
   <nav>
-    <a href="/">처음으로</a><a href="/map/">선택목록</a><a href="/hunt/">사냥터</a><a href="/gunghap/">궁합소</a><a href="/iljin/">오늘의 기운</a><a href="/ohaeng/">사주 이야기</a><a href="/love/">이성 조건 계산기</a><a href="blog.html">사주 이야기 전체 보기</a>
+    <a href="/">처음으로</a><a href="/map/">선택목록</a><a href="/hunt/">사냥터</a><a href="/gunghap/">궁합소</a><a href="/iljin/">오늘의 기운</a><a href="/ohaeng/">사주 이야기</a><a href="/love/">이성 조건 계산기</a>
   </nav>
   {SITE['name']} · 사주 계산은 직접 만든 만세력 엔진을 씁니다.<br>
   글에 쓰인 숫자는 전부 재현 가능한 계산 결과입니다.
