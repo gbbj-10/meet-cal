@@ -67,8 +67,16 @@ export async function showPair(o) {
     const mx = new THREE.AnimationMixer(root), clip = {};
     g.animations.forEach(a => { clip[a.name] = mx.clipAction(a); });
     const B = {}; root.traverse(n => { if (n.isBone) B[n.name] = n; });
-    const rest = {}; for (const n in B) rest[n] = B[n].quaternion.clone();
-    const u = { holder, pitch, mx, clip, B, rest, cur: null, yaw: 0, el };
+    const rest = {}, restP = {}; for (const n in B) { rest[n] = B[n].quaternion.clone(); restP[n] = B[n].position.clone(); }
+    /* 앞발(FFL/FFR)은 다리 뼈가 아니라 IK 뼈(IKFrontLeg*, 몸통 루트 직속)에 붙어 있다.
+       다리만 돌리면 발은 제자리에 남아 다리가 늘어나고 반대로 꺾여 보인다 → 아래다리 끝 위치를 기억해 두고 IK 뼈를 거기로 옮긴다 */
+    holder.updateMatrixWorld(true);
+    const paw = {};
+    for (const s of ['L', 'R']) {
+      const lo = B['FrontLowerLeg' + s], ik = B['IKFrontLeg' + s];
+      if (lo && ik) { const w = new THREE.Vector3(); ik.getWorldPosition(w); paw[s] = { lo, ik, local: lo.worldToLocal(w) }; }
+    }
+    const u = { holder, pitch, mx, clip, B, rest, restP, paw, cur: null, yaw: 0, el };
     play(u, 'Idle'); return u;
   }
   function play(u, name, ts = 1) {
@@ -147,18 +155,25 @@ export async function showPair(o) {
   }
 
   function apply(u, p, dt, wall) {
-    for (const n in u.B) u.B[n].quaternion.copy(u.rest[n]);
+    for (const n in u.B) { u.B[n].quaternion.copy(u.rest[n]); u.B[n].position.copy(u.restP[n]); }
     play(u, p.clip, p.ts); u.mx.update(dt);
     u.holder.position.set(p.x, p.hop, p.z);
     if (p.yaw != null) faceTo(u, p.yaw, dt * 6);
     u.pitch.rotation.x = p.bow * 0.40;          /* 앞쪽이 내려간다(+x) */ u.pitch.rotation.z = p.lean;
-    /* 플레이 바우: 앞다리를 앞으로 뻗고 팔꿈치를 바닥 쪽으로 */
+    /* 플레이 바우: 개의 앞다리처럼 — 위팔은 뒤아래로(팔꿈치가 뒤를 향해 바닥에 닿고), 아래팔은 앞으로 바닥에 납작하게.
+       (2026-09-25 수정: 전에는 팔꿈치가 앞을 향해 반대로 꺾였다. 값은 발·팔꿈치 위치를 재어 격자 탐색으로 고름 —
+        팔꿈치 높이 ≈0.04, 발 높이 ≈0.05, 아래팔이 앞으로 ≈0.2) */
     if (p.bow) {
-      /* 어깨 +는 다리를 앞으로 뻗는다(시험 4안 중 고름) */
-      R(u, 'FrontShoulderL', 0.9 * p.bow);  R(u, 'FrontShoulderR', 0.9 * p.bow);
-      R(u, 'FrontUpperLegL', -0.45 * p.bow); R(u, 'FrontUpperLegR', -0.45 * p.bow);
-      R(u, 'FrontLowerLegL', 0.15 * p.bow); R(u, 'FrontLowerLegR', 0.15 * p.bow);
+      R(u, 'FrontShoulderL', 0.2 * p.bow);   R(u, 'FrontShoulderR', 0.2 * p.bow);
+      R(u, 'FrontUpperLegL', -0.4 * p.bow);  R(u, 'FrontUpperLegR', -0.4 * p.bow);
+      R(u, 'FrontLowerLegL', -1.5 * p.bow);  R(u, 'FrontLowerLegR', -1.5 * p.bow);
       R(u, 'Neck1', 0.20 * p.bow); R(u, 'Head', 0.25 * p.bow);
+      /* 앞발 IK 뼈를 아래다리 끝으로 — 발이 다리를 따라온다 */
+      u.holder.updateMatrixWorld(true);
+      for (const s in u.paw) {
+        const q = u.paw[s], w = q.lo.localToWorld(q.local.clone());
+        q.ik.parent.worldToLocal(w); q.ik.position.lerp(w, Math.min(1, p.bow * 4));
+      }
     }
     /* 코 맞대기: 목을 내밀고 고개를 낮춘다 */
     if (p.nose) { R(u, 'Neck1', -0.18 * p.nose); R(u, 'Neck2', -0.12 * p.nose); }
