@@ -74,6 +74,7 @@ header.site nav a{font-size:14px;color:var(--mut);text-decoration:none}
 .btn.kakao{background:#fee500;color:#191600}
 .btn.rose{background:var(--rose);color:#2a0716}
 .btn.ghost{background:#222c3e;color:#c9d2df}
+.btn.hunt{background:#58e08f;color:#06210f}
 .btn:disabled{opacity:.6;cursor:default}
 .frow{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:8px}
 .f span{display:block;font-size:12.5px;color:var(--dim);margin-bottom:5px}
@@ -166,6 +167,7 @@ header.site nav a{font-size:14px;color:var(--mut);text-decoration:none}
 
   <section class="card" id="v-result" hidden>
     <div id="res"></div>
+    <a class="btn hunt" href="/hunt/" id="hunt-go">같이 사냥하러 가기</a>
     <a class="btn rose" href="/gunghap/" id="again">다른 사람과도 궁합 보기</a>
   </section>
 </main>
@@ -324,6 +326,7 @@ function result(row){
     '<div class="dog">'+b(t.dog)+'</div><div class="dis">'+esc(t.disclaimer)+'</div>';
   $('hero').hidden=true; show('v-result'); window.scrollTo(0,0);
   ev('gh_view',{score:r.score});
+  $('hunt-go').onclick=function(){ ev('gh_to_hunt',{score:r.score}); };
   var st=$('stage'); st.hidden=false; st.className='stage ld'; st.textContent='두 댕댕이를 불러오는 중…';
   if(PAIR3D){ try{ PAIR3D.destroy(); }catch(e){} PAIR3D=null; }
   import('/3d/play3d.js').then(function(mo){
