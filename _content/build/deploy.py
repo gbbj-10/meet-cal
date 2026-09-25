@@ -18,6 +18,7 @@ import map as MAP
 import iljin as ILJIN
 import hunt as HUNT
 import gunghap as GUNGHAP
+import info as INFO
 
 SITE_ROOT = 'https://meetcal.co.kr'         # www 는 여기로 리다이렉트된다 (GitHub Pages CNAME = apex)
 BASE      = SITE_ROOT + '/ohaeng'
@@ -147,6 +148,11 @@ def main():
     open(os.path.join(OUT, 'gunghap', 'index.html'), 'w', encoding='utf-8').write(
         GUNGHAP.render(ga, kakao_js_key=KAKAO_JS_KEY, site_root=SITE_ROOT))
 
+    # /privacy/ 개인정보처리방침 · /about/ 소개·문의(문의 양식) — 2026-09-25, 애드센스 신청 준비
+    for d, html_ in (('privacy', INFO.render_privacy(ga)), ('about', INFO.render_about(ga))):
+        os.makedirs(os.path.join(OUT, d), exist_ok=True)
+        open(os.path.join(OUT, d, 'index.html'), 'w', encoding='utf-8').write(html_)
+
     # 지도 그림은 완성본 .jpg 만. img/map/src/ 의 생성 원본 PNG 는 배포에서 뺀다.
     mimg = os.path.join(OUT, 'map', 'img')
     os.makedirs(mimg, exist_ok=True)
@@ -169,7 +175,9 @@ def main():
     urls  = [(SITE_ROOT + '/',      '1.0', str(today)),
              (ILJIN_URL,            '0.9', str(today)),
              (SITE_ROOT + '/map/',  '0.7', str(today)),
-             (LOVE,                 '0.8', str(today))]
+             (LOVE,                 '0.8', str(today)),
+             (SITE_ROOT + '/about/',   '0.5', str(today)),
+             (SITE_ROOT + '/privacy/', '0.3', str(today))]
     urls += [(BASE + '/', '0.9', str(today))]
     urls += [(f'{BASE}/{s}.html', '0.8', str(today)) for s in slugs]
     sm = ('<?xml version="1.0" encoding="UTF-8"?>\n'

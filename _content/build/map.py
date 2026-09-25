@@ -189,7 +189,7 @@ __MKCSS__
 
 __TILES__
 <p class="hint">버튼을 누르면 바로 들어갑니다. 아직 문이 열리지 않은 곳도 있습니다.</p>
-<footer class="foot"><a href="/">처음으로</a><a href="/hunt/">사냥터</a><a href="/gunghap/">궁합소</a><a href="/iljin/">오늘의 기운</a><a href="/ohaeng/">사주 이야기</a><a href="/love/">이성 조건 계산기</a></footer>
+<footer class="foot"><a href="/">처음으로</a><a href="/hunt/">사냥터</a><a href="/gunghap/">궁합소</a><a href="/iljin/">오늘의 기운</a><a href="/ohaeng/">사주 이야기</a><a href="/love/">이성 조건 계산기</a><a href="/about/">소개·문의</a><a href="/privacy/">개인정보처리방침</a></footer>
 
 <script>
 (function(){
