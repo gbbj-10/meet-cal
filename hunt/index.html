@@ -11,7 +11,7 @@
 </script>
 <meta name="color-scheme" content="dark">
 <meta name="robots" content="noindex,nofollow">
-<title>사냥터 — Four Paws</title>
+<title>사냥터 — 포포즈</title>
 <meta name="description" content="오행 사냥터 다섯 곳. 오늘의 기운과 내 사주로 유리한 곳을 골라 다섯 명이 함께 들어갑니다.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="같이 사냥 가실래요">
@@ -348,7 +348,7 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 </head><body>
 
 <header class="bar">
-  <a class="nm" href="/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="mk" aria-hidden="true"><path fill="#ffd93d" d="M24 25.6c7.6 0 14 5.1 14 11.1 0 4.9-4.1 8.3-8.6 8.3-2.6 0-3.8-.9-5.4-.9s-2.8.9-5.4.9C14.1 45 10 41.6 10 36.7c0-6 6.4-11.1 14-11.1z"/><ellipse cx="11.06" cy="21.75" rx="5.3" ry="6.5" transform="rotate(-30 11.06 21.75)" fill="#4fb95f"/><ellipse cx="18.73" cy="16.18" rx="5.8" ry="7.1" transform="rotate(-9 18.73 16.18)" fill="#e8483c"/><ellipse cx="29.27" cy="16.18" rx="5.8" ry="7.1" transform="rotate(9 29.27 16.18)" fill="#8e9bb0"/><ellipse cx="36.94" cy="21.75" rx="5.3" ry="6.5" transform="rotate(30 36.94 21.75)" fill="#3f8fe0"/></svg>Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
+  <a class="nm" href="/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="mk" aria-hidden="true"><path fill="#ffd93d" d="M24 25.6c7.6 0 14 5.1 14 11.1 0 4.9-4.1 8.3-8.6 8.3-2.6 0-3.8-.9-5.4-.9s-2.8.9-5.4.9C14.1 45 10 41.6 10 36.7c0-6 6.4-11.1 14-11.1z"/><ellipse cx="11.06" cy="21.75" rx="5.3" ry="6.5" transform="rotate(-30 11.06 21.75)" fill="#4fb95f"/><ellipse cx="18.73" cy="16.18" rx="5.8" ry="7.1" transform="rotate(-9 18.73 16.18)" fill="#e8483c"/><ellipse cx="29.27" cy="16.18" rx="5.8" ry="7.1" transform="rotate(9 29.27 16.18)" fill="#8e9bb0"/><ellipse cx="36.94" cy="21.75" rx="5.3" ry="6.5" transform="rotate(30 36.94 21.75)" fill="#3f8fe0"/></svg>포포즈</a><span class="tl">오행 댕댕이 키우기</span>
   <nav>
     <a href="/map/">선택목록</a><a href="/ohaeng/">사주 이야기</a><span data-fp-chip></span>
     <span class="me" id="me" hidden></span>
@@ -1351,7 +1351,7 @@ function invite(){
         objectType:'feed',
         content:{
           title: CUR.nm+'('+CUR.el+')에 자리가 비어 있습니다',
-          description: ME.nick+'님이 Four Paws 사냥터로 부릅니다. 한 자리 채워 주세요.',
+          description: ME.nick+'님이 포포즈 사냥터로 부릅니다. 한 자리 채워 주세요.',
           imageUrl: location.origin+'/ohaeng/img/og-ohaeng.png',
           link:{mobileWebUrl:url, webUrl:url}
         },
@@ -1361,7 +1361,7 @@ function invite(){
     }catch(e){}
   }
   /* 카카오가 안 되면 링크라도 손에 쥐어 준다 */
-  if(navigator.share){ navigator.share({title:CUR.nm+'('+CUR.el+') · Four Paws', url:url})
+  if(navigator.share){ navigator.share({title:CUR.nm+'('+CUR.el+') · 포포즈', url:url})
       .catch(function(){}); return; }
   if(navigator.clipboard){ navigator.clipboard.writeText(url).then(function(){
     alert('초대 링크를 복사했습니다.\n\n'+url); }); return; }

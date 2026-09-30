@@ -10,7 +10,7 @@
 </script>
 <meta name="color-scheme" content="dark">
 <meta name="robots" content="noindex">
-<title>궁합소 — Four Paws</title>
+<title>궁합소 — 무료 궁합 보기 | 포포즈</title>
 <meta name="description" content="상대를 카카오톡으로 불러 두 사람의 사주 여덟 글자로 궁합을 봅니다. 두 사람의 오행 댕댕이가 함께 노는 모습도 볼 수 있습니다.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="궁합소 — 두 사람의 오행 궁합">
@@ -93,7 +93,7 @@ header.site nav a{font-size:14px;color:var(--mut);text-decoration:none}
 </style>
 </head><body>
 <header class="site"><div class="in">
-  <a class="nm" href="/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="mk" aria-hidden="true"><path fill="#ffd93d" d="M24 25.6c7.6 0 14 5.1 14 11.1 0 4.9-4.1 8.3-8.6 8.3-2.6 0-3.8-.9-5.4-.9s-2.8.9-5.4.9C14.1 45 10 41.6 10 36.7c0-6 6.4-11.1 14-11.1z"/><ellipse cx="11.06" cy="21.75" rx="5.3" ry="6.5" transform="rotate(-30 11.06 21.75)" fill="#4fb95f"/><ellipse cx="18.73" cy="16.18" rx="5.8" ry="7.1" transform="rotate(-9 18.73 16.18)" fill="#e8483c"/><ellipse cx="29.27" cy="16.18" rx="5.8" ry="7.1" transform="rotate(9 29.27 16.18)" fill="#8e9bb0"/><ellipse cx="36.94" cy="21.75" rx="5.3" ry="6.5" transform="rotate(30 36.94 21.75)" fill="#3f8fe0"/></svg>Four&nbsp;Paws</a>
+  <a class="nm" href="/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="mk" aria-hidden="true"><path fill="#ffd93d" d="M24 25.6c7.6 0 14 5.1 14 11.1 0 4.9-4.1 8.3-8.6 8.3-2.6 0-3.8-.9-5.4-.9s-2.8.9-5.4.9C14.1 45 10 41.6 10 36.7c0-6 6.4-11.1 14-11.1z"/><ellipse cx="11.06" cy="21.75" rx="5.3" ry="6.5" transform="rotate(-30 11.06 21.75)" fill="#4fb95f"/><ellipse cx="18.73" cy="16.18" rx="5.8" ry="7.1" transform="rotate(-9 18.73 16.18)" fill="#e8483c"/><ellipse cx="29.27" cy="16.18" rx="5.8" ry="7.1" transform="rotate(9 29.27 16.18)" fill="#8e9bb0"/><ellipse cx="36.94" cy="21.75" rx="5.3" ry="6.5" transform="rotate(30 36.94 21.75)" fill="#3f8fe0"/></svg>포포즈</a>
   <nav><a href="/map/">선택목록</a><a href="/ohaeng/">사주 이야기</a><span data-fp-chip></span></nav>
 </div></header>
 
@@ -401,7 +401,7 @@ function share(code){
       return;
     }catch(e){}
   }
-  if(navigator.share){ navigator.share({title:'궁합소 · Four Paws', text:nick+'님이 궁합을 보자고 해요', url:url}).catch(function(){}); return; }
+  if(navigator.share){ navigator.share({title:'궁합소 · 포포즈', text:nick+'님이 궁합을 보자고 해요', url:url}).catch(function(){}); return; }
   if(navigator.clipboard){ navigator.clipboard.writeText(url).then(function(){ alert('초대 링크를 복사했어요.\n\n'+url); })
       .catch(function(){ prompt('이 링크를 보내 주세요', url); }); return; }
   prompt('이 링크를 보내 주세요', url);
