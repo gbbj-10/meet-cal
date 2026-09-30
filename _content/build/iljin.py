@@ -93,7 +93,7 @@ PAGE = r"""<!DOCTYPE html>
 <meta name="theme-color" content="#0d1119">
 __HEAD__
 <meta name="color-scheme" content="dark">
-<title>오늘의 기운 — 오늘의 일진을 매일 계산해 올립니다 | Four Paws</title>
+<title>오늘의 기운 — 오늘의 일진을 매일 계산해 올립니다 | 포포즈</title>
 <meta name="description" content="__DESC__">
 <link rel="canonical" href="__ROOT__/iljin/">
 <meta property="og:type" content="website">
@@ -210,7 +210,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 </head><body>
 
 <header class="site"><div class="wrap">
-  <a class="nm" href="/">__MARK__Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
+  <a class="nm" href="/">__MARK__포포즈</a><span class="tl">오행 댕댕이 키우기</span>
   <nav><a href="/map/">선택목록</a><a href="/ohaeng/">사주 이야기</a><span data-fp-chip></span></nav>
 </div></header>
 

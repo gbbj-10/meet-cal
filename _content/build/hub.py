@@ -10,9 +10,9 @@ import brand
 import html
 
 SITE_ROOT = 'https://meetcal.co.kr'
-TITLE = '사주 오행 계산기 — 생년월일로 만드는 내 오행 캐릭터 | Four Paws'
-DESC  = ('생년월일시를 넣으면 사주 여덟 글자와 오행 비율, 내 대표 속성과 '
-         '부족한 오행을 계산해 보여 줍니다. 만세력을 직접 계산합니다.')
+TITLE = '무료 사주 보기·무료 궁합 보기 — 오행 캐릭터 사주 게임 | 포포즈'
+DESC  = ('생년월일시만 넣으면 무료 사주 보기로 여덟 글자와 오행 비율, 부족한 오행을 바로 계산합니다. '
+         '친구와 무료 궁합 보기, 내 오행 캐릭터를 키우는 사주 게임까지 포포즈에서 즐기세요.')
 
 PAGE = r"""<!DOCTYPE html>
 <html lang="ko"><head>
@@ -29,11 +29,12 @@ __HEAD__
 <meta name="description" content="__DESC__">
 <link rel="canonical" href="__ROOT__/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="생년월일로 만드는 내 오행 캐릭터">
+<meta property="og:title" content="포포즈 — 무료 사주 보기·궁합 보기, 오행 캐릭터 사주 게임">
 <meta property="og:description" content="__DESC__">
 <meta property="og:url" content="__ROOT__/">
-<meta property="og:site_name" content="Four Paws">
+<meta property="og:site_name" content="포포즈">
 <meta property="og:locale" content="ko_KR">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"포포즈","alternateName":["Four Paws","포포즈 사주"],"url":"__ROOT__/"}</script>
 <meta property="og:image" content="__ROOT__/ohaeng/img/og-ohaeng.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -204,7 +205,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 </head><body>
 
 <header class="site"><div class="wrap">
-  <a class="nm" href="/">__MARK__Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
+  <a class="nm" href="/">__MARK__포포즈</a><span class="tl">오행 댕댕이 키우기</span>
   <nav><a href="/map/">선택목록</a><a href="/ohaeng/">사주 이야기</a><span data-fp-chip></span></nav>
 </div></header>
 

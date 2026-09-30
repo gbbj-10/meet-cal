@@ -297,7 +297,7 @@ LOVECALC = """
   </div>
   <div class="lrow">
     <label>연봉 (만원)<input id="l-sal" type="number" inputmode="numeric" value="4000" min="0" max="30000" step="100"></label>
-    <label>보유 자산 (만원, 빚은 -)<input id="l-ast" type="number" inputmode="numeric" value="3000" min="-30000" max="1000000" step="100"></label>
+    <label>보유 자산<select id="l-ast"></select></label>
   </div>
   <div class="lrow">
     <label>키 (cm)<input id="l-ht" type="number" inputmode="numeric" value="175" min="140" max="210"></label>
@@ -308,14 +308,17 @@ LOVECALC = """
   <div id="lout" class="cout" hidden></div>
   <div id="lad" class="cad" hidden><div class="cadl">광고</div><!--AD_UNIT--></div>
 </div>
-<script src="../data/meetcal-core.js?v=2"></script>
+<script src="../data/meetcal-core.js"></script>
 <script>
 (function(){
   var $=function(id){return document.getElementById(id)};
   var G='male';
   var BODY_MID=60;            // 신체 항목은 본 계산기에서만 — 여기서는 중간값 고정
-  if(!window.MeetCal||!(MeetCal.version>=2)){ $('lgo').disabled=true; return; }
+  if(!window.MeetCal){ $('lgo').disabled=true; return; }
 
+  $('l-ast').innerHTML = MeetCal.ASSET_TIERS.map(function(t,i){
+    return '<option value="'+t.v+'"'+(i===6?' selected':'')+'>'+t.l+'</option>';
+  }).join('');
 
   function setG(g){ G=g;
     $('lg-m').classList.toggle('on',g==='male');
@@ -348,7 +351,7 @@ LOVECALC = """
         '<tr><th>체중</th><td>'+p.pWt+'</td></tr>'+
       '</table>'+
       '<div class="cnote">신체 조건까지 넣고 항목을 고정해 다시 계산해 보시려면 '+
-        '<a href="/love/" data-cta="lovecalc_full">본 계산기</a>를 쓰시면 됩니다.</div>';
+        '<a href="/" data-cta="lovecalc_full">본 계산기</a>를 쓰시면 됩니다.</div>';
     var ad=$('lad');
     if(ad&&ad.hidden){
       ad.hidden=false;
@@ -391,7 +394,7 @@ gtag('js',new Date());gtag('config','{SITE['ga']}');</script>"""
 <meta name="description" content="{html.escape(desc)}">
 <link rel="canonical" href="{canon}">
 <meta property="og:type" content="{'article' if article else 'website'}">
-<meta property="og:site_name" content="Four Paws">
+<meta property="og:site_name" content="포포즈">
 <meta property="og:title" content="{html.escape(title)}">
 <meta property="og:description" content="{html.escape(desc)}">
 <meta property="og:url" content="{canon}">
@@ -404,7 +407,7 @@ gtag('js',new Date());gtag('config','{SITE['ga']}');</script>"""
 {brand.HEAD}
 </head><body>
 <header class="site"><div class="wrap">
-  <a class="nm" href="/">{brand.MARK}Four&nbsp;Paws</a>
+  <a class="nm" href="/">{brand.MARK}포포즈</a>
   <span class="tl"><a href="blog.html">{SITE['name']}</a></span>
   <nav>
     <a href="/map/" data-cta="nav_map">선택목록</a><a class="hl" href="blog.html" data-cta="nav_blog">사주 이야기</a><span data-fp-chip></span>
@@ -412,7 +415,7 @@ gtag('js',new Date());gtag('config','{SITE['ga']}');</script>"""
 </div></header>"""
 
 FOOT = f"""<footer class="site"><div class="wrap">
-  <b style="color:var(--mut)">Four&nbsp;Paws</b> · 오행 댕댕이 키우기<br>
+  <b style="color:var(--mut)">포포즈</b> · 오행 댕댕이 키우기<br>
   <nav>
     <a href="/">처음으로</a><a href="/map/">선택목록</a><a href="/hunt/">사냥터</a><a href="/gunghap/">궁합소</a><a href="/iljin/">오늘의 기운</a><a href="/ohaeng/">사주 이야기</a><a href="/love/">이성 조건 계산기</a><a href="/about/">소개·문의</a><a href="/privacy/">개인정보처리방침</a>
   </nav>

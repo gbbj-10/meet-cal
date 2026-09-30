@@ -13,7 +13,7 @@ import html
 import json
 
 SITE_ROOT = 'https://meetcal.co.kr'
-TITLE = '선택목록 — Four Paws'
+TITLE = '선택목록 — 포포즈'
 DESC  = ('사주각·궁합소·십이지 궁·십간의 기록·연의 저울·명식의 탑. '
          '사주 여덟 글자로 만든 캐릭터로 들어가는 오행 세계의 선택목록입니다.')
 
@@ -183,7 +183,7 @@ __MKCSS__
 </div>
 
 <div class="bar">
-  <a class="nm" href="/">__MARK__Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
+  <a class="nm" href="/">__MARK__포포즈</a><span class="tl">오행 댕댕이 키우기</span>
   <nav><a class="hl" href="/map/" aria-current="page">선택목록</a><a href="/ohaeng/">사주 이야기</a><span data-fp-chip></span></nav>
 </div>
 

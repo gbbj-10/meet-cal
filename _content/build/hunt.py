@@ -17,7 +17,7 @@ import os
 #
 # 2026-09-20 이름 교체. 예전 이름은 무협풍 한자어(청림곡 靑林谷 …)였는데,
 # 한자를 읽어야 뜻이 잡혀서 사주를 모르고 들어온 사람에게는 그냥 소리였다.
-# Four Paws(오행 댕댕이 키우기)에 맞춰 '색 + 장소' 네 글자로 통일했다.
+# 포포즈(오행 댕댕이 키우기)에 맞춰 '색 + 장소' 네 글자로 통일했다.
 # 사냥감은 오행 + 령(靈) 으로 다섯을 한 규칙에 묶었다.
 #
 # 한자 칸은 없앴다. 카드 왼쪽에 오행 구슬(木火土金水)이 이미 붙어 있어
@@ -85,7 +85,7 @@ __HEAD__
 </script>
 <meta name="color-scheme" content="dark">
 <meta name="robots" content="noindex,nofollow">
-<title>사냥터 — Four Paws</title>
+<title>사냥터 — 포포즈</title>
 <meta name="description" content="오행 사냥터 다섯 곳. 오늘의 기운과 내 사주로 유리한 곳을 골라 다섯 명이 함께 들어갑니다.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="같이 사냥 가실래요">
@@ -422,7 +422,7 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
 </head><body>
 
 <header class="bar">
-  <a class="nm" href="/">__MARK__Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
+  <a class="nm" href="/">__MARK__포포즈</a><span class="tl">오행 댕댕이 키우기</span>
   <nav>
     <a href="/map/">선택목록</a><a href="/ohaeng/">사주 이야기</a><span data-fp-chip></span>
     <span class="me" id="me" hidden></span>
@@ -1430,7 +1430,7 @@ function invite(){
         objectType:'feed',
         content:{
           title: CUR.nm+'('+CUR.el+')에 자리가 비어 있습니다',
-          description: ME.nick+'님이 Four Paws 사냥터로 부릅니다. 한 자리 채워 주세요.',
+          description: ME.nick+'님이 포포즈 사냥터로 부릅니다. 한 자리 채워 주세요.',
           imageUrl: location.origin+'/ohaeng/img/og-ohaeng.png',
           link:{mobileWebUrl:url, webUrl:url}
         },
@@ -1440,7 +1440,7 @@ function invite(){
     }catch(e){}
   }
   /* 카카오가 안 되면 링크라도 손에 쥐어 준다 */
-  if(navigator.share){ navigator.share({title:CUR.nm+'('+CUR.el+') · Four Paws', url:url})
+  if(navigator.share){ navigator.share({title:CUR.nm+'('+CUR.el+') · 포포즈', url:url})
       .catch(function(){}); return; }
   if(navigator.clipboard){ navigator.clipboard.writeText(url).then(function(){
     alert('초대 링크를 복사했습니다.\n\n'+url); }); return; }

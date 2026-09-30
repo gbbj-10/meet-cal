@@ -16,7 +16,7 @@ import os
 import brand
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-TITLE = '궁합소 — Four Paws'
+TITLE = '궁합소 — 무료 궁합 보기 | 포포즈'
 DESC = ('상대를 카카오톡으로 불러 두 사람의 사주 여덟 글자로 궁합을 봅니다. '
         '두 사람의 오행 댕댕이가 함께 노는 모습도 볼 수 있습니다.')
 
@@ -115,7 +115,7 @@ header.site nav a{font-size:14px;color:var(--mut);text-decoration:none}
 </style>
 </head><body>
 <header class="site"><div class="in">
-  <a class="nm" href="/">__MARK__Four&nbsp;Paws</a>
+  <a class="nm" href="/">__MARK__포포즈</a>
   <nav><a href="/map/">선택목록</a><a href="/ohaeng/">사주 이야기</a><span data-fp-chip></span></nav>
 </div></header>
 
@@ -279,7 +279,7 @@ function share(code){
       return;
     }catch(e){}
   }
-  if(navigator.share){ navigator.share({title:'궁합소 · Four Paws', text:nick+'님이 궁합을 보자고 해요', url:url}).catch(function(){}); return; }
+  if(navigator.share){ navigator.share({title:'궁합소 · 포포즈', text:nick+'님이 궁합을 보자고 해요', url:url}).catch(function(){}); return; }
   if(navigator.clipboard){ navigator.clipboard.writeText(url).then(function(){ alert('초대 링크를 복사했어요.\n\n'+url); })
       .catch(function(){ prompt('이 링크를 보내 주세요', url); }); return; }
   prompt('이 링크를 보내 주세요', url);

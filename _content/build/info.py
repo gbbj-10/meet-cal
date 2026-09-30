@@ -4,7 +4,7 @@
 애드센스 신청 전 준비(사용자 '처리해놔'). 카카오 로그인으로 개인정보를 받으니 법적으로도 필요하다.
 연락처는 메일을 공개하지 않고 문의 양식으로만 받는다(사용자 결정) — 문의는 Supabase contact_msgs 에
 넣기만 되고(anon/authenticated insert), 읽기는 운영자가 대시보드에서 한다.
-운영자 표기: Four Paws. 말투: 합니다체(사이트 기준, 궁합소만 해요체).
+운영자 표기: 포포즈. 말투: 합니다체(사이트 기준, 궁합소만 해요체).
 """
 import brand
 
@@ -27,7 +27,7 @@ SHELL = r"""<!DOCTYPE html>
 <meta name="theme-color" content="#0d1119">
 __HEAD__
 <meta name="color-scheme" content="dark">
-<title>__TITLE__ | Four Paws</title>
+<title>__TITLE__ | 포포즈</title>
 <meta name="description" content="__DESC__">
 <link rel="canonical" href="__ROOT____PATH__">
 <meta property="og:type" content="website">
@@ -82,7 +82,7 @@ footer.site .legal{display:block;margin-top:10px}
 </style>
 </head><body>
 <header class="site"><div class="wrap">
-  <a class="nm" href="/">__MARK__Four&nbsp;Paws</a><span class="tl">오행 댕댕이 키우기</span>
+  <a class="nm" href="/">__MARK__포포즈</a><span class="tl">오행 댕댕이 키우기</span>
   <nav><a href="/map/">선택목록</a><a href="/ohaeng/">사주 이야기</a><span data-fp-chip></span></nav>
 </div></header>
 <main class="wrap">
@@ -95,7 +95,7 @@ __SCRIPT__
 
 PRIVACY = """
 <h1>개인정보처리방침</h1>
-<p class="lead">Four Paws(이하 '서비스')는 이용자의 개인정보를 소중히 다루며, 「개인정보 보호법」에 따라 아래와 같이 처리합니다.
+<p class="lead">포포즈(이하 '서비스')는 이용자의 개인정보를 소중히 다루며, 「개인정보 보호법」에 따라 아래와 같이 처리합니다.
 시행일: __EFF__</p>
 
 <h2>1. 처리하는 개인정보와 목적</h2>
@@ -160,7 +160,7 @@ PRIVACY = """
 </ul>
 
 <h2>8. 개인정보 보호 책임자</h2>
-<p>책임자: Four Paws 운영자<br>연락: <a href="/about/#contact">문의 양식</a> (메일 주소는 공개하지 않습니다)</p>
+<p>책임자: 포포즈 운영자<br>연락: <a href="/about/#contact">문의 양식</a> (메일 주소는 공개하지 않습니다)</p>
 <p class="muted">개인정보 침해 신고·상담은 개인정보침해신고센터(국번 없이 118, privacy.kisa.or.kr),
 개인정보분쟁조정위원회(1833-6972, kopico.go.kr)에도 할 수 있습니다.</p>
 
@@ -169,7 +169,7 @@ PRIVACY = """
 """
 
 ABOUT = """
-<h1>Four Paws 소개</h1>
+<h1>포포즈 소개</h1>
 <p class="lead">생년월일로 내 오행 캐릭터를 만들고, 그 캐릭터로 사냥하고, 궁합을 보는 사이트입니다.</p>
 
 <h2>무엇을 하는 곳인가</h2>
@@ -188,7 +188,7 @@ ABOUT = """
 
 <h2>운영</h2>
 <div class="box">
-<p style="margin:0">운영: <b>Four Paws</b><br>
+<p style="margin:0">운영: <b>포포즈</b><br>
 사이트: meetcal.co.kr<br>
 개인정보: <a href="/privacy/">개인정보처리방침</a></p>
 </div>
@@ -248,11 +248,11 @@ def _page(path, title, desc, body, ga, script=''):
 
 def render_privacy(ga):
     return _page('/privacy/', '개인정보처리방침',
-                 'Four Paws가 어떤 개인정보를 왜 받고, 얼마나 보관하며, 어떻게 지우는지 적었습니다. 생년월일은 저장하지 않습니다.',
+                 '포포즈가 어떤 개인정보를 왜 받고, 얼마나 보관하며, 어떻게 지우는지 적었습니다. 생년월일은 저장하지 않습니다.',
                  PRIVACY, ga)
 
 
 def render_about(ga):
-    return _page('/about/', 'Four Paws 소개·문의',
-                 '생년월일로 오행 캐릭터를 만들고 사냥·궁합을 보는 Four Paws 소개와 문의 양식입니다.',
+    return _page('/about/', '포포즈 소개·문의',
+                 '생년월일로 오행 캐릭터를 만들고 사냥·궁합을 보는 포포즈 소개와 문의 양식입니다.',
                  ABOUT, ga, ABOUT_JS)
