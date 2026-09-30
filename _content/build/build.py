@@ -297,7 +297,7 @@ LOVECALC = """
   </div>
   <div class="lrow">
     <label>연봉 (만원)<input id="l-sal" type="number" inputmode="numeric" value="4000" min="0" max="30000" step="100"></label>
-    <label>보유 자산<select id="l-ast"></select></label>
+    <label>보유 자산 (만원, 빚은 -)<input id="l-ast" type="number" inputmode="numeric" value="3000" min="-30000" max="1000000" step="100"></label>
   </div>
   <div class="lrow">
     <label>키 (cm)<input id="l-ht" type="number" inputmode="numeric" value="175" min="140" max="210"></label>
@@ -308,17 +308,14 @@ LOVECALC = """
   <div id="lout" class="cout" hidden></div>
   <div id="lad" class="cad" hidden><div class="cadl">광고</div><!--AD_UNIT--></div>
 </div>
-<script src="../data/meetcal-core.js"></script>
+<script src="../data/meetcal-core.js?v=2"></script>
 <script>
 (function(){
   var $=function(id){return document.getElementById(id)};
   var G='male';
   var BODY_MID=60;            // 신체 항목은 본 계산기에서만 — 여기서는 중간값 고정
-  if(!window.MeetCal){ $('lgo').disabled=true; return; }
+  if(!window.MeetCal||!(MeetCal.version>=2)){ $('lgo').disabled=true; return; }
 
-  $('l-ast').innerHTML = MeetCal.ASSET_TIERS.map(function(t,i){
-    return '<option value="'+t.v+'"'+(i===6?' selected':'')+'>'+t.l+'</option>';
-  }).join('');
 
   function setG(g){ G=g;
     $('lg-m').classList.toggle('on',g==='male');
@@ -351,7 +348,7 @@ LOVECALC = """
         '<tr><th>체중</th><td>'+p.pWt+'</td></tr>'+
       '</table>'+
       '<div class="cnote">신체 조건까지 넣고 항목을 고정해 다시 계산해 보시려면 '+
-        '<a href="/" data-cta="lovecalc_full">본 계산기</a>를 쓰시면 됩니다.</div>';
+        '<a href="/love/" data-cta="lovecalc_full">본 계산기</a>를 쓰시면 됩니다.</div>';
     var ad=$('lad');
     if(ad&&ad.hidden){
       ad.hidden=false;
