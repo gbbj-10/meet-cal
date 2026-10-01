@@ -11,6 +11,28 @@
  * 이 파일은 모든 페이지의 <head> 에서 불린다. defer 를 붙이면 안 된다
  * (본문 끝 스크립트가 먼저 돌아 FP 가 없다).
  */
+/* 촬영 모드 — 홍보 영상(쇼츠·릴스) 녹화용. 2026-10-01
+ * 주소에 ?rec=fpshot 를 붙여 들어오면 이 탭이 닫힐 때까지:
+ *  - 카카오 로그인·서버(Supabase)를 끈다 → 프로필 사진·친구·닉네임이 화면에 안 나온다
+ *  - localStorage 대신 sessionStorage 를 쓴다 → 내 진짜 캐릭터·용신석과 섞이지 않고, 탭을 닫으면 사라진다
+ *  - GA 집계를 끄고 광고 칸을 숨긴다
+ * 끄려면 ?rec=off 로 한 번 들어오거나 탭을 닫으면 된다. 서버에는 아무것도 쓰지 않는다. */
+(function () {
+  try {
+    var ss = window.sessionStorage, q = location.search;
+    if (/[?&]rec=off(&|$)/.test(q)) ss.removeItem('fp.rec');
+    else if (/[?&]rec=fpshot(&|$)/.test(q)) ss.setItem('fp.rec', '1');
+    if (ss.getItem('fp.rec') !== '1') return;
+    window.FP_REC = true;
+    window.FPCFG = {};                                   /* FP.online() → false */
+    window['ga-disable-G-HMSZVTTJMB'] = true;
+    Object.defineProperty(window, 'localStorage', { value: ss, configurable: true });
+    var st = document.createElement('style');
+    st.textContent = 'ins.adsbygoogle,.adsbygoogle,[data-ad],[id^="aswift"],[data-fp-login],[data-fp-who]{display:none!important}';
+    (document.head || document.documentElement).appendChild(st);
+  } catch (e) {}
+})();
+
 (function () {
   var KEY = 'fp.me';
   var OLD = 'saju.dominant';       /* 사냥터가 혼자 쓰던 예전 키 */

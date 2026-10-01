@@ -543,7 +543,7 @@ var ev=function(n,p){ if(window.gtag) gtag('event',n,p||{}); };
 
 /* ===================== 저장 어댑터 ===================== */
 /* 키가 비어 있으면 demo 로 돈다. 채워 넣으면 그대로 supabase 가 된다. */
-var MODE = (CFG.sbUrl && CFG.sbKey && CFG.sbUrl.indexOf('http')===0) ? 'supabase' : 'demo';
+var MODE = (!window.FP_REC && CFG.sbUrl && CFG.sbKey && CFG.sbUrl.indexOf('http')===0) ? 'supabase' : 'demo';
 var sb = null;
 /* me.js(FP) 가 만든 클라이언트를 같이 쓴다 — 한 페이지에 둘이면 로그인 상태가 엇갈린다 */
 if (MODE==='supabase' && window.supabase) sb = (window.FP && FP.client && FP.client()) || window.supabase.createClient(CFG.sbUrl, CFG.sbKey);
@@ -571,7 +571,7 @@ var Store = {
   },
   login:function(){
     if(MODE==='demo'){
-      var nick = prompt('데모 모드입니다. 쓰실 이름을 넣어 주세요.','꾼기');
+      var nick = window.FP_REC ? '포포즈' : prompt('데모 모드입니다. 쓰실 이름을 넣어 주세요.','꾼기');
       if(!nick) return Promise.resolve(null);
       var me={id:'demo-'+Math.random().toString(36).slice(2,9), nick:nick, pic:'', el:null};
       LS.set('hunt.me',me); return Promise.resolve(me);
@@ -1250,7 +1250,7 @@ function renderPick(){
     b.onclick=function(){ openGround(b.dataset.g); };
   });
   if(MODE==='demo'){
-    $('demo-note').hidden=false;
+    $('demo-note').hidden=!!window.FP_REC;
     $('demo-note').textContent='데모 모드입니다 — 이 브라우저 안에서만 저장되고 친구와 공유되지 않습니다.';
   }
   show('v-pick');
