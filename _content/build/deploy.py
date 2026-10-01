@@ -81,7 +81,7 @@ GAME = """<!DOCTYPE html>
   <p style="margin-top:20px;font-size:14px">
     <a href="/hunt/" data-cta="pending_hunt">사냥터</a> ·
     <a href="/iljin/" data-cta="pending_iljin">오늘의 기운</a> ·
-    <a href="/map/" data-cta="pending_map">지도</a> ·
+    <a href="/map/" data-cta="pending_map">선택목록</a> ·
     <a href="index.html" data-cta="pending_back">사주 이야기</a></p>
 </main>
 <script>
@@ -157,7 +157,7 @@ def main():
     mimg = os.path.join(OUT, 'map', 'img')
     os.makedirs(mimg, exist_ok=True)
     for f in sorted(os.listdir(os.path.join(B.ROOT, 'img', 'map'))):
-        if f.endswith('.jpg'):
+        if f.endswith(('.jpg', '.webp')):
             shutil.copy(os.path.join(B.ROOT, 'img', 'map', f), mimg)
 
     # 정적 자산
