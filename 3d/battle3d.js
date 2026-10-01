@@ -103,13 +103,15 @@ function buildArena(sc, el, base) {
   gnd.rotation.x = -Math.PI / 2; sc.add(gnd);
 
   /* 바위 — 전투 뒤쪽과 양옆에만 */
+  /* 루프22: 바위·중경·랜드마크는 움직이지 않는다 → 한데 모았다가 재질별로 합친다(드로콜 줄이기) */
+  const statics = new THREE.Group();
   const rockMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(TH.rock).multiplyScalar(0.8), roughness: 1, flatShading: true });
   for (let i = 0; i < 22; i++) {
     const s = 0.15 + Math.random() * 0.55;
     const r = new THREE.Mesh(new THREE.IcosahedronGeometry(s, 0), rockMat);
     const x = (Math.random() - 0.5) * 18, z = -3.2 - Math.random() * 9;
     r.position.set(x, s * 0.35, z); r.rotation.set(Math.random()*3, Math.random()*3, Math.random()*3);
-    sc.add(r);
+    statics.add(r);
   }
   /* 중경 — 진짜 입체로 세워야 카메라가 흔들릴 때 시차가 난다.
      루프3: 민무늬 원뿔 한 개 → 층진 침엽수·마디 대나무·용암 첨탑·기둥머리 기둥. 그루마다 색이 조금씩 다르다 */
@@ -122,9 +124,10 @@ function buildArena(sc, el, base) {
     const h = M.h[0] + Math.random() * (M.h[1] - M.h[0]), w = M.w[0] + Math.random() * (M.w[1] - M.w[0]);
     const p = midProp(M.kind, h, w, pal[i % 3], TH);
     p.position.set(x, 0, z); p.rotation.y = Math.random() * 6.28;
-    sc.add(p);
+    statics.add(p);
   }
-  sc.add(buildLandmark(TH));
+  statics.add(buildLandmark(TH));
+  mergeStatic(statics, sc);
 
   /* 떠다니는 입자 — 목=잎 · 화=불티 · 토=모래 · 금=눈 · 수=물보라 */
   const D = TH.dust, pos = new Float32Array(D.n * 3), vel = new Float32Array(D.n);
@@ -151,6 +154,34 @@ function buildArena(sc, el, base) {
 
 
 /* 꼭짓점을 조금씩 흔들어 손으로 깎은 느낌을 낸다. 같은 자리의 꼭짓점은 같은 만큼 움직여 틈이 안 생긴다 */
+/* 움직이지 않는 메시를 재질별로 한 덩어리로 합친다. 조명은 떼어 내 장면에 그대로 둔다.
+   맵(텍스처)이 없는 재질만 쓰므로 위치·법선만 합친다. (루프22 — 전투 화면 드로콜 348 → 11, drawcalls.js 로 잼) */
+function mergeStatic(root, sc) {
+  root.updateMatrixWorld(true);
+  const byMat = new Map(), lights = [];
+  root.traverse(o => {
+    if (o.isLight) { lights.push(o); return; }
+    if (!o.isMesh || o.isSkinnedMesh || Array.isArray(o.material) || o.material.map) return;
+    const g = (o.geometry.index ? o.geometry.toNonIndexed() : o.geometry.clone());
+    g.applyMatrix4(o.matrixWorld);
+    if (!byMat.has(o.material)) byMat.set(o.material, []);
+    byMat.get(o.material).push(g);
+  });
+  for (const [mat, gs] of byMat) {
+    let n = 0; gs.forEach(g => n += g.attributes.position.count);
+    const pos = new Float32Array(n * 3), nor = new Float32Array(n * 3); let k = 0;
+    gs.forEach(g => { pos.set(g.attributes.position.array, k * 3);
+      if (g.attributes.normal) nor.set(g.attributes.normal.array, k * 3);
+      k += g.attributes.position.count; g.dispose(); });
+    const m = new THREE.BufferGeometry();
+    m.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    m.setAttribute('normal', new THREE.BufferAttribute(nor, 3));
+    m.computeBoundingSphere();
+    sc.add(new THREE.Mesh(m, mat));
+  }
+  lights.forEach(l => { const p = new THREE.Vector3(); l.getWorldPosition(p); l.parent.remove(l); l.position.copy(p); sc.add(l); });
+}
+
 function jitter(geo, amt) {
   const a = geo.attributes.position, seen = {};
   for (let i = 0; i < a.count; i++) {
