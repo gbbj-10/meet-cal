@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0d1119">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20%3E%3Cpath%20fill%3D%22%23ffd93d%22%20d%3D%22M24%2025.6c7.6%200%2014%205.1%2014%2011.1%200%204.9-4.1%208.3-8.6%208.3-2.6%200-3.8-.9-5.4-.9s-2.8.9-5.4.9C14.1%2045%2010%2041.6%2010%2036.7c0-6%206.4-11.1%2014-11.1z%22%2F%3E%3Cellipse%20cx%3D%2211.06%22%20cy%3D%2221.75%22%20rx%3D%225.3%22%20ry%3D%226.5%22%20transform%3D%22rotate(-30%2011.06%2021.75)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2218.73%22%20cy%3D%2216.18%22%20rx%3D%225.8%22%20ry%3D%227.1%22%20transform%3D%22rotate(-9%2018.73%2016.18)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2229.27%22%20cy%3D%2216.18%22%20rx%3D%225.8%22%20ry%3D%227.1%22%20transform%3D%22rotate(9%2029.27%2016.18)%22%20fill%3D%22%23ffd93d%22%2F%3E%3Cellipse%20cx%3D%2236.94%22%20cy%3D%2221.75%22%20rx%3D%225.3%22%20ry%3D%226.5%22%20transform%3D%22rotate(30%2036.94%2021.75)%22%20fill%3D%22%23ffd93d%22%2F%3E%3C%2Fsvg%3E"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><script>window.FPCFG={"sbUrl": "https://ibwgtlzdlbakjihilklq.supabase.co", "sbKey": "sb_publishable_Mpp5qKwA0OXAZqNyMaqC6Q_EAjMpF8w"}</script><script src="/me.js"></script>
+<!-- 전투 화면(three.js)용. 모듈 스크립트보다 먼저 와야 한다. -->
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+            "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}
+</script>
+<meta name="color-scheme" content="dark">
+<meta name="robots" content="noindex,nofollow">
+<title>사냥터 — 포포즈</title>
+<meta name="description" content="오행 사냥터 다섯 곳. 오늘의 기운과 내 사주로 유리한 곳을 골라 다섯 명이 함께 들어갑니다.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="같이 사냥 가실래요">
+<meta property="og:description" content="오행 사냥터에 자리가 비어 있습니다. 들어와서 한 자리 채워 주세요.">
+<meta property="og:url" content="https://meetcal.co.kr/hunt/">
+<meta property="og:image" content="https://meetcal.co.kr/ohaeng/img/og-ohaeng.png">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HMSZVTTJMB"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-HMSZVTTJMB');</script>
+<style>
+:root{--ink:#eaeef5;--mut:#9aa6b8;--dim:#6f7d92;--line:#232c3c;--pan:#111825;--acc:#5b9bf0}
+*{box-sizing:border-box}
+html,body{margin:0;background:#080c13;color:var(--ink);
+ font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+ word-break:keep-all;-webkit-text-size-adjust:100%;line-height:1.65}
+a{color:var(--acc)}
+.bar{display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--line)}
+.bar .nm{font-weight:800;font-size:17px;color:var(--ink);text-decoration:none;
+  letter-spacing:-.02em;display:flex;align-items:center;gap:8px;min-height:40px}
+.fpchip{display:inline-flex;align-items:center;gap:5px;text-decoration:none;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:999px;padding:3px 9px 3px 3px;font-size:13px;font-weight:700;color:var(--ink)}.fpchip i{width:19px;height:19px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:800;color:#0a0f18;font-family:"Noto Serif KR",serif}@media(max-width:430px){.fpchip b{display:none}.fpchip{padding:3px}}.mk{width:24px;height:24px;flex:none;display:block}header nav a,.bar nav a,.top-bar nav a,footer a{display:inline-flex;align-items:center;min-height:40px}main .h a,main a[data-cta]:not([class]){display:inline-flex;align-items:center;min-height:40px}.bar .mk,.top-bar .mk{width:21px;height:21px}body header.site nav,body .bar nav,body .top-bar nav{flex-wrap:nowrap;white-space:nowrap}body header.site .wrap,body .bar{flex-wrap:nowrap}header.site .nm,.bar .nm,.top-bar .nm{flex:none}@media(max-width:430px){header.site nav a[href="/"],.bar nav a[href="/"],.top-bar nav a[href="/"]{display:none}body header.site nav,body .bar nav,body .top-bar nav{gap:10px}body header.site nav a,body .bar nav a,body .top-bar nav a{font-size:13.5px}body .bar .me{display:none}}
+.bar .tl{font-size:12px;color:var(--dim);margin-left:-3px}
+@media(max-width:560px){.bar .tl{display:none}}
+.bar nav{margin-left:auto;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.bar nav a{font-size:14px;color:var(--mut);text-decoration:none}
+.bar .me{display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--mut)}
+.bar .me img{width:24px;height:24px;border-radius:50%;object-fit:cover}
+.wrap{max-width:820px;margin:0 auto;padding:0 18px 64px}
+h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
+.sub{color:var(--dim);font-size:14.5px;margin:0 0 22px}
+.view{display:none}.view.on{display:block}
+
+/* 0. 잠김 */
+.lock{max-width:460px;margin:8vh auto 0;text-align:center}
+.foot{max-width:720px;margin:0 auto;padding:18px 16px 30px;display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:center}
+.foot a{color:var(--dim);font-size:13px;text-decoration:none}
+.lock .seal{width:96px;height:96px;margin:0 auto 20px;border-radius:50%;
+  border:1px solid #2a3a52;display:grid;place-items:center;font-size:40px;
+  background:radial-gradient(circle at 50% 35%,#1b2536,#0d131d);border-color:#2a3a52}
+.lock h1{margin-top:0}
+.lock p{color:var(--mut);font-size:15px;margin:0 0 8px}
+.lock ul{text-align:left;max-width:340px;margin:18px auto 26px;padding-left:20px;
+  color:var(--mut);font-size:14.5px}
+.lock li{margin-bottom:7px}
+.kbtn{display:block;width:100%;max-width:340px;margin:0 auto;padding:15px;border:0;
+  border-radius:12px;background:#FEE500;color:#191600;font:inherit;font-size:16.5px;
+  font-weight:800;cursor:pointer}
+.kbtn:active{transform:translateY(1px)}
+.mini{font-size:12.5px;color:var(--dim);margin-top:14px}
+
+/* 1. 사냥터 선택 */
+.today{display:flex;align-items:center;gap:12px;background:var(--pan);
+  border:1px solid var(--line);border-radius:14px;padding:13px 16px;margin-bottom:8px}
+.today .gz{display:flex;gap:6px}
+.today .gz b{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-family:"Noto Serif KR",serif;font-size:18px;
+  font-size:19px;font-weight:800;color:#0a0f18;font-family:"Noto Serif KR",serif}
+.today .tx{font-size:14px;color:var(--mut)}
+.today .tx b{color:var(--ink)}
+.mine{font-size:13.5px;color:var(--dim);margin:0 0 20px;padding-left:2px}
+.seated,.mine b.seated,.sub b.seated{color:#58e08f}
+.mine b{color:var(--ink)}
+.mine a{cursor:pointer}
+
+.grid{display:grid;gap:12px}
+.grid + .guide{margin-top:18px}
+@media(min-width:900px){.grid{grid-template-columns:1fr 1fr}}
+.card{display:grid;grid-template-columns:64px 1fr;gap:14px;align-items:center;
+  background:var(--pan);border:1px solid var(--line);border-radius:16px;
+  padding:14px 16px;cursor:pointer;text-align:left;width:100%;font:inherit;color:inherit;
+  transition:border-color .15s,transform .15s}
+.card:hover{border-color:#31405c;transform:translateY(-1px)}
+.card .orb{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;
+  font-size:27px;font-weight:800;color:#0a0f18;font-family:"Noto Serif KR",serif;
+  box-shadow:0 0 0 1px rgba(255,255,255,.08) inset}
+.card .t{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.card .t b{font-size:18.5px;letter-spacing:-.01em}
+.card .t span{font-size:12.5px;color:var(--dim)}
+.card .one{font-size:13.5px;color:var(--mut);margin-top:2px}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;align-items:flex-start;align-content:flex-start}
+.tag{font-size:12px;font-weight:700;border-radius:20px;padding:3px 10px;border:1px solid;white-space:nowrap;flex:none;line-height:1.6}
+.tag.good{color:#7fe08f;border-color:#2d6b38;background:#0f2415}
+.tag.mine{color:#9cc3f7;border-color:#2c4a7a;background:#141d2b}
+.tag.edge{color:#ffe27a;border-color:#6b5a1a;background:#241f0f}
+.tag.res{color:#e3b8ff;border-color:#5b3a78;background:#1c1226}
+.tag.warn{color:#f0a0a0;border-color:#5c241f;background:#1c100e}
+.card.best{border-color:#2d6b38;box-shadow:0 0 0 1px #2d6b38}
+.why{font-size:12.5px;color:var(--dim);margin-top:7px}
+
+/* ── 보석 ──
+   속성 구슬은 단색 동그라미가 아니라 깎은 보석처럼 보이게 한다.
+   색 하나(--c)만 받아서 밝은 면·어두운 면·면 경계·반사광을 겹쳐 그린다.
+   .gem 은 둥근 보석, .gem.sq 는 모서리를 둥글린 네모 보석(쿠션 컷). */
+.gem{position:relative;color:#fff!important;border-radius:50%;
+  text-shadow:0 1px 2px rgba(0,0,0,.7),0 0 6px rgba(0,0,0,.35);
+  background:
+    radial-gradient(circle at 32% 24%,rgba(255,255,255,.95) 0 5%,rgba(255,255,255,.45) 10%,transparent 22%),
+    radial-gradient(circle at 70% 80%,rgba(255,255,255,.28) 0,transparent 26%),
+    conic-gradient(from 18deg,
+      color-mix(in srgb,var(--c) 55%,#fff) 0 36deg,  color-mix(in srgb,var(--c) 85%,#000) 36deg 72deg,
+      color-mix(in srgb,var(--c) 75%,#fff) 72deg 108deg,color-mix(in srgb,var(--c) 70%,#000) 108deg 144deg,
+      var(--c) 144deg 180deg,                         color-mix(in srgb,var(--c) 55%,#000) 180deg 216deg,
+      color-mix(in srgb,var(--c) 80%,#fff) 216deg 252deg,color-mix(in srgb,var(--c) 75%,#000) 252deg 288deg,
+      color-mix(in srgb,var(--c) 65%,#fff) 288deg 324deg,color-mix(in srgb,var(--c) 90%,#000) 324deg 360deg)
+    !important;
+  box-shadow:
+    inset 0 -7px 12px rgba(0,0,0,.42), inset 0 4px 7px rgba(255,255,255,.38),
+    0 0 0 2px color-mix(in srgb,var(--c) 45%,#1a2230), 0 0 0 3px rgba(255,255,255,.14),
+    0 6px 18px color-mix(in srgb,var(--c) 45%,transparent)!important}
+/* 가운데 테이블(윗면) — 보석을 위에서 본 평평한 면 */
+.gem::after{content:'';position:absolute;inset:22%;border-radius:inherit;pointer-events:none;z-index:-1;
+  background:radial-gradient(circle at 40% 35%,color-mix(in srgb,var(--c) 45%,#fff),var(--c) 70%);
+  opacity:.55;box-shadow:0 0 0 1px rgba(255,255,255,.22)}
+.gem{z-index:0}
+.gem.sq{border-radius:11px}
+.gem.sq::after{border-radius:6px}
+
+/* ── 던전 카드 — 뒤에 옅게 던전 그림 ── */
+.card{position:relative;overflow:hidden;isolation:isolate}
+.card::before{content:'';position:absolute;inset:0;z-index:-2;
+  background:var(--bg) center/cover no-repeat;opacity:.34;transition:opacity .2s}
+.card::after{content:'';position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(90deg,rgba(10,14,22,.94) 0%,rgba(10,14,22,.78) 45%,rgba(10,14,22,.45) 100%)}
+.card:hover::before{opacity:.48}
+.card .t b{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.card .t span,.card .one{color:#d7dfeb;text-shadow:0 1px 2px rgba(0,0,0,.85)}
+.card .why{color:#c3ccd9;text-shadow:0 1px 2px rgba(0,0,0,.85)}
+.card .tag{backdrop-filter:blur(2px)}
+
+/* ── 맨 위: 내 캐릭터 + 오늘의 기운 | 속성 막대 ── */
+.hcombo{grid-column:1/-1}.hcombo:empty{display:none}
+.combo{display:flex;gap:10px;align-items:center;margin-top:10px;padding:9px 11px;border-radius:12px;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--cc) 16%,transparent),transparent);border:1px solid color-mix(in srgb,var(--cc) 45%,transparent)}
+@media(max-width:640px){.combo{flex-direction:column;align-items:flex-start;gap:6px}}
+.combo .cgems{display:flex;align-items:center;gap:3px;flex:none}.combo .cgems i{font-style:normal;color:var(--mut);font-size:12px}
+.combo .orb.sm{width:26px;height:26px;display:grid;place-items:center;font:800 12px "Noto Serif KR",serif}
+.combo .cel{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-family:"Noto Serif KR",serif;font-size:17px;
+  color:#0a0f18;background:radial-gradient(circle at 35% 30%,#fff,var(--cc) 55%,color-mix(in srgb,var(--cc) 60%,#000));box-shadow:0 0 12px var(--cc)}
+.combo .ctx{font-size:12.5px;line-height:1.5;color:var(--mut);text-align:left}.combo .ctx b.ctag{color:var(--cc)}.combo .ctx b{color:var(--ink)}.combo small{color:var(--mut);font-size:11.5px}
+.combo .cok{color:var(--cc);font-weight:700}.combo .clk{color:#e8a33c;font-weight:700}.combo.lock .cel{filter:saturate(.35) brightness(.8)}
+.hero2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:14px;margin:0 0 16px}
+@media(max-width:640px){.hero2{grid-template-columns:1fr}}
+.hcard,.hbars{background:var(--pan);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.hcard{display:grid;grid-template-columns:130px 1fr;gap:12px;align-items:center}
+.hdog{height:150px;border-radius:12px;background:radial-gradient(ellipse at 50% 80%,rgba(255,217,61,.10),transparent 65%)}
+.hdog canvas{display:block;width:100%!important;height:100%!important}
+.hinfo .gems{display:flex;gap:7px;align-items:center;margin-bottom:10px}
+.hinfo .gems .orb{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+  font:800 20px "Noto Serif KR",serif}
+.hinfo .gems b{width:36px;height:36px;display:grid;place-items:center;font:800 17px "Noto Serif KR",serif}
+.hinfo p{margin:3px 0;font-size:14px;color:var(--mut)}
+.hinfo p b{color:var(--ink);font-size:15.5px}
+.hinfo p.day{color:#ffd93d;font-weight:700}
+.hbars .fpbars{margin:8px 0 0}
+.hbars summary{cursor:pointer;list-style:none;font-weight:700;font-size:14px;color:var(--mut);display:flex;justify-content:space-between;min-height:32px;align-items:center}
+.hbars summary::-webkit-details-marker{display:none}
+.hbars summary::after{content:'▼';font-size:11px;color:var(--dim)}
+.hbars[open] summary::after{content:'▲'}
+@media(max-width:640px){.hcard{grid-template-columns:96px 1fr}.hdog{height:112px}}
+
+/* ── 배속 · 건너뛰기 (서머너즈워·롤토체스처럼 전투 화면 오른쪽 위에 둔다) ── */
+.stagew{position:relative}
+.tbars{display:flex;gap:6px;margin:10px 0 8px}
+.tbar{flex:1;min-width:0;height:22px;border-radius:7px;background:#1b2436;overflow:hidden;position:relative;border:1px solid #243049}
+.tbar i{display:block;height:100%;width:100%;background:linear-gradient(180deg,#5fe08f,#2fa85c);transition:width .32s ease}
+.tbar b{position:absolute;left:8px;top:0;line-height:22px;font-size:12px;font-weight:800;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.7);white-space:nowrap;overflow:hidden;max-width:calc(100% - 12px)}
+.tbar.down i{background:#3a3f4c}.tbar.down b{opacity:.5}
+
+/* ── 사냥터 안내 · 오행도 ── */
+.guide{background:var(--pan);border:1px solid var(--line);border-radius:16px;margin:0 0 18px}
+.guide summary{cursor:pointer;list-style:none;padding:14px 18px;font-weight:700;font-size:15.5px;color:#ffd93d;
+  display:flex;align-items:center;justify-content:space-between}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary::after{content:'▼';font-size:12px;color:var(--dim);transition:transform .2s}
+.guide[open] summary::after{transform:rotate(180deg)}
+.guide .gbody{display:grid;grid-template-columns:1fr 250px;gap:16px;align-items:center;padding:0 18px 16px}
+@media(max-width:560px){.guide .gbody{grid-template-columns:1fr}.guide svg{max-width:250px;margin:0 auto}}
+.guide h2{display:none}
+.guide ul{margin:0;padding-left:18px;font-size:13.5px;color:var(--mut);line-height:1.7}
+.guide li b{color:var(--ink)}
+.guide svg{width:100%;height:auto;display:block}
+.guide .lg{display:flex;gap:14px;justify-content:center;font-size:12px;color:var(--dim);margin-top:4px}
+.guide .lg i{display:inline-block;width:18px;height:0;border-top:2px solid;vertical-align:middle;margin-right:5px}
+
+/* 2. 단 고르기 — 계단(아래)에서 갑단(위)으로 올라가는 사다리 */
+.pouch{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--pan);
+  border:1px solid var(--line);border-radius:14px;padding:11px 14px;margin:14px 0 4px;font-size:13.5px}
+.pouch .st{width:15px;height:15px;border-radius:4px;transform:rotate(45deg);flex:none;
+  box-shadow:0 0 0 1px rgba(255,255,255,.14) inset}
+.pouch b{color:var(--ink)}
+.pouch .yg{color:#ffd93d;font-weight:700}
+.pouch .bo{margin-left:auto;color:var(--dim)}
+@media(max-width:430px){.pouch .bo{margin-left:0;width:100%}}
+
+.ladder{display:flex;flex-direction:column-reverse;gap:8px;margin:14px 0 6px}
+.rung{display:grid;grid-template-columns:48px 1fr auto;gap:13px;align-items:center;
+  background:var(--pan);border:1px solid var(--line);border-radius:14px;
+  padding:12px 15px;cursor:pointer;text-align:left;width:100%;font:inherit;color:inherit;
+  transition:border-color .15s,transform .15s}
+.rung:hover:not(:disabled){border-color:#31405c;transform:translateY(-1px)}
+.rung:disabled{cursor:not-allowed;opacity:.42}
+.tip3{margin:0 0 10px;font-size:13px;color:var(--mut);line-height:1.6}
+.rung:disabled .gz2{filter:grayscale(.65)}
+.fxd{margin:6px 0}.fxd summary{cursor:pointer;color:var(--dim);font-size:13px;min-height:28px}
+.fxd .fx{display:block;font-size:13px;color:var(--mut);margin-top:4px}
+.rung .gz2{width:48px;height:48px;border-radius:13px;display:grid;place-items:center;
+  font-size:22px;font-weight:800;font-family:"Noto Serif KR",serif;color:#0a0f18;flex:none}
+.rung .tn{display:block;font-size:17px;font-weight:700;letter-spacing:-.01em}
+.rung .td{display:block;font-size:12.5px;color:var(--dim);margin-top:3px;line-height:1.45}
+.rung .rt2{font-size:12px;font-weight:700;border-radius:20px;padding:3px 10px;border:1px solid;white-space:nowrap}
+.rt2.done{color:#7fe08f;border-color:#2d6b38;background:#0f2415}
+.rt2.open{color:#ffd93d;border-color:#6b5a1a;background:#241f0f}
+.rt2.shut{color:#8494ab;border-color:#2b3a52;background:#121a29}
+.rung.now{border-color:#6b5a1a;box-shadow:0 0 0 1px #6b5a1a}
+.rung.weak{border-color:rgba(232,72,60,.55)}
+.loot{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 2px;font-size:13.5px}
+.loot .st{width:14px;height:14px;border-radius:4px;transform:rotate(45deg);flex:none}
+.loot .bo{color:var(--dim)}
+
+/* 2. 파티 */
+.gh{display:flex;align-items:center;gap:13px;margin:22px 0 6px}
+.gh .orb{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;
+  font-size:23px;font-weight:800;color:#0a0f18;font-family:"Noto Serif KR",serif;flex:none}
+.gh h1{margin:0;font-size:24px}
+.gh .hj{font-size:13px;color:var(--dim)}
+.back{background:0;border:0;color:var(--mut);font:inherit;font-size:14px;cursor:pointer;
+  padding:14px 0 0}
+.slots{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin:18px 0 6px}
+@media(max-width:560px){.slots{grid-template-columns:repeat(2,1fr)}}
+.slot{background:var(--pan);border:1px solid var(--line);border-radius:14px;
+  padding:14px 10px;text-align:center;min-height:148px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:8px}
+.slot.me{border-color:#2c4a7a;background:#111726}
+.slot .av{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;
+  font-size:20px;font-weight:800;color:#0a0f18;font-family:"Noto Serif KR",serif}
+.slot .nm2{font-size:14px;font-weight:700;line-height:1.35;word-break:break-all}
+.slot .rl{font-size:11.5px;color:var(--dim)}
+.slot.empty{border-style:dashed;border-color:#2a3550}
+.slot.empty .av{background:#1a2333;color:#44536e;font-size:26px}
+.slot .add{background:#FEE500;color:#191600;border:0;border-radius:9px;padding:7px 11px;
+  font:inherit;font-size:12.5px;font-weight:800;cursor:pointer}
+.slot.empty{cursor:pointer}.slot.empty:hover,.slot.empty:focus-visible{border-color:#FEE500;outline:none}
+.slot .sbtn{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.slot .add{display:inline-block}
+.slot .pick{background:#1b2740;color:#9cc3f7;border:1px solid #2c4a7a;border-radius:9px;
+  padding:7px 11px;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
+.syn{background:var(--pan);border:1px solid var(--line);border-radius:14px;
+  padding:14px 16px;margin:14px 0 0;font-size:14px;color:var(--mut)}
+.syn b{color:var(--ink)}
+.syn .bar2{height:8px;border-radius:5px;background:#1a2333;margin:9px 0 6px;overflow:hidden}
+.syn .bar2 i{display:block;height:100%;border-radius:5px;background:var(--acc)}
+.go{width:100%;margin-top:16px;padding:15px;border:0;border-radius:12px;
+  background:var(--acc);color:#08101c;font:inherit;font-size:16.5px;font-weight:800;cursor:pointer}
+.go[disabled]{background:#22304a;color:#5f7291;cursor:default}
+.go.weak{background:#e8483c;color:#fff}
+.note{font-size:12.5px;color:var(--dim);margin-top:12px;line-height:1.7}
+
+/* 3. 전투 — 보는 화면이다. 누를 것은 끝나고 나서만 생긴다. */
+.foe{display:flex;align-items:center;gap:13px;margin:20px 0 4px}
+.foe .orb{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;
+  font-size:22px;font-weight:800;color:#0a0f18;font-family:"Noto Serif KR",serif;flex:none}
+.foe h1{margin:0;font-size:22px}
+.foe .wh{font-size:12.5px;color:var(--dim)}
+.hp{height:10px;border-radius:6px;background:#1b2436;overflow:hidden;margin-top:7px}
+.hp i{display:block;height:100%;transition:width .32s ease}
+.team{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:16px 0 4px}
+@media(max-width:560px){.team{grid-template-columns:repeat(3,1fr)}}
+.mate{background:var(--pan);border:1px solid var(--line);border-radius:11px;padding:9px 7px;
+  text-align:center}
+.mate .av2{width:30px;height:30px;border-radius:50%;margin:0 auto 5px;display:grid;
+  place-items:center;font-size:14px;font-weight:800;color:#0a0f18;font-family:"Noto Serif KR",serif}
+.mate .n2{font-size:11.5px;font-weight:700;line-height:1.3;word-break:break-all;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mate.down{opacity:.38}
+.mate.down .n2:after{content:" 쓰러짐";color:#e8483c;font-weight:600}
+.stage{margin-top:14px;border-radius:14px;overflow:hidden;background:#0b0f17;
+  border:1px solid var(--line);min-height:150px;position:relative}
+.stage canvas{display:block;width:100%;height:auto}
+@media(max-width:560px){.stagew{margin-left:-12px;margin-right:-12px}.stage{border-radius:0;border-left:0;border-right:0}}
+.load{position:absolute;inset:0;display:grid;place-items:center;font-size:13px;color:var(--dim)}
+.cap{margin:11px 2px 0;font-size:14px;line-height:1.6;color:var(--ink);min-height:44px}
+.lgtoggle{margin-top:14px;background:0;border:0;color:var(--mut);font:inherit;font-size:13px;
+  cursor:pointer;padding:6px 0;text-decoration:underline}
+.log{background:#0c111b;border:1px solid var(--line);border-radius:12px;padding:13px 15px;
+  margin-top:16px;min-height:190px;max-height:290px;overflow-y:auto;font-size:13.5px;line-height:1.85}
+.log p{margin:0 0 3px;color:var(--mut)}
+.log p.hit{color:var(--ink)}
+.log p.big{color:#ffd93d;font-weight:700}
+.log p.bad{color:#f0a0a0}
+.log p.turn{color:var(--dim);font-size:12px;margin-top:9px;
+  border-top:1px solid #1b2436;padding-top:7px}
+.res{margin-top:16px;padding:17px 18px;border-radius:14px;border:1px solid var(--line);
+  background:var(--pan)}
+.res.win{border-color:rgba(255,217,61,.5);background:rgba(255,217,61,.08)}
+.res .rt{font-size:20px;font-weight:800;letter-spacing:-.02em}
+.res.win .rt{color:#ffd93d}
+.res.lose{border-color:rgba(232,72,60,.5);background:rgba(232,72,60,.08)}.res.lose .rt{color:#e8483c}
+.res .rw{font-size:13.5px;color:var(--mut);line-height:1.7;margin-top:6px}
+.res .rn{display:flex;gap:18px;margin-top:12px;font-size:12.5px;color:var(--dim)}
+.res .rn b{color:var(--mut);font-weight:700}
+.again{display:flex;gap:9px;margin-top:14px;flex-wrap:wrap}
+.again button{flex:1;min-width:130px;padding:13px;border:1px solid var(--line);border-radius:11px;
+  background:var(--pan);color:var(--ink);font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.again button.pri{background:#ffd93d;color:#191600;border-color:#ffd93d}
+
+/* 친구 고르기 */
+.mask{position:fixed;inset:0;background:rgba(4,7,12,.72);display:none;z-index:40;
+  align-items:flex-end;justify-content:center;padding:0 12px max(12px,env(safe-area-inset-bottom))}
+.mask.on{display:flex}
+.modal{width:100%;max-width:480px;background:var(--pan);border:1px solid #27324a;
+  border-radius:16px;padding:16px 18px 18px;animation:up .18s ease-out}
+@keyframes up{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
+.modal h3{margin:0 0 4px;font-size:17px}
+.modal .s{font-size:13px;color:var(--dim);margin:0 0 12px}
+.flist2{list-style:none;margin:0;padding:0;max-height:46vh;overflow:auto}
+.flist2 li{display:flex;align-items:center;gap:10px;padding:10px 4px;
+  border-bottom:1px solid var(--line)}
+.flist2 .av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
+  font-weight:800;color:#0a0f18;font-size:15px;font-family:"Noto Serif KR",serif;flex:none}
+.flist2 b{flex:1;font-size:14.5px}.flist2 b small{display:block;font-size:12px;font-weight:400;color:var(--dim);margin-top:2px}
+.flist2 button{background:#1b2740;color:#9cc3f7;border:1px solid #2c4a7a;border-radius:8px;
+  padding:6px 12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.flist2 .none{color:var(--dim);font-size:14px;padding:16px 4px;border:0}
+.modal .x{width:100%;margin-top:12px;background:0;border:1px solid var(--line);
+  color:var(--mut);border-radius:10px;padding:11px;font:inherit;cursor:pointer}
+
+/* 자바스크립트 없이 */
+.flist{list-style:none;margin:20px auto;padding:0;max-width:560px}
+.flist li{display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:12px 0;border-bottom:1px solid var(--line)}
+.flist i{font-style:normal;width:26px;height:26px;border-radius:50%;color:#0a0f18;
+  display:grid;place-items:center;font-weight:800;flex:none}
+.flist b{font-size:16px}.flist span{font-size:12.5px;color:var(--dim)}
+.flist em{flex:1 0 100%;font-style:normal;font-size:13.5px;color:var(--mut)}
+.demo{background:#1b1a12;border:1px solid #42360f;color:#e0c168;border-radius:10px;
+  padding:10px 14px;font-size:13px;margin:16px 0 0}
+</style>
+</head><body>
+
+<header class="bar">
+  <a class="nm" href="/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="mk" aria-hidden="true"><path fill="#ffd93d" d="M24 25.6c7.6 0 14 5.1 14 11.1 0 4.9-4.1 8.3-8.6 8.3-2.6 0-3.8-.9-5.4-.9s-2.8.9-5.4.9C14.1 45 10 41.6 10 36.7c0-6 6.4-11.1 14-11.1z"/><ellipse cx="11.06" cy="21.75" rx="5.3" ry="6.5" transform="rotate(-30 11.06 21.75)" fill="#4fb95f"/><ellipse cx="18.73" cy="16.18" rx="5.8" ry="7.1" transform="rotate(-9 18.73 16.18)" fill="#e8483c"/><ellipse cx="29.27" cy="16.18" rx="5.8" ry="7.1" transform="rotate(9 29.27 16.18)" fill="#8e9bb0"/><ellipse cx="36.94" cy="21.75" rx="5.3" ry="6.5" transform="rotate(30 36.94 21.75)" fill="#3f8fe0"/></svg>포포즈</a><span class="tl">오행 댕댕이 키우기</span>
+  <nav>
+    <a href="/map/">선택목록</a><a href="/ohaeng/">사주 이야기</a><span data-fp-chip></span>
+    <span class="me" id="me" hidden></span>
+  </nav>
+</header>
+
+<div class="wrap">
+
+  <!-- 0. 로그인 확인 — 잠금 화면은 없앴다(2026-09-24). 로그인은 홈·선택목록에서 이미 하고 들어온다.
+       로그인 안 된 채로 바로 온 사람(초대 링크 등)은 여기서 곧장 카카오톡 로그인으로 넘긴다. -->
+  <section class="view on" id="v-lock">
+    <div class="lock">
+      <p id="lock-msg">사냥터를 여는 중…</p>
+      <button class="kbtn" id="btn-login" hidden>카카오톡 로그인</button>
+    </div>
+  </section>
+
+  <!-- 1. 사냥터 선택 -->
+  <section class="view" id="v-pick">
+    <h1>어느 사냥터로 갈까</h1>
+    <p class="sub">다섯 곳 중 하나를 고르세요. 오늘의 기운과 내 사주로 유리한 곳을 표시해 뒀습니다.</p>
+    <p class="mine" id="mine"></p>
+    <div class="hero2">
+      <div class="hcard">
+        <div class="hdog" id="hdog"></div>
+        <div class="hinfo" id="today"></div>
+        <div class="hcombo" id="hcombo"></div>
+      </div>
+      <details class="hbars" id="hbarsw"><summary>내 속성 수치</summary><div id="hbars"></div></details>
+    </div>
+    <!-- 루프21: 사냥터 목록을 안내(접힌 '강해지는 법')보다 먼저 — 고르는 화면에서 고를 것이 먼저 보이게. 알림(#mine)은 제목 바로 아래로 -->
+    <div class="grid" id="grid"></div>
+    <details class="guide" id="guide-wrap">
+      <summary>사냥터에서 강해지는 법</summary>
+      <div class="gbody" id="guide"></div>
+    </details>
+    <noscript><ul class="flist"><li><i style="background:#4fb95f">木</i><b>녹빛 언덕</b><span>목령 사슴</span><em>풀이 무릎까지 자란 비탈</em></li><li><i style="background:#e8483c">火</i><b>붉은 마당</b><span>화령 해태</span><em>불씨가 밤새 꺼지지 않는 마당</em></li><li><i style="background:#ffd93d">土</i><b>황토 텃밭</b><span>토령 멧돼지</span><em>파도 파도 끝이 없는 붉은 흙</em></li><li><i style="background:#8e9bb0">金</i><b>하얀 골목</b><span>금령 백호</span><em>쇠붙이가 발에 차이는 뒷골목</em></li><li><i style="background:#3f8fe0">水</i><b>청빛 호수</b><span>수령 늑대</span><em>바닥이 보이지 않는 깊은 물</em></li></ul></noscript>
+    <div class="demo" id="demo-note" hidden></div>
+  </section>
+
+  <!-- 2. 단 고르기 -->
+  <section class="view" id="v-tier">
+    <button class="back" id="btn-back-t">← 사냥터 다시 고르기</button>
+    <div class="gh" id="th"></div>
+    <p class="sub" id="tsub"></p>
+    <div class="pouch" id="pouch"></div>
+    <div class="ladder" id="ladder"></div>
+    <p class="note" id="tnote"></p>
+  </section>
+
+  <!-- 3. 파티 -->
+  <section class="view" id="v-party">
+    <button class="back" id="btn-back">← 단 다시 고르기</button>
+    <div class="gh" id="gh"></div>
+    <p class="sub" id="gsub"></p>
+    <div class="slots" id="slots"></div>
+    <!-- 루프21: 들어가기 버튼을 시너지 상자 위로 — 390×844 첫 화면 안에 들어오게(전에는 860px) -->
+    <button class="go" id="btn-go" disabled>사냥 시작</button>
+    <div class="syn" id="syn"></div>
+    <p class="note" id="note"></p>
+  </section>
+
+  <!-- 4. 전투 -->
+  <section class="view" id="v-battle">
+    <div class="foe" id="foe"></div>
+    <div class="tbars" id="tbars"></div>
+    <div class="stagew"><div class="stage" id="stage"><div class="load" id="load">사냥터를 그리는 중…</div></div></div>
+    <p class="cap" id="cap"></p>
+    <div class="team" id="team"></div>
+    <div id="res"></div>
+    <button class="lgtoggle" id="lgtoggle" hidden>전투 로그</button>
+    <div class="log" id="log" hidden></div>
+  </section>
+
+</div>
+<footer class="foot"><a href="/">처음으로</a><a href="/map/">선택목록</a><a href="/gunghap/">궁합소</a><a href="/iljin/">오늘의 기운</a><a href="/ohaeng/">사주 이야기</a><a href="/love/">이성 조건 계산기</a><a href="/about/">소개·문의</a><a href="/privacy/">개인정보처리방침</a></footer>
+
+<div class="mask" id="mask">
+  <div class="modal">
+    <h3 id="fl-h">친구 목록</h3>
+    <p class="s" id="fl-s">친구를 골라 자리에 넣으세요. 이 사냥터에서의 전투력이 높은 순입니다. 새 친구는 카카오톡으로 초대하세요.</p>
+    <button class="kbtn" id="btn-invite2" style="margin:10px 0 12px">카카오톡으로 친구 초대하기</button>
+    <ul class="flist2" id="friends"></ul>
+    <button class="x" id="btn-close">닫기</button>
+  </div>
+</div>
+
+<script src="/ohaeng/data/saju-calculator.js"></script>
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.8.3/kakao.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+
+/* ===================== 설정 ===================== */
+var CFG = {
+  kakaoKey: '60b71fcf9ec72aad11e6f5d62358c8db',
+  sbUrl:    'https://ibwgtlzdlbakjihilklq.supabase.co',
+  sbKey:    'sb_publishable_Mpp5qKwA0OXAZqNyMaqC6Q_EAjMpF8w'
+};
+var GROUNDS = [{"el":"목","id":"nokbit","nm":"녹빛 언덕","one":"풀이 무릎까지 자란 비탈","prey":"목령","beast":"사슴","col":"#4fb95f","elhj":"木"},{"el":"화","id":"bulgeun","nm":"붉은 마당","one":"불씨가 밤새 꺼지지 않는 마당","prey":"화령","beast":"해태","col":"#e8483c","elhj":"火"},{"el":"토","id":"hwangto","nm":"황토 텃밭","one":"파도 파도 끝이 없는 붉은 흙","prey":"토령","beast":"멧돼지","col":"#ffd93d","elhj":"土"},{"el":"금","id":"hayan","nm":"하얀 골목","one":"쇠붙이가 발에 차이는 뒷골목","prey":"금령","beast":"백호","col":"#8e9bb0","elhj":"金"},{"el":"수","id":"cheongbit","nm":"청빛 호수","one":"바닥이 보이지 않는 깊은 물","prey":"수령","beast":"늑대","col":"#3f8fe0","elhj":"水"}];
+var DSAENG = {목:'화',화:'토',토:'금',금:'수',수:'목'};   /* A가 B를 낳는다 */
+var DGEUK  = {목:'토',토:'수',수:'화',화:'금',금:'목'};   /* A가 B를 이긴다 */
+var DGAN='갑을병정무기경신임계', DZHI='자축인묘진사오미신유술해';
+var GANHJ={갑:'甲',을:'乙',병:'丙',정:'丁',무:'戊',기:'己',경:'庚',신:'辛',임:'壬',계:'癸'};
+var ZHIHJ={자:'子',축:'丑',인:'寅',묘:'卯',진:'辰',사:'巳',오:'午',미:'未',신:'申',유:'酉',술:'戌',해:'亥'};
+var DGANEL={갑:'목',을:'목',병:'화',정:'화',무:'토',기:'토',경:'금',신:'금',임:'수',계:'수'};
+var DZHIEL={자:'수',축:'토',인:'목',묘:'목',진:'토',사:'화',오:'화',미:'토',신:'금',유:'금',술:'토',해:'수'};
+var JOSA={목:{i:'이',eul:'을',eun:'은',wa:'과'},화:{i:'가',eul:'를',eun:'는',wa:'와'},
+          토:{i:'가',eul:'를',eun:'는',wa:'와'},금:{i:'이',eul:'을',eun:'은',wa:'과'},
+          수:{i:'가',eul:'를',eun:'는',wa:'와'}};
+var J=function(el,k){ return el+((JOSA[el]||{})[k]||''); };
+var $=function(id){return document.getElementById(id)};
+var ev=function(n,p){ if(window.gtag) gtag('event',n,p||{}); };
+
+/* ===================== 저장 어댑터 ===================== */
+/* 키가 비어 있으면 demo 로 돈다. 채워 넣으면 그대로 supabase 가 된다. */
+var MODE = (!window.FP_REC && CFG.sbUrl && CFG.sbKey && CFG.sbUrl.indexOf('http')===0) ? 'supabase' : 'demo';
+var sb = null;
+/* me.js(FP) 가 만든 클라이언트를 같이 쓴다 — 한 페이지에 둘이면 로그인 상태가 엇갈린다 */
+if (MODE==='supabase' && window.supabase) sb = (window.FP && FP.client && FP.client()) || window.supabase.createClient(CFG.sbUrl, CFG.sbKey);
+
+var LS = {
+  get:function(k,d){ try{ var v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } },
+  set:function(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+};
+
+var Store = {
+  /* 로그인한 사람 */
+  me:function(){
+    if(MODE==='demo') return Promise.resolve(LS.get('hunt.me',null));
+    return sb.auth.getUser().then(function(r){
+      var u=r.data&&r.data.user; if(!u) return null;
+      var m=u.user_metadata||{};
+      var o={id:u.id, nick:m.name||m.full_name||m.preferred_username||'이름없음',
+              pic:m.avatar_url||m.picture||'', el:null};
+      /* 직접 정한 닉네임(me.js 닉네임 창, nick_set)이 있으면 그 이름 */
+      return sb.from('hunt_players').select('nick,nick_set').eq('user_id',u.id).maybeSingle().then(function(q){
+        if(q&&q.data&&q.data.nick_set&&q.data.nick) o.nick=q.data.nick;
+        return o;
+      },function(){ return o; });
+    });
+  },
+  login:function(){
+    if(MODE==='demo'){
+      var nick = window.FP_REC ? '포포즈' : prompt('데모 모드입니다. 쓰실 이름을 넣어 주세요.','꾼기');
+      if(!nick) return Promise.resolve(null);
+      var me={id:'demo-'+Math.random().toString(36).slice(2,9), nick:nick, pic:'', el:null};
+      LS.set('hunt.me',me); return Promise.resolve(me);
+    }
+    /* 2026-09-20 확인 — scopes 를 지정해도 Supabase(GoTrue)가 자기 기본값에 '덧붙인다'.
+       실제 카카오로 나간 값: 'account_email profile_image profile_nickname
+       profile_nickname profile_image'. account_email 을 뺄 방법이 없다.
+       그래서 카카오 앱을 비즈 앱으로 전환해 account_email 권한을 여는 쪽으로 갔다.
+       (개인 개발자도 본인인증 + 약관 동의로 무료 전환 가능)
+       이메일은 '선택 동의'로 두고, Supabase 의 'Allow users without an email' 을 켜 둔다.
+       여기서 scopes 를 다시 지정하면 중복만 늘어나므로 지정하지 않는다. */
+    return sb.auth.signInWithOAuth({provider:'kakao',
+      options:{redirectTo:location.origin+'/hunt/'+location.search}});
+  },
+  logout:function(){
+    if(MODE==='demo'){ LS.set('hunt.me',null); return Promise.resolve(); }
+    return sb.auth.signOut();
+  },
+  /* 내 프로필(오행) 저장 */
+  saveEl:function(el){
+    if(MODE==='demo'){ var m=LS.get('hunt.me',null); if(m){m.el=el; LS.set('hunt.me',m);} return Promise.resolve(); }
+    return sb.auth.getUser().then(function(r){
+      var u=r.data&&r.data.user; if(!u) return;
+      return sb.from('hunt_players').upsert({user_id:u.id, dominant_element:el});
+    });
+  },
+  /* 내 초대로 합류한 사람들 */
+  friends:function(){
+    if(MODE==='demo') return Promise.resolve(LS.get('hunt.friends.'+Store.myCode(ME),[]));
+    return sb.auth.getUser().then(function(r){
+      var u=r.data&&r.data.user; if(!u) return [];
+      return sb.from('hunt_invites').select('joined_id,joined_nick,joined_element,joined_stats')
+               .eq('host_code',String(u.id).slice(0,8)).then(function(q){
+        return (q.data||[]).map(function(x){
+          return {id:x.joined_id, nick:x.joined_nick, el:x.joined_element, stats:x.joined_stats||null};
+        });
+      });
+    });
+  },
+  /* 초대 링크로 들어온 사람을 host 파티에 등록 */
+  join:function(hostCode, me){
+    if(MODE==='demo'){
+      var f=LS.get('hunt.friends.'+hostCode,[]);
+      var hit=false;
+      f=f.map(function(x){ if(x.id===me.id){ hit=true; return {id:me.id,nick:me.nick,el:me.el,stats:myVals()}; } return x; });
+      if(!hit) f.push({id:me.id,nick:me.nick,el:me.el,stats:myVals()});
+      LS.set('hunt.friends.'+hostCode,f);
+      return Promise.resolve();
+    }
+    return sb.from('hunt_invites').upsert({host_code:hostCode, joined_id:me.id,
+      joined_nick:me.nick, joined_element:me.el, joined_stats:myVals()});
+  },
+  /* 파티 구성 저장/불러오기 */
+  party:function(gid){
+    if(MODE==='demo') return Promise.resolve(LS.get('hunt.party.'+gid,[]));
+    return sb.auth.getUser().then(function(r){
+      var u=r.data&&r.data.user; if(!u) return [];
+      return sb.from('hunt_parties').select('members').eq('user_id',u.id)
+               .eq('ground',gid).maybeSingle().then(function(q){
+        return (q.data&&q.data.members)||[];
+      });
+    });
+  },
+  saveParty:function(gid, members){
+    if(MODE==='demo'){ LS.set('hunt.party.'+gid,members); return Promise.resolve(); }
+    return sb.auth.getUser().then(function(r){
+      var u=r.data&&r.data.user; if(!u) return;
+      return sb.from('hunt_parties').upsert({user_id:u.id, ground:gid, members:members});
+    });
+  },
+  myCode:function(me){ return (me && me.id) ? String(me.id).slice(0,8) : ''; }
+  /* 전투력은 내 화면의 지금 파티원으로만 계산한다 — 상대 쪽 목록의 내 수치를 따로 갱신하지 않는다(9/25 사용자 결정) */
+};
+
+/* ===================== 오늘의 일진 ===================== */
+function kstToday(){
+  var t=new Date();
+  var k=new Date(t.getTime()+t.getTimezoneOffset()*60000+9*3600000);
+  return new Date(k.getFullYear(),k.getMonth(),k.getDate());
+}
+function dayPillar(d){
+  var n=Math.round((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-Date.UTC(1900,0,31))/86400000);
+  var g=DGAN[((n%10)+10)%10], z=DZHI[((n%12)+12)%12];
+  return {gan:g, zhi:z, els:[DGANEL[g],DZHIEL[z]]};
+}
+
+/* ===================== 추천 판정 ===================== */
+/* 오늘의 기운 → 사냥터 : 같은 기운 +2, 기운을 실어 주면 +1, 누르면 -1 */
+function todayScore(gEl, dayEls){
+  var s=0;
+  dayEls.forEach(function(d){
+    if(d===gEl) s+=2;
+    else if(DSAENG[d]===gEl) s+=1;
+    else if(DGEUK[d]===gEl) s-=1;
+  });
+  return s;
+}
+/* 내 오행 → 사냥터 : 관계 한 줄 */
+function mineRel(myEl, gEl){
+  if(!myEl) return null;
+  if(myEl===gEl)        return {k:'same', tag:'익숙한 곳',   why:'내 기운과 같은 곳이라 길을 잃지 않습니다.'};
+  if(DGEUK[myEl]===gEl) return {k:'easy', tag:'내가 우세',   why:'내 '+J(myEl,'i')+' '+J(gEl,'eul')+' 누릅니다. 사냥이 수월합니다.'};
+  if(DSAENG[gEl]===myEl) return {k:'gain', tag:'기운을 얻음', why:J(gEl,'i')+' 내 '+J(myEl,'eul')+' 살립니다. 오래 버팁니다.'};
+  if(DGEUK[gEl]===myEl) return {k:'risk', tag:'위험',        why:J(gEl,'i')+' 내 '+J(myEl,'eul')+' 누릅니다. 혼자면 위험합니다.'};
+  if(DSAENG[myEl]===gEl) return {k:'give', tag:'기운을 내줌', why:'내 '+J(myEl,'i')+' '+J(gEl,'eul')+' 살립니다. 오래 있으면 지칩니다.'};
+  return {k:'flat', tag:null, why:'내 기운을 특별히 돕지도 막지도 않습니다.'};
+}
+/* 파티 시너지 — 상생 고리로 이어진 쌍의 수 */
+function synergy(els){
+  var n=0, pairs=0;
+  for(var i=0;i<els.length;i++) for(var j=0;j<els.length;j++){
+    if(i===j||!els[i]||!els[j]) continue;
+    if(DSAENG[els[i]]===els[j]) pairs++;
+  }
+  var kinds={}; els.forEach(function(e){ if(e) kinds[e]=1; });
+  n=Object.keys(kinds).length;
+  return {pairs:pairs, kinds:n, bonus: pairs*4 + (n===5?20:0)};
+}
+
+
+
+/* ===================== 단(段) ===================== */
+/* 사냥터 하나에 열 단. 천간을 거꾸로 써서 계단(癸)이 맨 아래, 갑단(甲)이 꼭대기.
+
+   규칙 (루프3, 2026-09-22) — **전투력이 권장 전투력을 넘으면 깬다.**
+   - 속성 수치 = 30 + 사주 비율 × 1.0 + 그 속성 용신석 개수   (me.js FP.stats)
+   - 전투력 = 다섯 수치 × 상성(극 1.5 · 같음 1.0 · 상생 0.8 · 역극 0.5)의 합
+   - 파티 = 가장 센 사람 + 나머지 × 0.2, 상생 한 쌍마다 +5% · 오늘의 기운 속성 +5%
+   - 권장 전투력을 넘은 단은 **반드시 이긴다.** 난수는 몇 번 겨루는지·누가 맞는지에만 쓴다
+   - 용신석 = 단 × (1 + 0.25 × (인원 − 1)), 오늘의 사냥터는 ×1.5
+   문턱 곡선과 판 수는 `_content/build/tier_sim.js` 로 검산한다. */
+var TIERS=[
+  {k:1, gan:'계', hj:'癸', nm:'계단'}, {k:2, gan:'임', hj:'壬', nm:'임단'},
+  {k:3, gan:'신', hj:'辛', nm:'신단'}, {k:4, gan:'경', hj:'庚', nm:'경단'},
+  {k:5, gan:'기', hj:'己', nm:'기단'}, {k:6, gan:'무', hj:'戊', nm:'무단'},
+  {k:7, gan:'정', hj:'丁', nm:'정단'}, {k:8, gan:'병', hj:'丙', nm:'병단'},
+  {k:9, gan:'을', hj:'乙', nm:'을단'}, {k:10,gan:'갑', hj:'甲', nm:'갑단'}
+];
+var TH = FP.TH;   /* 전투력 문턱 — me.js 와 같은 표 */
+function tOf(k){ return TIERS[Math.max(1,Math.min(10,k))-1]; }
+function tierFor(v){ var t=0; for(var i=0;i<10;i++) if(v>=TH[i]) t=i+1; return t; }
+
+/* 이 사냥터에서 깬 가장 높은 단 — 표시용. 문을 여는 건 수치다. */
+function cleared(gid){ return LS.get('hunt.tier.'+gid, 0); }
+function markCleared(gid,k){ if(k>cleared(gid)) LS.set('hunt.tier.'+gid,k); }
+
+/* 용신석 — 속성마다 따로 쌓인다. me.js 도 같은 키를 읽어 막대를 그린다. */
+function stones(){ return LS.get('hunt.stones', {목:0,화:0,토:0,금:0,수:0}); }
+function addStones(el,n){ var s=stones(); s[el]=(s[el]||0)+n; LS.set('hunt.stones',s); return s; }
+
+/* 땅 G 에서 싸울 때 쓰는 속성 = G 를 누르는 속성 */
+function keyOf(gEl){ return FP.edge(gEl); }
+
+/* 한 사람의 다섯 속성 수치 {목:…}. 나는 me.js 에서(오늘 몫 포함), 친구는 받은 값,
+   없으면 주 속성만 보고 어림한다(주 속성 70, 나머지 55). */
+function myVals(){
+  var st = window.FP && FP.stats ? FP.stats() : null, v={};
+  ['목','화','토','금','수'].forEach(function(x){ v[x] = st ? st[x].now : 50; });
+  return v;
+}
+function valsOf(who){
+  if(who.me) return myVals();
+  if(who.stats) return who.stats;
+  var v={}; ['목','화','토','금','수'].forEach(function(x){ v[x] = who.el===x ? 70 : 55; });
+  return v;
+}
+
+/* 전투력 — 다섯 속성을 땅과의 관계로 무게를 달아 더한다 (me.js FP.weight).
+     그 땅을 누르는 속성 ×1.5 · 같은 속성 ×1 · 서로 살리는 사이 ×0.8 · 그 땅에 눌리는 속성 ×0.5
+   파티는 가장 센 사람 + 나머지 합 × 0.2, 상생 한 쌍마다 +5%. */
+function powerAt(gEl){
+  var who=[{me:true, el:MYEL, nick:(ME&&ME.nick)||'나'}];
+  PARTY.forEach(function(f){ if(f) who.push({el:f.el, nick:f.nick, stats:f.stats}); });
+  var pows=who.map(function(w){ return FP.powerOf(valsOf(w), gEl); });
+  var syn=synergy(who.map(function(w){return w.el}));
+  function total(p){ var top=Math.max.apply(null,p), sum=p.reduce(function(a,b){return a+b},0);
+    return (top + (sum-top)*0.2) * (1+0.05*syn.pairs); }
+  var pow=total(pows), res=0, CB=myCombo();
+  /* 조합 공명 — 내 조합이 누르는 땅에서는 내 몫 +8%. 기단(필살기가 열리는 단)부터 */
+  if(CB && CB.strong.indexOf(gEl)>=0){
+    var p2=pows.slice(); p2[0]=Math.round(p2[0]*(1+FP.COMBO_BONUS));
+    var pw2=total(p2);
+    if(tierFor(pw2)>=FP.ULT_TIER){ pow=pw2; pows=p2; res=1; }
+  }
+  return {edge:FP.edge(gEl), pow:Math.round(pow), mine:pows[0], n:who.length,
+          pairs:syn.pairs, who:who, vals:pows, res:res};
+}
+function myCombo(){ return (window.FP && FP.combo) ? FP.combo() : null; }
+/* 던전마다 사냥감이 다르다(수 늑대·토 멧돼지·목 사슴·화 해태·금 백호). 갑단은 우두머리 '왕' */
+function beastOf(g,K){ return g.beast+(K>=10?'왕':''); }
+function preyOf(g,K){ return g.prey+' '+beastOf(g,K); }
+/* 열리는 단 = 바로 전 단을 깬 다음 단까지(계단은 늘 열림). 단은 급수라서 어느 사냥터에서 깼든 같은 단이 다른 사냥터에도
+   열린다 — 사냥터마다 처음부터 다시 오르게 하면 한 곳만 파게 된다(시뮬 322판·한 곳 100%).
+   권장 전투력은 문턱이 아니라 경고다 — 모자라도 들어갈 수 있지만 진다 */
+function topCleared(){ var m=0; GROUNDS.forEach(function(g){ m=Math.max(m, cleared(g.id)); }); return m; }
+function tierCap(gEl){ return Math.min(10, topCleared()+1); }
+function tierReach(gEl){ return Math.max(1, tierFor(powerAt(gEl).pow)); }     /* 전투력으로 깰 수 있는 단 */
+function dropFor(k,n){ return Math.round(k*(1+0.25*(n-1))); }
+/* 같은 사냥터를 잇따라 돌면 사냥감이 경계한다 — 판마다 용신석 12%씩, 최대 절반까지 줄어든다.
+   다른 사냥터로 옮기면 바로 풀린다. 다섯 곳을 고루 돌게 하는 장치다(서머너즈워의 요일 던전과 같은 목적) */
+function streak(){ return LS.get('hunt.streak', {id:'', n:0}) || {id:'', n:0}; }
+function streakN(gid){ var k=streak(); return k.id===gid ? k.n : 0; }
+function wary(gid){ return Math.max(0.52, 1 - 0.12*Math.min(4, streakN(gid))); }
+function noteVisit(gid){ var k=streak(); LS.set('hunt.streak', {id:gid, n: k.id===gid ? k.n+1 : 1}); }
+/* 내 조합이 누르는 두 땅(공명) — 용신석 ×1.2. 사주마다 자주 가는 땅이 갈라진다 */
+function isResG(el){ var c=myCombo(); return !!(c && c.strong.indexOf(el)>=0); }
+function lootMul(el,gid){ return (isTodayG(el)?1.5:1)*(isResG(el)?1.2:1)*(gid?wary(gid):1); }
+function lootTag(el,gid){ var t=[]; if(isTodayG(el)) t.push('오늘 ×1.5'); if(isResG(el)) t.push('공명 ×1.2');
+  if(gid && wary(gid)<1) t.push('경계 ×'+(Math.round(wary(gid)*100)/100)); return t.join(' · '); }
+
+/* ===================== 전투 ===================== */
+/* 보는 전투다. 한 번 누르면 끝까지 굴러가고, 사람은 로그를 읽는다.
+   규칙은 화면에 이미 써 놓은 추천 문구(mineRel)와 같은 오행 관계를 쓴다.
+   추천에서 "내가 우세" 라고 해 놓고 전투에서 지면 그 화면이 거짓말이 된다. */
+var HJEL={목:'木',화:'火',토:'土',금:'金',수:'水'};
+
+/* 사람 이름 뒤 조사. 카카오 닉네임은 무엇이든 올 수 있어서 받침을 직접 센다.
+   '민수을 덮칩니다' 같은 문장이 한 줄만 나와도 화면 전체가 엉성해 보인다. */
+function jn(w, pair){
+  var c=String(w||'').trim().slice(-1).charCodeAt(0);
+  var hasJong = (c>=0xAC00 && c<=0xD7A3) ? ((c-0xAC00)%28)!==0 : true;
+  return w + (hasJong ? pair[0] : pair[1]);
+}
+
+/* 공격 한 대의 배수와, 로그에 쓸 한 줄. */
+function strike(att, def){
+  if(DGEUK[att]===def)  return {m:1.55, s:'누른다',   k:'big'};
+  if(DGEUK[def]===att)  return {m:0.65, s:'눌린다',   k:'bad'};
+  if(DSAENG[att]===def) return {m:0.80, s:'살려 준다', k:''};
+  if(DSAENG[def]===att) return {m:1.15, s:'기운을 받는다', k:'hit'};
+  if(att===def)         return {m:1.10, s:'같은 기운', k:'hit'};
+  return {m:1.0, s:'', k:'hit'};
+}
+
+/* 단이 오르면 마물 수가 는다 — 계·임 1, 경·신 2, 두 단마다 +1 (갑단 5).
+   총 체력과 반격 총량은 그대로라 깰 수 있는 난이도는 같다. 숫자가 늘어 보이는 만큼만 달라진다 */
+function foeCount(K){ return Math.min(5, 1+Math.floor((K-1)/2)); }
+
+function buildFight(){
+  var g=CUR, gEl=g.el, K=TIER;
+  var P=powerAt(gEl), need=TH[K-1];
+  var ratio=P.pow/need, win=ratio>=1;
+  var margin=Math.max(1, ratio);                /* 문턱을 얼마나 넘었나 */
+  var team=P.who.map(function(w){ return {nick:w.nick, el:w.el, me:!!w.me, hp:100, max:100, down:false}; });
+  var n=team.length, M=foeCount(K);
+
+  /* 여유가 클수록 빨리 끝나고 덜 맞는다. 문턱에 딱 걸치면 아슬아슬하다. 문턱 아래면 진다. */
+  var T    = win ? Math.max(3, Math.min(7, Math.round(7-(margin-1)*8))) : 6;
+  var left = win ? Math.max(0.16, Math.min(0.92, 0.16+(margin-1)*1.6)) : 0;
+  var total=Math.round(need*(1+0.6*(n-1)));
+  var beast=beastOf(g,K), foeNm=tOf(K).gan+'급 '+preyOf(g,K);
+  var foes=[]; for(var fi=0;fi<M;fi++){ var hpF=Math.round(total/M); foes.push({i:fi, nm:foeNm+(M>1?' '+(fi+1):''), el:gEl, max:hpF, hp:hpF, alive:true}); }
+  foes[M-1].max += total - foes.reduce(function(a,f){return a+f.max},0); foes[M-1].hp=foes[M-1].max;
+  var foe={nm:foeNm, el:gEl, max:total, hp:total, count:M};     /* 합계 — 헤더·로그용 */
+  var alive=function(){ return foes.filter(function(f){return f.alive}); };
+  var target=function(){ var a=alive(); return a.length?a[0]:null; };
+
+  var L=[], A=[];
+  function push(t,k){ L.push({t:t,k:k||''}); return L[L.length-1]; }
+  function act(o){ A.push(o); }
+  function jit(){ return 0.85+Math.random()*0.3; }
+  function hpOf(f){ return f.hp/f.max; }
+
+  push(g.nm+' '+tOf(K).nm+'에 들어섰습니다. '+(M>1 ? beast+' '+M+'마리가' : jn(foe.nm,['이','가']))+' 기다리고 있습니다.','big');
+  push('전투력 '+P.pow+' · 권장 전투력 '+need+(P.pow>=need*1.3?' — 여유 있습니다.':P.pow<need?' — 모자랍니다.':''),'hit');
+  if(P.pairs) push('파티의 기운이 서로를 살립니다. 상생 '+P.pairs+'쌍 +'+(P.pairs*5)+'%.','hit');
+  var TD=FP.today(); push('오늘의 기운 '+TD.ganHj+TD.zhiHj+' — '+TD.els[0]+(TD.els[1]!==TD.els[0]?'·'+TD.els[1]:'')+' 수치가 '+Math.round(FP.TODAY*100)+'% 오릅니다.','hit');
+
+  /* 우리 쪽 공격 몫 — 각자의 수치와 상성으로 나누고, T 번에 걸쳐 정확히 다 깎는다(지면 비율만큼만) */
+  var share=team.map(function(t,i){ return P.vals[i]; });
+  var shareSum=share.reduce(function(a,b){return a+b},0);
+  var dealTotal = win ? foe.max : Math.round(foe.max*Math.min(0.85, ratio*0.9));
+  var plan=[], tot=0;
+  for(var r=0;r<T;r++) for(var i=0;i<n;i++){ var d=share[i]/shareSum*dealTotal/T*jit(); plan.push(d); tot+=d; }
+  plan=plan.map(function(d){ return Math.max(1,Math.round(d*dealTotal/tot)); });
+  var fix=dealTotal-plan.reduce(function(a,b){return a+b},0); plan[plan.length-1]+=fix;
+
+  /* 상대 쪽 공격 몫 — 끝났을 때 각자 left 만큼 남게. 이기면 쓰러지는 사람은 없다. 지면 한 명이 쓰러지고 물러난다 */
+  var hurt=Math.round((1-Math.max(left,0.16))*100*n), hits=T-1, per=hits?hurt/hits:0;
+  if(!win) per*=1.35;
+
+  /* 내 한 방을 마물에게 넣는다 — 넘치는 만큼은 다음 마물로 */
+  function dealTo(who, i, dmg, kind, lineBase){
+    while(dmg>0){
+      var f=target(); if(!f) return;
+      var d=Math.min(dmg, f.hp); f.hp-=d; dmg-=d;
+      var line=lineBase(f);
+      push(line+' (−'+d+')', kind.k); L[L.length-1].foe=foe.hp>0 ? (foes.reduce(function(a,x){return a+x.hp},0)/foe.max) : 0;
+      act({t:'hit', by:i, foe:f.i, dmg:d, kind:(kind.m>=1.5?'big':''), foeHp:hpOf(f), allHp:foes.reduce(function(a,x){return a+x.hp},0)/foe.max, text:line});
+      if(f.hp<=0){ f.alive=false; var ld=jn(f.nm,['이','가'])+' 쓰러집니다.'; push(ld,'big'); act({t:'foedown', foe:f.i, text:ld}); }
+    }
+  }
+
+  var pi=0, CB=myCombo(), ultAt=(CB && K>=FP.ULT_TIER) ? Math.min(2,T) : 0, calm=0, dotV=0, dotN=0, guard=0, guardK=1;
+  function dot(){ if(!dotN||!target()) return; dotN--; var left2=dotV;
+    while(left2>0){ var f=target(); if(!f) return; var v=Math.min(left2,f.hp); f.hp-=v; left2-=v;
+      var ld=jn(f.nm,['이','가'])+' '+(CB.fx==='gas'?'독연에 괴로워합니다':'뜨거운 김에 데었습니다');
+      push(ld+' (−'+v+')','hit'); L[L.length-1].foe=hpOf(f);
+      act({t:'dot', foe:f.i, dmg:v, col:CB.col, foeHp:hpOf(f), text:ld});
+      if(f.hp<=0){ f.alive=false; var ld2=jn(f.nm,['이','가'])+' 쓰러집니다.'; push(ld2,'big'); act({t:'foedown', foe:f.i, text:ld2}); } } }
+  /* 필살기 = 이번 겨룸 내 몫 + 다음 겨룸 내 몫을 한 번에. 다음 겨룸 내 차례는 쉰다 */
+  if(ultAt && plan[(ultAt)*n]!==undefined){ plan[(ultAt-1)*n]+=plan[ultAt*n]; plan[ultAt*n]=0; }
+  var downed=null;
+  for(var turn=1; turn<=T; turn++){
+    push('— '+turn+'번째 겨룸','turn'); act({t:'turn', text:'— '+turn+'번째 겨룸'});
+    dot(); if(!target()) break;
+    for(var i=0;i<n;i++){
+      var t=team[i], sk=strike(t.el,gEl), dmg=plan[pi++];
+      if(!dmg || t.down) continue;
+      if(i===0 && turn===ultAt){
+        /* 효과마다 실제로 다르게 — 설명과 전투가 맞게 */
+        var fx=CB.fx, splits=[dmg];
+        if((fx==='gas'||fx==='steam') && dmg>=6){ dotV=Math.max(1,Math.round(dmg*(fx==='gas'?0.12:0.2))); dotN=fx==='gas'?2:1; dmg-=dotV*dotN; splits=[dmg]; }
+        if(fx==='bolt'){ var b1=Math.round(dmg*0.55); splits=[b1,dmg-b1]; }
+        if(fx==='wind'){ var w1=Math.round(dmg*0.3), w2=Math.round(dmg*0.3); splits=[w1,w2,dmg-w1-w2]; }
+        var ft=target(); var dU=Math.min(dmg, ft.hp); var over=dmg-dU; ft.hp-=dU;
+        var lu=t.nick+'의 조합 필살기 '+CB.sk+'('+CB.skHj+')! '+HJEL[CB.a]+HJEL[CB.b]+' → '+CB.nm+'. '+CB.eff+'.';
+        push(lu+' (−'+dU+')','big'); L[L.length-1].foe=hpOf(ft);
+        act({t:'ult', by:0, foe:ft.i, dmg:dU, splits:(function(){ var acc=0, out=splits.map(function(x,q){ var v=(q<splits.length-1)?Math.round(x*dU/Math.max(1,dmg)):dU-acc; acc+=v; return v; }); return out; })(), foeHp:hpOf(ft), fx:fx, col:CB.col, name:CB.sk, hj:CB.skHj,
+             pair:HJEL[CB.a]+HJEL[CB.b], nm:CB.nm, eff:CB.eff, text:lu});
+        if(ft.hp<=0){ ft.alive=false; var ld3=jn(ft.nm,['이','가'])+' 쓰러집니다.'; push(ld3,'big'); act({t:'foedown', foe:ft.i, text:ld3}); }
+        if(over>0) dealTo(t, i, over, sk, function(f){ return '넘친 기운이 '+jn(f.nm,['을','를'])+' 덮칩니다'; });
+        if(/ice|quake|mist/.test(fx)) calm=1;          /* 마물이 한 번 쉰다 */
+        if(fx==='crystal') guard=2, guardK=0.5;        /* 결정 방벽 — 두 번 반으로 */
+        if(fx==='mud') guard=2, guardK=0.6;            /* 속박 — 두 번 약하게 */
+        if(!target()) break;
+        continue;
+      }
+      dealTo(t, i, dmg, sk, function(f){ return t.nick+'의 '+J(t.el,'i')+' '+jn(f.nm,['을','를'])+' 칩니다'+(t.el===FP.edge(gEl)?' — 우세!':''); });
+      if(!target()) break;
+    }
+    if(!target()) break;
+    if(calm){ calm=0; var lc=beast+(M>1?'들':'')+(CB.fx==='ice'?'이 얼어붙어 움직이지 못합니다':CB.fx==='quake'?'이 땅이 흔들려 쓰러져 있습니다':'이 안개 속에서 헛손질합니다')+'.';
+      push(lc,'hit'); act({t:'turn', text:lc}); continue; }
+    /* 살아 있는 마물이 한 번씩 — 가장 성한 사람을 노린다. 총량은 마물 수와 상관없이 같다 */
+    var al=alive();
+    for(var m=0;m<al.length;m++){
+      var v=team.filter(function(x){return !x.down}).sort(function(a,b){return b.hp-a.hp})[0]; if(!v) break;
+      var d2=Math.max(1,Math.round(per/al.length*jit()));
+      if(win) d2=Math.min(d2, Math.max(0, v.hp-Math.round(left*100*0.9)));
+      var gd=''; if(guard>0){ guard--; d2=Math.max(1,Math.round(d2*guardK)); gd=CB.fx==='crystal'?' — 결정 방벽이 막아 줍니다':' — 발이 묶여 힘이 빠졌습니다'; }
+      v.hp=Math.max(0, v.hp-d2);
+      var line2=jn(al[m].nm,['이','가'])+' '+jn(v.nick,['을','를'])+' 덮칩니다'+gd;
+      push(line2+' (−'+d2+')', ''); L[L.length-1].team=team.map(function(x){return {hp:x.hp/x.max,down:x.down}});
+      act({t:'foehit', from:al[m].i, to:team.indexOf(v), dmg:d2, kind:'', hp:team.map(function(x){return x.hp/x.max}), text:line2});
+      if(!win && v.hp<=0 && !v.down){ v.down=true; downed=v; var ldn=jn(v.nick,['이','가'])+' 쓰러졌습니다.'; push(ldn,'big'); act({t:'down', i:team.indexOf(v), text:ldn}); }
+    }
+    if(!win && (downed || turn===T)) break;
+  }
+  if(!win && !downed){ var vv=team.slice().sort(function(a,b){return a.hp-b.hp})[0]; vv.hp=0; vv.down=true; downed=vv;
+    var ldn2=jn(vv.nick,['이','가'])+' 쓰러졌습니다.'; push(ldn2,'big'); act({t:'down', i:team.indexOf(vv), text:ldn2}); }
+  while(win && dotN>0 && target()) dot();                    /* 남은 독·화상은 끝에 */
+  if(win){ foes.forEach(function(f){ if(f.alive){ f.hp=0; f.alive=false; act({t:'foedown', foe:f.i, text:''}); } }); }
+  foe.hp = foes.reduce(function(a,x){return a+x.hp},0);
+
+  var loot=0, ltext='';
+  if(win){
+    var endLine=(M>1 ? beast+'들이' : jn(foe.nm,['이','가']))+' 물러갑니다.';
+    push(endLine,'big'); act({t:'end', win:true, text:endLine});
+    loot=Math.max(1, Math.round(dropFor(K,n)*lootMul(gEl,g.id)));
+    ltext=gEl+' 용신석 '+loot+'개 획득'+(lootTag(gEl,g.id)?' ('+lootTag(gEl,g.id)+')':'')+(n>1?' — 한 사람에 '+loot+'개씩':'')+'.';
+    push(ltext,'big'); act({t:'loot', el:gEl, n:loot, yong:true, text:ltext});
+  } else {
+    var endL='버티지 못하고 물러났습니다. 용신석은 없습니다.';
+    push(endL,'big'); act({t:'end', win:false, text:endL});
+  }
+
+  var nxt = K<10 ? TH[K] : null, gapN = nxt ? nxt-P.pow : 0;
+  var why = !win ? '권장 전투력 '+need+'에 '+(need-P.pow)+' 모자랍니다 — '+FP.edge(gEl)+' 용신석 '+Math.ceil((need-P.pow)/1.5)+'개쯤이면 넘습니다.'
+          : !nxt ? '갑단 정복 — 이 사냥터의 끝까지 올랐습니다.'
+          : gapN<=0 ? '여유 있게 이겼습니다. '+tOf(K+1).nm+'이 열렸고, 권장 전투력도 이미 넘었습니다.'
+          : tOf(K+1).nm+'까지 전투력 '+gapN+' 남았습니다 — '+FP.edge(gEl)+' 용신석이 가장 빨리 채워 줍니다.';
+
+  return {log:L, acts:A, win:win, turns:T, standing:team.filter(function(x){return !x.down}).length, total:n, why:why,
+          foe:foe, foes:foes, team:team, syn:{pairs:P.pairs}, tier:K, loot:loot, lootEl:gEl, P:P, need:need};
+}
+
+function renderBattleHead(F){
+  var g=CUR;
+  $('foe').innerHTML=gem(g.col, HJEL[g.el])+
+    '<span><h1>'+esc(F.foe.nm)+(F.foe.count>1?' × '+F.foe.count:'')+'</h1><span class="wh">'+esc(g.nm)+' '+tOf(F.tier).nm+' · '+g.el+'</span></span>';
+  paintTeam(F.team.map(function(t){return {hp:1,down:false}}), F.team);
+}
+function paintTeam(st, team){
+  /* 내 캐릭터와 친구들의 체력 — 화면 위에 한 줄, 인원수만큼 나눠서. 마물 체력은 3D 안 마물 머리 위에 */
+  $('tbars').innerHTML=team.map(function(t,i){
+    var s=st[i]||{hp:1,down:false};
+    return '<div class="tbar'+(s.down?' down':'')+'"><i style="width:'+Math.round(s.hp*100)+'%"></i><b>'+esc(t.nick)+(s.down?' · 쓰러짐':'')+'</b></div>';
+  }).join('');
+}
+
+var BT=null, CURF=null;
+/* 배속 — 기억해 둔다. 판수가 많은 게임이라 두 번째 판부터는 대부분 빠르게 본다 */
+var SPEED=1;                                    /* 배속·건너뛰기는 뺐다 — 전투를 보는 게 놀이다 */
+var V3=null;      /* 돌고 있는 3D 화면 */
+
+/* 이 브라우저에서 3D 를 돌릴 수 있나. 못 돌리면 글로 흐른다 —
+   빈 화면을 보여 주느니 예전 방식이 낫다. */
+function can3D(){
+  try{
+    var c=document.createElement('canvas');
+    if(!(c.getContext('webgl2')||c.getContext('webgl'))) return false;
+  }catch(e){ return false; }
+  return typeof Promise!=='undefined' && !!window.fetch;
+}
+
+function stopBattle(){
+  if(BT){ clearTimeout(BT); BT=null; }
+  if(V3){ try{ V3.destroy(); }catch(e){} V3=null; }
+}
+
+function playBattle(){
+  stopBattle();
+  var F=buildFight(); CURF=F;
+  show('v-battle');
+  renderBattleHead(F);
+  $('res').innerHTML=''; $('cap').textContent='';
+  $('log').hidden=true; $('lgtoggle').hidden=true; $('lgtoggle').textContent='전투 로그';
+  fillLog(F);
+  ev('hunt_battle',{ground:CUR.nm, size:F.total});
+
+  if(!can3D()) return playLog(F);
+  $('stage').hidden=false;
+  $('stage').innerHTML='<div class="load" id="load">사냥터를 그리는 중…</div>';
+  import('/3d/battle3d.js').then(function(m){
+    return m.runBattle({
+      mount:$('stage'), base:'/3d/',
+      ground:{el:CUR.el, nm:CUR.nm, id:CUR.id},
+      team:F.team.map(function(t){ return {el:t.el, nick:t.nick}; }),
+      foe:{el:F.foe.el, nm:F.foe.nm}, foeCount:F.foe.count,
+      acts:F.acts, tier:F.tier,
+      speed:function(){ return SPEED; },
+      onProgress:function(p){ var l=$('load'); if(l) l.textContent='사냥터를 그리는 중… '+Math.round(p*100)+'%'; },
+      onCaption:function(t){ $('cap').textContent=t; },
+      onLoot:function(got,all){ $('cap').textContent='용신석 '+got+' / '+all+'개 획득'; },
+      onTeamHp:function(hp){ paintTeam(hp.map(function(h,i){
+        return {hp:h, down:F.team[i].down&&h<=0}; }), F.team); },
+      onDone:function(){ if(CURF===F){ CURF=null; endBattle(F); } }
+    });
+  }).then(function(h){ V3=h; }).catch(function(e){
+    /* 모델을 못 받았거나 three 가 안 뜬 경우 — 조용히 글로 넘어간다 */
+    ev('hunt_3d_fail',{msg:String(e&&e.message||e).slice(0,80)});
+    $('stage').hidden=true;
+    playLog(F);
+  });
+}
+
+/* 기록을 미리 다 적어 둔다. 3D 로 볼 때는 접어 두고, 눌러서 펼친다. */
+function fillLog(F){
+  $('log').innerHTML='';
+  F.log.forEach(function(l){
+    var p=document.createElement('p'); p.className=l.k; p.textContent=l.t;
+    $('log').appendChild(p);
+  });
+}
+
+/* 3D 를 못 쓸 때 — 예전처럼 한 줄씩 흐른다 */
+function playLog(F){
+  $('stage').hidden=true; $('cap').textContent='';
+  $('log').hidden=false; $('log').innerHTML='';
+  var i=0;
+  (function step(){
+    if(i>=F.log.length){ BT=null; if(CURF===F){ CURF=null; endBattle(F); } return; }
+    var l=F.log[i++];
+    var p=document.createElement('p');
+    p.className=l.k; p.textContent=l.t;
+    $('log').appendChild(p);
+    $('log').scrollTop=$('log').scrollHeight;
+    if(l.team) paintTeam(l.team, F.team);
+    BT=setTimeout(step, (l.k==='turn' ? 260 : 430)/SPEED);
+  })();
+}
+
+function endBattle(F){
+  paintTeam(F.team.map(function(t){return {hp:t.hp/t.max, down:t.down}}), F.team);
+  var tn=tOf(F.tier).nm, nx=F.tier+1;
+  if(F.win){ markCleared(CUR.id, F.tier); addStones(F.lootEl, F.loot); noteVisit(CUR.id); }
+  if(window.FP) FP.push();              /* 로그인했으면 계정에 저장 */
+  var cap=tierCap(CUR.el);
+  var canNext = F.win && nx<=10 && nx<=cap;
+  var st = window.FP && FP.stats ? FP.stats() : null;
+  var mineNow = st ? st[F.lootEl].val : null;   /* 오늘 몫 뺀 본 수치 */
+  var nextNeed = nx<=10 ? TH[nx-1] : null;
+  if(F.win){
+    $('res').innerHTML=
+      '<div class="res win">'+
+        '<div class="rt">'+tn+' 정복</div>'+
+        '<div class="rw">'+esc(F.why)+'</div>'+
+        '<div class="loot"><span class="st" style="background:'+colOf(F.lootEl)+'"></span>'+
+          '<b>'+F.lootEl+' 용신석 '+F.loot+'개</b>'+
+          (mineNow!=null ? '<span class="bo">내 '+F.lootEl+' 수치 '+mineNow+' ('+
+            (st[F.lootEl].val-F.loot)+' → '+mineNow+')</span>' : '')+'</div>'+
+        '<div class="rn"><span><b>'+F.turns+'</b>번 겨룸</span>'+
+          '<span>전투력 <b>'+F.P.pow+'</b> / 권장 '+F.need+'</span>'+
+          (nextNeed ? '<span>'+tOf(nx).nm+' 권장 전투력 <b>'+nextNeed+'</b></span>' : '')+'</div>'+
+      '</div>';
+  } else {
+    $('res').innerHTML=
+      '<div class="res lose">'+
+        '<div class="rt">'+tn+' — 물러났습니다</div>'+
+        '<div class="rw" style="color:#f0a0a0">'+esc(F.why)+'</div>'+
+        '<div class="rn"><span>전투력 <b>'+F.P.pow+'</b> / 권장 <b style="color:#e8483c">'+F.need+'</b></span><span>용신석 없음</span></div>'+
+      '</div>';
+  }
+  $('res').innerHTML +=
+    '<div class="again">'+
+      (canNext ? '<button class="pri" id="b-next">'+tOf(nx).nm+'으로 올라가기</button>' : '')+
+      '<button'+(canNext?'':' class="pri"')+' id="b-again">다시 도전</button>'+
+      '<button id="b-tier">단 선택</button>'+
+      '<button id="b-ground">사냥터 목록</button>'+
+    '</div>';
+  LS.set('hunt.last.'+CUR.id, {win:F.win, turns:F.turns, total:F.total, tier:F.tier, at:Date.now()});
+  ev('hunt_result',{ground:CUR.nm, tier:F.tier, win:F.win?1:0, turns:F.turns, size:F.total, loot:F.loot, pow:F.P.pow});
+  if(window.FP) FP.paint();
+  $('lgtoggle').hidden=false;
+  $('lgtoggle').onclick=function(){
+    var on=$('log').hidden; $('log').hidden=!on;
+    this.textContent = on ? '전투 로그 닫기' : '전투 로그';
+  };
+  $('b-again').onclick=playBattle;
+  if($('b-next')) $('b-next').onclick=function(){ stopBattle(); TIER=nx; renderParty(); };
+  $('b-tier').onclick=function(){ stopBattle(); renderTier(); };
+  $('b-ground').onclick=function(){ stopBattle(); renderPick(); };
+}
+
+/* ===================== 화면 ===================== */
+var ME=null, MYEL=null, DAY=dayPillar(kstToday()), CUR=null, TIER=1, PARTY=[null,null,null,null];
+
+function show(id){
+  ['v-lock','v-pick','v-tier','v-party','v-battle'].forEach(function(v){ $(v).classList.toggle('on', v===id); });
+  window.scrollTo({top:0,behavior:'instant'});
+}
+
+/* 내 오행은 **홈에서 만든 캐릭터** 하나뿐이다.
+   예전에는 여기서 생년월일을 또 물어봤다 — 같은 사람에게 같은 걸 두 번 묻는
+   꼴이었고, 카카오로 로그인하고 나면 그 값이 어디로 갔는지도 헷갈렸다.
+   (2026-09-20) */
+function myElement(){
+  if(window.FP && FP.el()) return FP.el();
+  if(ME && ME.el) return ME.el;
+  return null;
+}
+
+function renderTop(){
+  var d=DAY, a=d.els[0], b=d.els[1], TD=FP.today();
+  var dayTxt = (a===b ? J(a,'i')+' 겹친 날' : J(a,'wa')+' '+b+'의 날');
+  $('today').innerHTML =
+    '<div class="gems">'+(MYEL?gem(colOf(MYEL), HJEL[MYEL]):'')+
+      '<b class="gem sq" style="--c:'+colOf(a)+'" title="'+d.gan+'">'+TD.ganHj+'</b>'+
+      '<b class="gem sq" style="--c:'+colOf(b)+'" title="'+d.zhi+'">'+TD.zhiHj+'</b></div>'+
+    (MYEL?'<p>오행 속성 <b>'+MYEL+'</b></p>':'')+
+    '<p>오늘의 기운 <b>'+d.gan+d.zhi+'</b></p>'+
+    '<p class="day">'+dayTxt+' — '+a+(a!==b?'·'+b:'')+' 수치 +'+Math.round(FP.TODAY*100)+'%</p>';
+  $('hcombo').innerHTML = comboHTML();
+  $('hbars').innerHTML = MYEL ? FP.barsHTML({}) : '';
+  $('hbarsw').hidden = !MYEL;
+  /* 넓은 화면은 펼쳐 두고, 휴대폰은 접어서 던전 카드가 첫 화면에 보이게 한다 */
+  if(!$('hbarsw').dataset.init){ $('hbarsw').dataset.init='1'; $('hbarsw').open = innerWidth > 640; }
+
+  /* 3D 캐릭터는 한 번만 띄운다 */
+  var dg=$('hdog');
+  if(MYEL && dg && !dg.dataset.on){
+    dg.dataset.on='1';
+    import('/3d/profile3d.js').then(function(m){
+      return m.showDog({mount:dg, base:'/3d/', el:MYEL, height:150});
+    }).catch(function(){ dg.style.display='none'; });
+  }
+  if(!MYEL && dg) dg.style.display='none';
+
+  if(MYEL){ $('mine').innerHTML=''; $('mine').hidden=true; }
+  else {
+    $('mine').hidden=false;
+    $('mine').innerHTML='아직 캐릭터가 없습니다. '+
+      '<a href="/">생년월일로 캐릭터 만들기 &rarr;</a>';
+  }
+}
+
+/* 내 조합 필살기 한 줄 — 사주 1·2위 속성이 만든 변화 속성 */
+function comboHTML(){
+  var c=myCombo(); if(!c) return '';
+  /* 아직 기단 전이면 잠긴 채로 보여 준다 — 목표가 눈에 보이게 */
+  var best=0; GROUNDS.forEach(function(g){ best=Math.max(best, tierFor(powerAt(g.el).pow)); });
+  var open=best>=FP.ULT_TIER, need=TH[FP.ULT_TIER-1], now=0;
+  GROUNDS.forEach(function(g){ now=Math.max(now, powerAt(g.el).pow); });
+  return '<div class="combo'+(open?'':' lock')+'" style="--cc:'+c.col+'">'+
+    '<span class="cgems">'+gem(colOf(c.a),HJEL[c.a],'orb sm')+'<i>+</i>'+gem(colOf(c.b),HJEL[c.b],'orb sm')+'<i>=</i>'+
+    '<b class="cel">'+c.hj+'</b></span>'+
+    '<span class="ctx"><b>조합 필살기 · '+c.sk+'</b> <small>'+c.skHj+'</small><br>'+
+    c.a+'+'+c.b+' → <b>'+c.nm+'</b> · <b class="ctag">'+c.eff.split(' — ')[0]+'</b> '+(c.eff.split(' — ')[1]||'')+'<br>'+
+    (open ? '<span class="cok">열림 · 둘째 겨룸에 나갑니다</span>'
+          : '<span class="clk">잠김 · 기단(5단)에서 열림 · 전투력 '+now+' / '+need+'</span>')+'<br>'+
+    '공명 · '+FP.FROM[c.strong[0]]+'·'+FP.FROM[c.strong[1]]+' — 용신석 ×1.2, 기단부터 전투력 +'+Math.round(FP.COMBO_BONUS*100)+'%</span></div>';
+}
+/* 보석 한 알. sq 면 네모 보석 */
+function gem(col, txt, cls){ return '<span class="'+(cls||'orb')+' gem" style="--c:'+col+'"><span class="h">'+txt+'</span></span>'; }
+
+/* 오행도 — 상생(살림)은 바깥 고리, 상극(누름)은 안쪽 별.
+   사냥터 규칙이 전부 이 그림 하나에서 나온다: 그 땅을 누르는 속성으로 싸운다. */
+function wuxingSVG(){
+  var R=92, cx=125, cy=118, order=['화','토','금','수','목'];   /* 화가 꼭대기, 시계 방향 */
+  var P={}; order.forEach(function(e,i){ var a=-Math.PI/2+i*2*Math.PI/5; P[e]={x:cx+R*Math.cos(a), y:cy+R*Math.sin(a)}; });
+  var HJ={목:'木',화:'火',토:'土',금:'金',수:'水'};
+  function trim(a,b,d){ var dx=b.x-a.x, dy=b.y-a.y, L=Math.sqrt(dx*dx+dy*dy);
+    return {x1:a.x+dx/L*d, y1:a.y+dy/L*d, x2:b.x-dx/L*d, y2:b.y-dy/L*d}; }
+  var o='<svg viewBox="0 0 250 250" role="img" aria-label="오행 상생 상극도">'+
+    '<defs><marker id="ms" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7fe08f"/></marker>'+
+    '<marker id="mk" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#f08c8c"/></marker>';
+  order.forEach(function(e){ var c=colOf(e);
+    o+='<radialGradient id="g'+e+'" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#fff" stop-opacity=".95"/>'+
+       '<stop offset=".18" stop-color="'+c+'"/><stop offset=".75" stop-color="'+c+'"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></radialGradient>'; });
+  o+='</defs>';
+  /* 상생 — 이웃끼리, 바깥 호 */
+  order.forEach(function(e,i){ var n=order[(i+1)%5], a=P[e], b=P[n];
+    var t=trim(a,b,25), mx=(a.x+b.x)/2, my=(a.y+b.y)/2, ox=(mx-cx)*0.28, oy=(my-cy)*0.28;
+    o+='<path d="M'+t.x1.toFixed(1)+','+t.y1.toFixed(1)+' Q'+(mx+ox).toFixed(1)+','+(my+oy).toFixed(1)+' '+t.x2.toFixed(1)+','+t.y2.toFixed(1)+'" '+
+       'fill="none" stroke="#7fe08f" stroke-width="2" marker-end="url(#ms)" opacity=".85"/>'; });
+  /* 상극 — 하나 건너, 안쪽 별 */
+  order.forEach(function(e,i){ var n=order[(i+2)%5], t=trim(P[e],P[n],25);
+    o+='<line x1="'+t.x1.toFixed(1)+'" y1="'+t.y1.toFixed(1)+'" x2="'+t.x2.toFixed(1)+'" y2="'+t.y2.toFixed(1)+'" '+
+       'stroke="#f08c8c" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#mk)" opacity=".8"/>'; });
+  order.forEach(function(e){ var q=P[e], mine=(e===MYEL);
+    o+='<circle cx="'+q.x.toFixed(1)+'" cy="'+q.y.toFixed(1)+'" r="21" fill="url(#g'+e+')" stroke="'+(mine?'#ffd93d':'rgba(255,255,255,.25)')+'" stroke-width="'+(mine?3:1.5)+'"/>'+
+       '<circle cx="'+q.x.toFixed(1)+'" cy="'+q.y.toFixed(1)+'" r="11" fill="'+colOf(e)+'" opacity=".45"/>'+
+       '<text x="'+q.x.toFixed(1)+'" y="'+(q.y+6.5).toFixed(1)+'" text-anchor="middle" font-size="18" font-weight="800" fill="#fff" '+
+       'style="font-family:\'Noto Serif KR\',serif;paint-order:stroke" stroke="rgba(0,0,0,.55)" stroke-width="2.5">'+HJ[e]+'</text>'; });
+  return o+'</svg><div class="lg"><span><i style="border-color:#7fe08f"></i>상생 · 살린다</span>'+
+         '<span><i style="border-color:#f08c8c;border-top-style:dashed"></i>상극 · 누른다</span></div>';
+}
+
+function renderGuide(){
+  $('guide').innerHTML =
+    '<div><h2>사냥터에서 강해지는 법</h2><ul>'+
+    '<li>사냥터마다 <b>그 땅을 누르는 속성</b>의 수치로 싸웁니다. 목은 토를, 토는 수를 누릅니다.</li>'+
+    '<li>이기면 그 땅의 <b>용신석</b>이 떨어집니다. 용신석을 모으면 그 속성 수치가 올라 <b>더 높은 단</b>으로 갈 수 있습니다.</li>'+
+    '<li><b>친구와 파티를 하면 더 높은 단을 깰 수 있고</b>, 한 사람이 받는 용신석도 늘어납니다.</li>'+
+    '<li>높은 단일수록 용신석이 많이 나옵니다.</li>'+
+    '<li><b>오늘의 사냥터</b>는 용신석 ×1.5, 내 사주 조합이 누르는 두 땅(<b>조합 공명</b>)은 ×1.2 — 사주마다 자주 가는 땅이 다릅니다.</li>'+
+    '<li>같은 사냥터를 <b>잇따라 돌면 사냥감이 경계해</b> 용신석이 판마다 12%씩 줄어듭니다(최대 절반). 다른 사냥터로 옮기면 바로 풀립니다.</li>'+
+    '<li><b>기단</b>부터는 사주 1·2위 속성이 만난 <b>조합 필살기</b>가 둘째 겨룸에 나갑니다.</li>'+
+    '</ul></div>'+ wuxingSVG();
+}
+
+function colOf(el){ for(var i=0;i<GROUNDS.length;i++) if(GROUNDS[i].el===el) return GROUNDS[i].col; return '#8e9bb0'; }
+
+/* 오늘의 사냥터 — 서머너즈워의 요일 던전처럼, 오늘의 기운이 든 땅은 용신석 ×1.5 */
+function isTodayG(el){ return DAY.els.indexOf(el)>=0; }
+
+function renderPick(){
+  MYEL = myElement();
+  renderTop();
+  var html='';
+  GROUNDS.forEach(function(g){
+    var P0=powerAt(g.el), cap=Math.max(1,tierFor(P0.pow)), rec=TH[Math.min(9,cap)] || TH[9];
+    var tags='';
+    if(isTodayG(g.el)) tags+='<span class="tag good">오늘의 사냥터 · 용신석 ×1.5</span>';
+    if(isResG(g.el)) tags+='<span class="tag res">조합 공명 · 용신석 ×1.2</span>';
+    if(wary(g.id)<1) tags+='<span class="tag warn">연속 '+streakN(g.id)+'판 · 사냥감 경계 ×'+(Math.round(wary(g.id)*100)/100)+'</span>';
+    tags+='<span class="tag edge">'+FP.edge(g.el)+' 우세</span>';
+    var dn=cleared(g.id), nx=Math.min(10,topCleared()+1), nd=TH[nx-1];
+    var why='내 전투력 <b>'+P0.pow+'</b> · 다음 '+tOf(nx).nm+' 권장 '+nd+
+            (P0.pow<nd ? ' <b style="color:#e8483c">('+FP.edge(g.el)+' 용신석 '+Math.ceil((nd-P0.pow)/1.5)+'개 더)</b>' : '')+
+            (dn ? ' · '+tOf(dn).nm+' 정복' : '');
+    html += '<button class="card'+(isTodayG(g.el)?' best':'')+'" data-g="'+g.id+'" '+
+      'style="--bg:url(/img/dungeon/'+g.id+'.webp)">'+ gem(g.col, g.elhj) +
+      '<span><span class="t"><b>'+g.nm+'</b><span>'+g.prey+' '+g.beast+'</span></span>'+
+      '<span class="one">'+g.one+'</span>'+
+      '<span class="tags">'+tags+'</span>'+
+      '<span class="why">'+why+'</span></span></button>';
+  });
+  $('grid').innerHTML=html;
+  renderGuide();
+  var sw=seatWith();
+  if(sw && ME && MYEL){ $('mine').hidden=false;
+    $('mine').innerHTML='<b class="seated">'+esc(sw.nick)+'님과 함께 왔습니다</b> — 사냥터를 고르면 '+esc(sw.nick)+'님이 파티 자리에 바로 앉습니다.'; }
+  [].forEach.call($('grid').querySelectorAll('.card'),function(b){
+    b.onclick=function(){ openGround(b.dataset.g); };
+  });
+  if(MODE==='demo'){
+    $('demo-note').hidden=!!window.FP_REC;
+    $('demo-note').textContent='데모 모드입니다 — 이 브라우저 안에서만 저장되고 친구와 공유되지 않습니다.';
+  }
+  show('v-pick');
+}
+
+/* ---- 파티 화면 ---- */
+function gOf(id){ for(var i=0;i<GROUNDS.length;i++) if(GROUNDS[i].id===id) return GROUNDS[i]; return null; }
+
+function openGround(id){
+  CUR = gOf(id); if(!CUR) return;
+  ev('hunt_enter',{ground:CUR.nm, element:CUR.el});
+  Store.party(CUR.id).then(function(m){
+    PARTY = (m && m.length===4) ? m : [null,null,null,null];
+    return seatPartner();
+  }).then(renderTier, renderTier);
+}
+
+/* ---- 궁합소에서 온 상대 바로 앉히기 ----
+   궁합 결과의 '같이 사냥하러 가기'가 localStorage 'hunt.seatWith' 에 상대를 적고, 서버(gh_link)가 서로를 친구 목록에 올려 둔다.
+   처음 들어가는 사냥터의 빈 자리에 앉히고 표시를 지운다(파티는 사냥터마다 따로라 한 곳에만). 하루 지나면 무시. */
+var SEATED=null;
+function seatWith(){ var w=LS.get('hunt.seatWith',null); return (w && w.id && Date.now()-(+w.at||0) < 86400000) ? w : null; }
+function seatPartner(){
+  var w=seatWith(); if(!w || !ME || String(w.id)===String(ME.id)) return Promise.resolve();
+  if(PARTY.some(function(p){ return p && String(p.id)===String(w.id); })){ LS.set('hunt.seatWith',null); return Promise.resolve(); }
+  return Store.friends().then(function(list){
+    var f=list.filter(function(x){ return String(x.id)===String(w.id); })[0];
+    if(!f) return;                                   /* 아직 친구 목록에 없다 — 표시는 남겨 두고 다음에 다시 */
+    var i=PARTY.indexOf(null);
+    if(i<0){ SEATED={nick:f.nick, full:true}; return; }
+    PARTY[i]=f; Store.saveParty(CUR.id,PARTY); LS.set('hunt.seatWith',null);
+    SEATED={nick:f.nick}; ev('hunt_seat_gunghap',{ground:CUR.nm});
+  });
+}
+
+/* ---- 단 고르기 ----
+   사다리는 아래에서 위로 읽는다(.ladder 는 column-reverse). 계단이 맨 아래,
+   갑단이 맨 위. 잠긴 칸도 숨기지 않고 왜 잠겼는지 한 줄로 적는다 —
+   무엇을 하면 열리는지 보이지 않으면 사람은 다시 오지 않는다. */
+function renderTier(){
+  var g=CUR, P=powerAt(g.el), done=cleared(g.id), cap=Math.max(1,tierFor(P.pow));
+  $('th').innerHTML=gem(g.col, g.elhj)+
+    '<span><h1>'+g.nm+'</h1><span class="hj">'+g.prey+' '+g.beast+' · 계단부터 갑단까지 열 단</span></span>';
+  var parts=FP.ORDER.map(function(x){ return x+'×'+FP.weight(x,g.el); }).join(' + ');
+  $('tsub').innerHTML='<b>'+P.edge+' 우세</b> — '+J(P.edge,'i')+' 이 땅을 누릅니다. '+
+    '<details class="fxd"><summary>전투력 계산식 보기</summary><span class="fx">'+parts+'</span></details>'+
+    (P.n>1?P.n+'명 파티 전투력 ':'내 전투력 ')+'<b class="pw">'+P.pow+'</b>'+
+    (P.n>1&&P.pairs?' (상생 '+P.pairs+'쌍 포함)':'')+'.';
+
+  /* 속성 막대 다섯 줄 — 이 땅에서 각 속성이 받는 무게를 옆에 적는다 */
+  $('pouch').innerHTML = FP.barsHTML({hl:P.edge, w:g.el});
+
+  var html='';
+  TIERS.forEach(function(t){
+    var top=topCleared(), need=TH[t.k-1], isDone=t.k<=done, isOpen=t.k<=top+1, weak=P.pow<need;
+    var tag = isDone ? '<span class="rt2 done">정복</span>'
+            : isOpen ? '<span class="rt2 open">열림</span>' : '<span class="rt2 shut">잠김</span>';
+    var gap=need-P.pow;
+    var cnt=foeCount(t.k);
+    var why = beastOf(g,t.k)+(cnt>1?' '+cnt+'마리':'')+' · 권장 '+need+
+      (weak ? ' · <b style="color:#e8483c">'+FP.edge(g.el)+' 용신석 '+Math.ceil(gap/1.5)+'개 더</b>'
+            : ' · '+g.el+' '+Math.max(1,Math.round(dropFor(t.k,P.n)*lootMul(g.el,g.id)))+'개'+(lootMul(g.el,g.id)!==1?' ×'+(Math.round(lootMul(g.el,g.id)*100)/100):''));
+    html += '<button class="rung'+(t.k===top+1&&isOpen?' now':'')+(weak&&isOpen?' weak':'')+'" data-k="'+t.k+'"'+(isOpen?'':' disabled')+'>'+
+      gem(g.col, t.hj, 'gz2 sq')+
+      '<span><span class="tn">'+t.nm+'</span><span class="td">'+why+'</span></span>'+tag+'</button>';
+  });
+  $('ladder').innerHTML=html;
+  [].forEach.call($('ladder').querySelectorAll('.rung'),function(b){
+    b.onclick=function(){ TIER=+b.dataset.k; renderParty(); };
+  });
+
+  var tip = (P.pow<TH[9]) ? '<p class="tip3">부족한 전투력은 <b>'+P.edge+' 용신석</b>이 가장 빨리 채웁니다(1개 +1.5, '+FP.FROM[P.edge]+'에서 나옴)'+(P.n<5?' · 친구와 오면 더 빨리 열립니다':'')+'.</p>' : '';
+  $('tnote').innerHTML = tip +
+    '<b>바로 전 단을 깨면 다음 단이 열립니다</b>(어느 사냥터에서 깼든). 권장 전투력을 넘으면 반드시 깨고, <b style="color:#e8483c">붉은 글씨</b>가 뜬 단은 들어갈 수는 있지만 집니다. '+TIERS.map(function(t){return t.nm+' '+TH[t.k-1]}).join(' · ')+'.<br>'+
+    '<b>'+g.el+' 용신석</b>은 이곳에서 나고 '+g.el+' 수치를 올립니다. 모든 사냥터의 전투력에 조금씩 보탬이 됩니다. '+
+    '친구와 오면 파티 수치가 오르고, 각자 받는 돌도 늘어납니다(다섯이면 두 배).';
+  var seatedNow=!!SEATED;
+  if(SEATED){
+    $('tsub').innerHTML = '<b class="seated">'+esc(SEATED.nick)+'님'+(SEATED.full?'은 자리가 다 차서 앉지 못했습니다 — 파티에서 한 명을 빼고 친구 목록에서 앉혀 주세요.':'이 궁합소에서 함께 와 파티 자리에 앉았습니다.')+'</b><br>'+$('tsub').innerHTML;
+    SEATED=null;
+  }
+  ev('hunt_tier_view',{ground:g.nm, done:done, cap:cap, pow:P.pow});
+  show('v-tier');
+  /* 서머너즈워 층 선택처럼 — 들어오면 지금 도전할 단이 먼저 보이게 */
+  var now=$('ladder').querySelector('.rung.now') || [].filter.call($('ladder').querySelectorAll('.rung'),function(r){return !r.disabled}).pop();
+  /* 궁합 상대가 방금 앉았으면 그 알림(맨 위)이 보이게 스크롤하지 않는다(루프21) */
+  if(now && !seatedNow) setTimeout(function(){ now.scrollIntoView({block:'center'}); }, 30);
+}
+
+function renderParty(){
+  var g=CUR, ts=todayScore(g.el,DAY.els), rel=mineRel(MYEL,g.el);
+  $('gh').innerHTML=gem(g.col, g.elhj)+
+    '<span><h1>'+g.nm+' '+tOf(TIER).nm+'</h1><span class="hj">'+tOf(TIER).gan+'급 '+preyOf(g,TIER)+'</span></span>';
+  var Pp=powerAt(g.el);
+  $('gsub').textContent = g.one + ' — 권장 전투력 '+TH[TIER-1]+' · 내 '+(Pp.n>1?'파티 ':'')+'전투력 '+Pp.pow+
+    (lootTag(g.el,g.id)?' · 용신석 '+lootTag(g.el,g.id):'');
+
+  var html='';
+  /* 내 자리 */
+  html += '<div class="slot me"><span class="av gem" style="--c:'+(MYEL?colOf(MYEL):'#8e9bb0')+'">'+
+          (MYEL?({목:'木',화:'火',토:'土',금:'金',수:'水'})[MYEL]:'?')+'</span>'+
+          '<span class="nm2">'+(ME?esc(ME.nick):'나')+'</span>'+
+          '<span class="rl">나 · '+(MYEL||'오행 미정')+'</span></div>';
+  /* 친구 네 자리 */
+  for(var i=0;i<4;i++){
+    var p=PARTY[i];
+    if(p){
+      html += '<div class="slot"><span class="av gem" style="--c:'+colOf(p.el)+'">'+
+              (({목:'木',화:'火',토:'土',금:'金',수:'水'})[p.el]||'?')+'</span>'+
+              '<span class="nm2">'+esc(p.nick)+'</span>'+
+              '<span class="rl">'+(p.el||'?')+' · 전투력 '+FP.powerOf(valsOf(p), g.el)+'</span>'+
+              '<span class="sbtn"><button class="pick" data-swap="'+i+'">바꾸기</button>'+
+              '<button class="pick" data-drop="'+i+'">빼기</button></span></div>';
+    } else {
+      html += '<div class="slot empty" data-pick="'+i+'" role="button" tabindex="0" aria-label="빈 자리에 친구 넣기"><span class="av">＋</span>'+
+              '<span class="rl">빈 자리</span>'+
+              '<span class="add">친구 넣기</span></div>';
+    }
+  }
+  $('slots').innerHTML=html;
+  [].forEach.call($('slots').querySelectorAll('[data-invite]'),function(b){ b.onclick=invite; });
+  [].forEach.call($('slots').querySelectorAll('[data-pick]'),function(b){
+    b.onclick=function(){ openFriends(+b.dataset.pick); };
+    b.onkeydown=function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openFriends(+b.dataset.pick); } };
+  });
+  [].forEach.call($('slots').querySelectorAll('[data-swap]'),function(b){
+    b.onclick=function(){ openFriends(+b.dataset.swap); };
+  });
+  [].forEach.call($('slots').querySelectorAll('[data-drop]'),function(b){
+    b.onclick=function(){ PARTY[+b.dataset.drop]=null; Store.saveParty(CUR.id,PARTY); renderParty(); };
+  });
+
+  var els=[MYEL].concat(PARTY.map(function(p){return p?p.el:null}));
+  var sy=synergy(els), filled=1+PARTY.filter(Boolean).length;
+  var SZ={1:'혼자 들어갑니다',2:'둘이 들어갑니다',3:'셋이 들어갑니다',
+          4:'넷이 들어갑니다',5:'다섯이 다 모였습니다'};
+  $('syn').innerHTML='<b>'+SZ[filled]+'</b> — 상생으로 이어진 쌍 '+sy.pairs+'개'+
+    (sy.kinds===5?' · <b>오행 전부</b> 모였습니다':'')+
+    '<span class="bar2"><i style="width:'+Math.min(100,sy.bonus)+'%"></i></span>'+
+    '시너지 +'+sy.bonus+'% · 자리 '+filled+'/5'+
+    (filled<5 ? ' — <span style="color:#6f7d92">더 부르면 시너지가 올라갑니다</span>' : '');
+  /* 인원은 1~5 어디든 된다. 다만 고른 단이 지금 인원으로 열리는 단이어야 한다.
+     친구를 빼서 상한이 내려가면 단을 조용히 내리지 않고 그 자리에서 말해 준다. */
+  var cap2=tierCap(g.el), tooHigh=TIER>cap2, Pp2=powerAt(g.el), weak=Pp2.pow<TH[TIER-1];
+  $('btn-go').disabled = tooHigh;
+  $('btn-go').textContent = tooHigh
+      ? tOf(TIER-1).nm+'을 먼저 깨야 합니다'
+      : (filled===1 ? '혼자 '+tOf(TIER).nm+'으로' : filled+'명으로 '+tOf(TIER).nm+'으로');
+  $('btn-go').classList.toggle('weak', weak && !tooHigh);
+
+  var danger = false;
+  $('note').innerHTML =
+    '<b>'+tOf(TIER).nm+'으로 들어갑니다.</b> <a href="#" id="a-tier">단 다시 고르기</a><br>'+
+    '<b>친구와 파티를 하면 더 높은 단을 깰 수 있습니다.</b> 한 사람이 받는 용신석도 늘어납니다.<br>'+
+    (tooHigh ? '<span style="color:#f0a0a0">'+tOf(TIER).nm+'은 아직 잠겨 있습니다. '+tOf(TIER-1).nm+'을 먼저 깨세요.</span><br>' : '')+
+    (weak && !tooHigh ? '<span style="color:#e8483c;font-weight:700">전투력이 권장 '+TH[TIER-1]+'에 '+(TH[TIER-1]-Pp2.pow)+' 모자랍니다 — '+FP.edge(g.el)+' 용신석 '+Math.ceil((TH[TIER-1]-Pp2.pow)/1.5)+'개 더 모으면 넘습니다. 지금 들어가면 집니다.</span><br>' : '')+
+    (danger ? '<span style="color:#f0a0a0">이 사냥터는 내 기운을 누릅니다. '+
+              '적은 인원으로는 버티기 어렵습니다.</span><br>' : '')+
+    '빈 자리(<b>＋</b>)를 누르면 친구 목록이 열립니다. 앉은 친구는 <b>바꾸기</b>·<b>빼기</b>로 바꿀 수 있고, 새 친구는 목록에서 카카오톡으로 초대합니다.';
+  if($('a-tier')) $('a-tier').onclick=function(e){ e.preventDefault(); renderTier(); };
+  show('v-party');
+}
+
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+/* ---- 초대 ---- */
+function invite(){
+  if(!ME){ alert('먼저 로그인해 주세요.'); return; }
+  var code = Store.myCode(ME);
+  var url  = location.origin + '/hunt/?invite=' + encodeURIComponent(code) +
+             '&g=' + encodeURIComponent(CUR.id);
+  ev('hunt_invite',{ground:CUR.nm});
+  if(window.Kakao && Kakao.isInitialized && Kakao.isInitialized() && Kakao.Share){
+    try{
+      Kakao.Share.sendDefault({
+        objectType:'feed',
+        content:{
+          title: CUR.nm+'('+CUR.el+')에 자리가 비어 있습니다',
+          description: ME.nick+'님이 포포즈 사냥터로 부릅니다. 한 자리 채워 주세요.',
+          imageUrl: location.origin+'/ohaeng/img/og-ohaeng.png',
+          link:{mobileWebUrl:url, webUrl:url}
+        },
+        buttons:[{title:'들어가기', link:{mobileWebUrl:url, webUrl:url}}]
+      });
+      return;
+    }catch(e){}
+  }
+  /* 카카오가 안 되면 링크라도 손에 쥐어 준다 */
+  if(navigator.share){ navigator.share({title:CUR.nm+'('+CUR.el+') · 포포즈', url:url})
+      .catch(function(){}); return; }
+  if(navigator.clipboard){ navigator.clipboard.writeText(url).then(function(){
+    alert('초대 링크를 복사했습니다.\n\n'+url); }); return; }
+  prompt('이 링크를 보내 주세요', url);
+}
+
+/* 친구 목록 — 빈 자리(＋)를 누르면 넣을 친구를, 앉은 자리의 '바꾸기'를 누르면 바꿔 넣을 친구를 고른다.
+   이미 다른 자리에 앉은 친구는 빼고 보여 준다. 이 사냥터 기준 전투력이 높은 순. */
+function openFriends(slot){
+  var cur=PARTY[slot];
+  $('fl-h').textContent = cur ? cur.nick+' 대신 넣을 친구' : '빈 자리에 넣을 친구';
+  Store.friends().then(function(list){
+    var used={}; PARTY.forEach(function(p){ if(p) used[p.id]=1; });
+    var free=list.filter(function(f){ return !used[f.id]; })
+                 .map(function(f){ return {f:f, pw:FP.powerOf(valsOf(f), CUR.el)}; })
+                 .sort(function(x,y){ return y.pw-x.pw; });
+    $('friends').innerHTML = free.length ? free.map(function(o){ var f=o.f;
+      return '<li><span class="av gem" style="--c:'+colOf(f.el)+'">'+
+        (({목:'木',화:'火',토:'土',금:'金',수:'水'})[f.el]||'?')+'</span>'+
+        '<b>'+esc(f.nick)+'<small>'+(f.el||'?')+' · 전투력 '+o.pw+'</small></b><button data-id="'+esc(f.id)+'">'+(cur?'바꿔 넣기':'넣기')+'</button></li>';
+    }).join('') : '<li class="none">'+(list.length ? '다른 친구가 모두 자리에 앉아 있습니다.' : '아직 들어온 친구가 없습니다.')+' 카카오톡으로 친구를 초대해 보세요.</li>';
+    $('btn-invite2').onclick=invite;
+    [].forEach.call($('friends').querySelectorAll('button'),function(b){
+      b.onclick=function(){
+        var o=free.filter(function(x){return String(x.f.id)===b.dataset.id})[0];
+        if(o){ PARTY[slot]=o.f; Store.saveParty(CUR.id,PARTY); ev('hunt_party_'+(cur?'swap':'add'),{ground:CUR.nm}); }
+        $('mask').classList.remove('on'); renderParty();
+      };
+    });
+    $('mask').classList.add('on');
+  });
+}
+
+/* ===================== 시작 ===================== */
+function qs(k){ var m=new RegExp('[?&]'+k+'=([^&]*)').exec(location.search); return m?decodeURIComponent(m[1]):''; }
+
+function afterLogin(me){
+  ME=me;
+  if(!ME){ autoLogin(); return; }
+  $('me').hidden=false;
+  /* 로그아웃은 프로필(홈 카드 · 지도 사주각)에서만 한다 */
+  $('me').innerHTML=(ME.pic?'<img src="'+esc(ME.pic)+'" alt="">':'')+esc(ME.nick);
+
+  /* 계정에 저장된 캐릭터·용신석을 먼저 받아 온다(다른 기기에서 키운 것) */
+  if(MODE==='supabase' && window.FP && !FP.synced && !FP._tried){
+    FP._tried=true;
+    FP.sync().then(function(){ afterLogin(me); });
+    return;
+  }
+  MYEL = myElement();
+  if(MYEL) Store.saveEl(MYEL);
+
+  var host=qs('invite');
+  if(host && host!==Store.myCode(ME)){
+    Store.join(host, {id:ME.id, nick:ME.nick, el:MYEL}).then(function(){
+      ev('hunt_join',{host:host});
+    });
+  }
+  var g=qs('g');
+  /* 초대로 처음 온 사람은 캐릭터부터 만들어야 자리에 앉힐 수 있다.
+     여기서 생년월일을 묻지 않고 홈으로 보낸다 — 캐릭터는 한 곳에서만 만든다. */
+  if(host && host!==Store.myCode(ME) && !MYEL){
+    if(g && gOf(g)) CUR=gOf(g);
+    renderPick();
+    $('mine').innerHTML='초대를 받으셨습니다. '+
+      '<a href="/">먼저 내 캐릭터를 만들어 주세요 &rarr;</a>';
+    return;
+  }
+  if(g && gOf(g)){ MYEL=myElement(); renderTop(); openGround(g); }
+  else renderPick();
+}
+
+/* 로그인이 안 돼 있으면 잠금 화면 없이 곧장 카카오톡 로그인으로 보낸다.
+   다만 방금(1분 안) 보냈는데 로그인 없이 돌아왔다면(취소 등) 다시 보내지 않고 버튼을 보여 준다 — 무한 왕복 방지. */
+function autoLogin(){
+  var k='hunt.autoLogin', t=0; try{ t=+sessionStorage.getItem(k)||0; }catch(e){}
+  if(Date.now()-t < 60000){
+    $('lock-msg').textContent = qs('invite') ? '초대를 받으셨습니다. 카카오톡으로 로그인하면 그 자리에 앉습니다.'
+                                             : '카카오톡으로 로그인하면 사냥터가 열립니다.';
+    $('btn-login').hidden=false; show('v-lock'); return;
+  }
+  try{ sessionStorage.setItem(k, String(Date.now())); }catch(e){}
+  $('lock-msg').textContent='카카오톡 로그인으로 이동합니다…';
+  show('v-lock');
+  ev('hunt_login_auto',{mode:MODE, invited:!!qs('invite')});
+  /* 카카오 로그인은 페이지를 떠나며 돌아온다. signInWithOAuth 가 돌려주는 값({data,error})은 사용자가 아니다 —
+     그걸 사용자로 받아 afterLogin 하면 떠나기 직전 로그인 안 된 사냥터가 잠깐 열린다(루프19 발견). 데모만 바로 들어간다. */
+  Promise.resolve(Store.login()).then(function(me){
+    if(MODE==='demo'){ if(me) afterLogin(me); else $('btn-login').hidden=false; }
+  }).catch(function(){ $('btn-login').hidden=false; });
+}
+
+(function init(){
+  try{ if(CFG.kakaoKey && window.Kakao && !Kakao.isInitialized()) Kakao.init(CFG.kakaoKey); }catch(e){}
+  $('btn-login').onclick=function(){
+    ev('hunt_login_try',{mode:MODE});
+    Promise.resolve(Store.login()).then(function(me){ if(MODE==='demo' && me) afterLogin(me); });
+  };
+  $('btn-back').onclick=function(){ stopBattle(); renderTier(); };
+  $('btn-back-t').onclick=function(){ stopBattle(); renderPick(); };
+  $('btn-close').onclick=function(){ $('mask').classList.remove('on'); };
+  $('mask').onclick=function(e){ if(e.target===$('mask')) $('mask').classList.remove('on'); };
+  $('btn-go').onclick=function(){
+    var n=1+PARTY.filter(Boolean).length;
+    ev('hunt_start',{size:n, ground:CUR?CUR.nm:'', tier:TIER});
+    playBattle();
+  };
+
+  Promise.resolve(Store.me()).then(function(me){
+    if(me) afterLogin(me);
+    else autoLogin();
+  }).catch(function(){ autoLogin(); });
+})();
+
+</script>
+</body></html>
