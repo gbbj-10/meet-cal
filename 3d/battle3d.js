@@ -14,6 +14,9 @@ import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js';
 
 const COL = { 목:0x4fb95f, 화:0xe8483c, 토:0xffd93d, 금:0x8e9bb0, 수:0x3f8fe0 };
 const MDL = { 목:'m_mok', 화:'m_hwa', 토:'m_to', 금:'m_geum', 수:'m_su' };
+/* 루프23 — 던전 랜드마크 소품(트리포 스마트 메시 · 5천 삼각형 이하 · 512 WebP). 파일이 없으면 기본 도형으로 대신한다 */
+const PROP = { 목:'p_mok', 화:'p_hwa', 토:'p_to', 금:'p_geum', 수:'p_su' };
+const PROP_H = { 목:2.5, 화:2.8, 토:1.9, 금:2.1, 수:2.6 };   /* 세울 높이(월드 단위). 기본 도형 랜드마크(최대 2.3)와 비슷하게 */
 /* 사냥감 — 단이 오르면 짐승이 바뀐다 (트리포 메시 + 늑대 뼈대, rigN)
    계단~경단 늑대 · 기단~정단 멧돼지 · 병단~을단 범 · 갑단 해태 */
 /* 던전마다 사냥감이 다르다 — 수 늑대 · 토 멧돼지 · 목 사슴 · 화 해태(불을 먹는 짐승) · 금 백호(서쪽의 흰 범) */
@@ -84,7 +87,7 @@ function sparkTexture() {
 /* 전투장 한 벌 — 원경 그림 · 바닥 · 바위 · 중경 · 랜드마크 · 입자.
    ⚠ 카메라(z≈6)와 전투(z≈0) 사이에는 아무것도 세우지 않는다 — 개를 가린다.
      중경은 z ≤ -5, 랜드마크는 왼쪽 뒤. */
-function buildArena(sc, el, base) {
+function buildArena(sc, el, base, prop) {
   const TH = THEME[el] || THEME.화;
   sc.background = skyTexture(TH.sky);
   sc.fog = new THREE.Fog(TH.fog, TH.fogN, TH.fogF);
@@ -126,7 +129,8 @@ function buildArena(sc, el, base) {
     p.position.set(x, 0, z); p.rotation.y = Math.random() * 6.28;
     statics.add(p);
   }
-  statics.add(buildLandmark(TH));
+  /* 소품 GLB 는 텍스처가 있어 합치지 않고 장면에 바로 둔다(드로콜 +1) */
+  if (prop) sc.add(placeProp(prop, TH, PROP_H[el] || 2.2)); else statics.add(buildLandmark(TH));
   mergeStatic(statics, sc);
 
   /* 떠다니는 입자 — 목=잎 · 화=불티 · 토=모래 · 금=눈 · 수=물보라 */
@@ -343,6 +347,22 @@ function buildLandmark(TH) {
   return g;
 }
 
+/* 트리포 소품을 랜드마크 자리에 세운다 — 바닥을 0 에 맞추고 높이를 맞춘 뒤 기본 랜드마크와 같은 자리·각도 */
+function placeProp(gltf, TH, H) {
+  const g = new THREE.Group(), m = gltf.scene.clone(true);
+  m.traverse(o => { if (o.isMesh) { const mt = o.material = o.material.clone();
+    mt.roughness = 0.9; mt.metalness = 0; mt.side = THREE.FrontSide;
+    if (mt.map) { mt.emissiveMap = mt.map; mt.emissive = new THREE.Color(0x4a4a4a); } } });   /* 안개·색조에 묻히지 않게 자체 밝기를 조금 준다 */
+  const bb = new THREE.Box3().setFromObject(m), sz = bb.getSize(new THREE.Vector3());
+  const k = Math.min(H / Math.max(0.001, sz.y), 3.4 / Math.max(0.001, sz.x, sz.z));   /* 너비는 3.4 를 넘지 않게 */
+  m.scale.setScalar(k);
+  m.position.set(-(bb.min.x + bb.max.x) / 2 * k, -bb.min.y * k, -(bb.min.z + bb.max.z) / 2 * k);
+  g.add(m);
+  g.position.set(-4.6, 0, -6.5); g.rotation.y = 0.42;
+  const pl = new THREE.PointLight(TH.rim, 6, 7, 1.6); pl.position.set(0.6, 1.6, 1.2); g.add(pl);
+  return g;
+}
+
 let cache = {};                      /* 한 번 받은 모델은 다시 받지 않는다 */
 let loader = null;
 const DRACO_DEFAULT = 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/libs/draco/';
@@ -406,6 +426,9 @@ export async function runBattle(o) {
     catch (e) { if (n === 'm_enemy') throw e; packs[n] = await load(base, 'm_enemy', dracoPath); packs[n].fallback = true; }
     if (onProgress) onProgress(++got / want.length);
   }
+  /* 랜드마크 소품 — 실패해도 전투는 기본 도형으로 그대로 간다 */
+  let prop = null;
+  if (PROP[ground.el]) { try { prop = await load(base, PROP[ground.el], dracoPath); } catch (e) { prop = null; } }
 
   /* ── 무대 ── */
   const W = mount.clientWidth, H = Math.round(W * (W < 560 ? 0.92 : 0.70));
@@ -418,7 +441,7 @@ export async function runBattle(o) {
 
   const gc = new THREE.Color(COL[ground.el]);
   const sc = new THREE.Scene();
-  const arena = buildArena(sc, ground.el, (base || '/3d/').replace(/3d\/?$/, ''));
+  const arena = buildArena(sc, ground.el, (base || '/3d/').replace(/3d\/?$/, ''), prop);
   const TH = arena.TH;
 
   /* 휴대폰은 화면을 세로로 키운 만큼 시야를 넓히고 눈높이를 낮춰, 양 끝 유닛이 잘리지 않게 한다 */
