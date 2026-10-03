@@ -297,7 +297,7 @@ LOVECALC = """
   </div>
   <div class="lrow">
     <label>연봉 (만원)<input id="l-sal" type="number" inputmode="numeric" value="4000" min="0" max="30000" step="100"></label>
-    <label>보유 자산<select id="l-ast"></select></label>
+    <label>보유 자산 (만원, 빚은 -)<input id="l-ast" type="number" inputmode="numeric" value="3000" min="-30000" max="1000000" step="100"></label>
   </div>
   <div class="lrow">
     <label>키 (cm)<input id="l-ht" type="number" inputmode="numeric" value="175" min="140" max="210"></label>
@@ -308,17 +308,14 @@ LOVECALC = """
   <div id="lout" class="cout" hidden></div>
   <div id="lad" class="cad" hidden><div class="cadl">광고</div><!--AD_UNIT--></div>
 </div>
-<script src="../data/meetcal-core.js"></script>
+<script src="../data/meetcal-core.js?v=2"></script>
 <script>
 (function(){
   var $=function(id){return document.getElementById(id)};
   var G='male';
   var BODY_MID=60;            // 신체 항목은 본 계산기에서만 — 여기서는 중간값 고정
-  if(!window.MeetCal){ $('lgo').disabled=true; return; }
+  if(!window.MeetCal||!(MeetCal.version>=2)){ $('lgo').disabled=true; return; }
 
-  $('l-ast').innerHTML = MeetCal.ASSET_TIERS.map(function(t,i){
-    return '<option value="'+t.v+'"'+(i===6?' selected':'')+'>'+t.l+'</option>';
-  }).join('');
 
   function setG(g){ G=g;
     $('lg-m').classList.toggle('on',g==='male');
@@ -351,7 +348,7 @@ LOVECALC = """
         '<tr><th>체중</th><td>'+p.pWt+'</td></tr>'+
       '</table>'+
       '<div class="cnote">신체 조건까지 넣고 항목을 고정해 다시 계산해 보시려면 '+
-        '<a href="/" data-cta="lovecalc_full">본 계산기</a>를 쓰시면 됩니다.</div>';
+        '<a href="/love/" data-cta="lovecalc_full">본 계산기</a>를 쓰시면 됩니다.</div>';
     var ad=$('lad');
     if(ad&&ad.hidden){
       ad.hidden=false;
@@ -403,7 +400,7 @@ gtag('js',new Date());gtag('config','{SITE['ga']}');</script>"""
 {ga}
 {ads}
 <style>{CSS}</style>
-<style>{brand.CSS}</style>
+<style>{brand.CSS}</style>{('<style>'+AFF_CSS+'</style>') if (meta or {}).get('affiliate') else ''}
 {brand.HEAD}
 </head><body>
 <header class="site"><div class="wrap">
@@ -439,6 +436,51 @@ def cta(where):
   <a href="/" data-cta="{where}">내 사주 보기</a>
 </div>"""
 
+AFF_CSS = """
+.aff-disc{font-size:17px;color:var(--ink);border:1px solid #3a4a63;border-radius:10px;
+  padding:12px 15px;margin:-12px 0 28px;line-height:1.6}
+.aff{margin:0 0 32px;padding:18px 20px;border-radius:12px;background:var(--soft);border:1px solid var(--line)}
+.aff .h{font-size:15px;font-weight:700;color:var(--mut);margin-bottom:10px}
+.aff ul{list-style:none;margin:0;padding:0}
+.aff li{padding:10px 0;border-top:1px solid var(--line)}
+.aff li:first-child{border-top:0;padding-top:0}
+.aff a{font-weight:700}
+.aff .w{display:block;font-size:14px;color:var(--mut);margin-top:2px}
+"""
+
+AFF_DISC = '이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.'
+
+def check_aff(meta, fn):
+    """affiliate: true 원고 검사. 어기면 빌드를 멈춘다(문구·링크 규칙 위반은 계정 정지 사유)."""
+    if not meta.get('affiliate'): return
+    prods = meta.get('products') or []
+    bad = []
+    if not isinstance(prods, list) or not 1 <= len(prods) <= 3:
+        bad.append(f'products 는 1~3개여야 합니다 (지금 {len(prods) if isinstance(prods, list) else "목록 아님"})')
+    else:
+        for i, p in enumerate(prods, 1):
+            p = p if isinstance(p, dict) else {}
+            for k in ('name', 'url', 'who', 'why'):
+                if not str(p.get(k) or '').strip():
+                    bad.append(f'{i}번 상품 {k} 비어 있음')
+            if str(p.get('url') or '').strip() and not str(p['url']).startswith('https://link.coupang.com/'):
+                bad.append(f'{i}번 상품 url 이 쿠팡 단축 링크가 아님: {p["url"]}')
+    if bad:
+        sys.exit(f'빌드 실패 — {fn} 쿠팡파트너스 규칙 위반:\n  ' + '\n  '.join(bad))
+
+def aff_disc(meta):
+    return f'\n  <p class="aff-disc">{AFF_DISC}</p>' if meta.get('affiliate') else ''
+
+def aff_block(meta):
+    """계산기 CTA 아래·면책 위. 글자 링크만(이미지·위젯·배너 없음)."""
+    if not meta.get('affiliate'): return ''
+    items = ''.join(
+        f'<li><a href="{html.escape(p["url"].strip())}" rel="sponsored nofollow noopener" target="_blank" '
+        f'data-cta="aff_{meta["slug"]}_{i}">{html.escape(str(p["name"]).strip())}</a>'
+        f'<span class="w">{html.escape(str(p["who"]).strip())} — {html.escape(str(p["why"]).strip())}</span></li>'
+        for i, p in enumerate(meta['products'], 1))
+    return f'<div class="aff"><div class="h">이 글과 이어지는 물건</div><ul>{items}</ul></div>\n'
+
 def kst_today():
     """한국 날짜. 발행 예정일이 오늘보다 뒤인 초안은 건너뛴다."""
     return datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).date()
@@ -450,6 +492,7 @@ def build():
     for fn in sorted(os.listdir(DRAFT)):
         if not fn.endswith('.md'): continue
         meta, body = read_md(os.path.join(DRAFT, fn))
+        check_aff(meta, fn)
         try:
             when = datetime.date.fromisoformat(str(meta['date'])[:10])
         except (ValueError, KeyError):
@@ -489,11 +532,11 @@ def build():
 <main class="wrap">
 <article>
   <h1>{html.escape(meta['title'])}</h1>
-  <div class="meta">{meta['date']} · {SITE['name']}</div>
+  <div class="meta">{meta['date']} · {SITE['name']}</div>{aff_disc(meta)}
   {body}
 </article>
 {cta('end')}
-<p class="disc">{DISCLAIMER}</p>
+{aff_block(meta)}<p class="disc">{DISCLAIMER}</p>
 {relhtml}
 </main>""" + FOOT
         open(os.path.join(POSTS, slug+'.html'), 'w', encoding='utf-8').write(page)
