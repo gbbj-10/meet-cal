@@ -564,9 +564,12 @@ def build():
               open(os.path.join(ROOT,'index.json'),'w',encoding='utf-8'), ensure_ascii=False, indent=1)
 
     # sitemap
-    urls = [f"{SITE['base']}/blog.html"] + [f"{SITE['base']}/posts/{m['slug']}.html" for m,_ in posts]
+    # lastmod = 글의 updated:(있으면) 또는 date: — 빌드한 날이 아니다(2026-10-18, 블로그팀 10/07 요청)
+    pdt = lambda m: str(m.get('updated') or m['date'])[:10]
+    newest = max((pdt(m) for m,_ in posts), default=str(today))
+    urls = [(f"{SITE['base']}/blog.html", newest)] + [(f"{SITE['base']}/posts/{m['slug']}.html", pdt(m)) for m,_ in posts]
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + \
-         ''.join(f'<url><loc>{u}</loc><lastmod>{datetime.date.today()}</lastmod></url>\n' for u in urls) + '</urlset>\n'
+         ''.join(f'<url><loc>{u}</loc><lastmod>{d}</lastmod></url>\n' for u, d in urls) + '</urlset>\n'
     open(os.path.join(ROOT,'sitemap.xml'),'w',encoding='utf-8').write(sm)
     open(os.path.join(ROOT,'robots.txt'),'w',encoding='utf-8').write(
         f"User-agent: *\nAllow: /\nSitemap: {SITE['base']}/sitemap.xml\n")

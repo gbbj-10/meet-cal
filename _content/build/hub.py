@@ -270,6 +270,9 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
   </div>
 </section>
 
+<!-- 설명 글 — 원고 _content/pages/home.html (블로그팀). 입력 칸 아래, 글 카드 위 -->
+__GUIDE__
+
 <section class="sec">
   <div class="h"><h2>사주 이야기</h2><a href="/ohaeng/">전체 보기 &rarr;</a></div>
   __POSTS__
@@ -377,6 +380,12 @@ $('go').addEventListener('click', function(){
     notes+='<div class="note">시각을 넣으면 두 글자가 더 붙어 비율이 달라집니다. '+
       '실제로 <b>72.6%</b>의 경우 결과가 바뀝니다. '+
       '<a href="/ohaeng/taeeonan-sigak.html" data-cta="note_time">태어난 시간 확인하는 3가지 방법 &rarr;</a></div>';
+  }
+  /* 23시대 기준 안내(2026-10-15 블로그팀 요청) — 이 엔진은 '자정에 날이 바뀐다'(①)로 계산한다.
+     엔진 기준을 바꾸면 블로그 yajasi-jojasi 글의 한 줄도 같이 고쳐야 한다(블로그팀에 알림). */
+  if(hh===23){
+    notes+='<div class="note"><b>23시대</b>(23:00~23:59)에 태어난 경우 <b>자정 기준</b>으로 계산했습니다 &mdash; '+
+      '날은 그날 그대로 두고 시주만 자시(子時)로 봅니다. 23시에 날을 바꾸는 만세력도 있어 다른 곳과 결과가 다를 수 있습니다.</div>';
   }
   $('notes').innerHTML=notes;
 
@@ -511,6 +520,7 @@ def render(posts, ga_snippet, ad_client, ad_slot, limit=4):
                  ('__MKCSS__', brand.CSS),
                  ('__TITLE__', TITLE), ('__DESC__', DESC), ('__ROOT__', SITE_ROOT),
                  ('__GA__', ga_snippet), ('__ADCLIENT__', ad_client),
-                 ('__ADSLOT__', ad_slot), ('__POSTS__', cards)):
+                 ('__ADSLOT__', ad_slot), ('__POSTS__', cards),
+                 ('__GUIDE__', brand.guide('home'))):
         s = s.replace(k, v)
     return s

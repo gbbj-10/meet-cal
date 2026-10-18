@@ -129,11 +129,13 @@ header.site nav a{font-size:14px;color:var(--mut);text-decoration:none}
 
   <div class="stage" id="stage" hidden></div>
 
-  <section class="card" id="v-load"><p class="s">불러오는 중…</p></section>
+  <!-- 불러오는 중·연결 실패 문구는 HTML 에 기본값으로 두지 않는다(2026-10-18 애드센스 대응).
+       크롤러는 숨은 칸의 글자도 읽어서, '열 수 없어요'가 박혀 있으면 고장 난 페이지로 본다. JS 가 상황을 확인한 뒤에만 채운다. -->
+  <section class="card" id="v-load"><p class="s" id="load-p"></p></section>
 
   <section class="card" id="v-off" hidden>
-    <h2>지금은 궁합소를 열 수 없어요</h2>
-    <p class="s">계정 연결이 아직 준비되지 않았어요. 잠시 뒤에 다시 들어와 주세요.</p>
+    <h2 id="off-h"></h2>
+    <p class="s" id="off-p"></p>
   </section>
 
   <section class="card" id="v-login" hidden>
@@ -172,6 +174,9 @@ header.site nav a{font-size:14px;color:var(--mut);text-decoration:none}
     <p class="hsub" id="hunt-sub"></p>
     <a class="btn rose" href="/gunghap/" id="again">다른 사람과도 궁합 보기</a>
   </section>
+
+  <!-- 설명 글 — 원고 _content/pages/gunghap.html (블로그팀). 로그인 전에도 보이는 자리 -->
+  __GUIDE__
 </main>
 <footer class="foot"><a href="/">처음으로</a><a href="/map/">선택목록</a><a href="/hunt/">사냥터</a><a href="/iljin/">오늘의 기운</a><a href="/ohaeng/">사주 이야기</a><a href="/love/">이성 조건 계산기</a><a href="/about/">소개·문의</a><a href="/privacy/">개인정보처리방침</a></footer>
 
@@ -186,7 +191,11 @@ var COL={목:'#4fb95f',화:'#e8483c',토:'#ffd93d',금:'#8e9bb0',수:'#3f8fe0'};
 var HJ={목:'木',화:'火',토:'土',금:'金',수:'水'};
 var ORDER=['목','화','토','금','수'];
 var VIEWS=['v-load','v-off','v-login','v-birth','v-host','v-msg','v-result'];
-function show(v){ VIEWS.forEach(function(x){ $(x).hidden=(x!==v); }); }
+function show(v){
+  if(v==='v-off'){ $('off-h').textContent='로그인 연결을 준비 중이에요'; $('off-p').textContent='잠시 뒤에 다시 들어와 주세요. 그동안 아래에서 궁합소가 궁합을 보는 방법을 먼저 읽어 보세요.'; }
+  VIEWS.forEach(function(x){ $(x).hidden=(x!==v); });
+}
+$('load-p').textContent='불러오는 중…';
 function qs(k){ var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search); return m?decodeURIComponent(m[1]):null; }
 function ev(n,p){ if(window.gtag) gtag('event',n,p||{}); }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
@@ -391,6 +400,6 @@ def render(ga_snippet, kakao_js_key='', site_root='https://meetcal.co.kr'):
     for k, v in (('__MARK__', brand.MARK), ('__HEAD__', brand.HEAD), ('__MKCSS__', brand.CSS),
                  ('__TITLE__', TITLE), ('__DESC__', DESC), ('__ROOT__', site_root),
                  ('__GA__', ga_snippet), ('__KAKAO_KEY__', kakao_js_key or ''),
-                 ('__CORE__', core)):
+                 ('__CORE__', core), ('__GUIDE__', brand.guide('gunghap'))):
         s = s.replace(k, v)
     return s

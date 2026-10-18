@@ -63,6 +63,7 @@ def build(out_dir, site_root='https://meetcal.co.kr', ga='', kakao_js_key='', su
     html = html.replace('__ROOT__', site_root)
     html = html.replace('__GA__', ga or '')
     html = html.replace('__KAKAO_KEY__', kakao_js_key or '')
+    html = html.replace('__GUIDE__', brand.guide('hunt'))
     html = html.replace('__SB_URL__', supabase[0] or '')
     html = html.replace('__SB_KEY__', supabase[1] or '')
     os.makedirs(out_dir, exist_ok=True)
@@ -435,9 +436,12 @@ h1{font-size:clamp(23px,5.2vw,30px);letter-spacing:-.02em;margin:26px 0 8px}
        로그인 안 된 채로 바로 온 사람(초대 링크 등)은 여기서 곧장 카카오톡 로그인으로 넘긴다. -->
   <section class="view on" id="v-lock">
     <div class="lock">
-      <p id="lock-msg">사냥터를 여는 중…</p>
+      <!-- 로딩 문구는 HTML 기본값으로 두지 않는다(2026-10-18 애드센스 대응) — JS 가 상황을 본 뒤 채운다 -->
+      <p id="lock-msg"></p>
       <button class="kbtn" id="btn-login" hidden>카카오톡 로그인</button>
     </div>
+    <!-- 설명 글 — 원고 _content/pages/hunt.html (블로그팀). 로그인 확인 전에도 보이는 자리 -->
+    __GUIDE__
   </section>
 
   <!-- 1. 사냥터 선택 -->
@@ -1517,7 +1521,9 @@ function afterLogin(me){
    다만 방금(1분 안) 보냈는데 로그인 없이 돌아왔다면(취소 등) 다시 보내지 않고 버튼을 보여 준다 — 무한 왕복 방지. */
 function autoLogin(){
   var k='hunt.autoLogin', t=0; try{ t=+sessionStorage.getItem(k)||0; }catch(e){}
-  if(Date.now()-t < 60000){
+  /* 검색·광고 크롤러는 카카오 로그인으로 보내지 않는다 — 보내면 설명 글 대신 카카오 로그인 화면만 읽고 간다(2026-10-18). */
+  var BOT=navigator.webdriver || /bot|crawl|spider|slurp|Mediapartners-Google|AdsBot|Google-InspectionTool|Lighthouse/i.test(navigator.userAgent||'');
+  if(BOT || Date.now()-t < 60000){
     $('lock-msg').textContent = qs('invite') ? '초대를 받으셨습니다. 카카오톡으로 로그인하면 그 자리에 앉습니다.'
                                              : '카카오톡으로 로그인하면 사냥터가 열립니다.';
     $('btn-login').hidden=false; show('v-lock'); return;
@@ -1528,9 +1534,10 @@ function autoLogin(){
   ev('hunt_login_auto',{mode:MODE, invited:!!qs('invite')});
   /* 카카오 로그인은 페이지를 떠나며 돌아온다. signInWithOAuth 가 돌려주는 값({data,error})은 사용자가 아니다 —
      그걸 사용자로 받아 afterLogin 하면 떠나기 직전 로그인 안 된 사냥터가 잠깐 열린다(루프19 발견). 데모만 바로 들어간다. */
-  Promise.resolve(Store.login()).then(function(me){
+  var p1; try{ p1=Promise.resolve(Store.login()); }catch(e){ p1=Promise.reject(e); }
+  p1.then(function(me){
     if(MODE==='demo'){ if(me) afterLogin(me); else $('btn-login').hidden=false; }
-  }).catch(function(){ $('btn-login').hidden=false; });
+  }).catch(function(){ $('lock-msg').textContent='카카오톡으로 로그인하면 사냥터가 열립니다.'; $('btn-login').hidden=false; });
 }
 
 (function init(){
@@ -1549,7 +1556,9 @@ function autoLogin(){
     playBattle();
   };
 
-  Promise.resolve(Store.me()).then(function(me){
+  /* Store.me() 가 동기로 터지면(로그인 라이브러리를 못 받은 경우 등) 빈 화면이 남았다 — 그때도 로그인 안내로 넘긴다(2026-10-18) */
+  var p0; try{ p0=Promise.resolve(Store.me()); }catch(e){ p0=Promise.reject(e); }
+  p0.then(function(me){
     if(me) afterLogin(me);
     else autoLogin();
   }).catch(function(){ autoLogin(); });

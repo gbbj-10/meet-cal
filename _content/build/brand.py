@@ -68,6 +68,32 @@ CSS = (CHIP +
        'body header.site nav a,body .bar nav a,body .top-bar nav a{font-size:13.5px}'
        'body .bar .me{display:none}}')
 
+# 도구 페이지 설명 글(애드센스 '가치가 별로 없는 콘텐츠' 대응, 2026-10-18).
+# 원고는 블로그팀이 _content/pages/<이름>.html 에 쓴다 — 문구만 고쳐도 다음 빌드에 반영된다.
+# 본문 글자 크기 그대로, 접지 않는다(숨긴 텍스트는 스팸 정책 위반). /love/ 는 정적 파일이라 따로 붙여 넣는다.
+GUIDE_CSS = ('.page-guide{margin:30px 0 10px;padding:20px 18px;border:1px solid rgba(255,255,255,.09);'
+             'border-radius:14px;background:rgba(255,255,255,.025);font-size:15.5px;line-height:1.8;'
+             'color:#d6deea;text-align:left}'
+             '.page-guide h2{font-size:18px;line-height:1.45;margin:22px 0 8px;color:#e9eef6}'
+             '.page-guide h2:first-child{margin-top:0}'
+             '.page-guide p,.page-guide ol,.page-guide ul{margin:0 0 10px}'
+             '.page-guide ol,.page-guide ul{padding-left:22px}'
+             '.page-guide li{margin-bottom:6px}'
+             '.page-guide a{color:#ffd93d}'
+             '.page-guide .note{font-size:14px;color:#96a3b6;margin-top:14px}')
+CSS += GUIDE_CSS
+
+
+def guide(name):
+    """_content/pages/<name>.html 설명 조각. 파일이 없으면 빈 문자열(빌드는 그대로 돈다)."""
+    import os
+    p = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'pages', name + '.html')
+    try:
+        return open(p, encoding='utf-8').read().strip()
+    except OSError:
+        return ''
+
+
 # 내 오행 캐릭터는 모든 페이지가 같은 파일에서 읽는다. 페이지마다 따로
 # 물어보면 사용자는 같은 걸 세 번 입력하게 된다.
 HEAD = ('<link rel="icon" href="%s">'

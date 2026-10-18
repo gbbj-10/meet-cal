@@ -168,18 +168,29 @@ def main():
     for js in ('saju-calculator.js', 'meetcal-core.js'):
         shutil.copy(os.path.join(B.ROOT, 'data', js), os.path.join(SITE, 'data'))
 
-    # 사이트 루트 sitemap.xml — 기존 URL + 새 URL
-    today = datetime.date.today()
+    # 사이트 루트 sitemap.xml — lastmod 는 '실제로 바뀐 날'(2026-10-18, 블로그팀 10/07 요청).
+    # 전부 빌드한 날로 찍으면 매일 모든 주소가 '수정됨'이 되어 구글이 lastmod 를 무시한다.
+    #   글      : front-matter updated: 가 있으면 그것, 없으면 date: (KST 날짜)
+    #   목록·허브: 가장 최근 글 날짜와 PAGE_EDITED 중 늦은 것(새 글이 올라오면 카드가 바뀐다)
+    #   일진    : 매일 바뀌므로 오늘(KST)
+    #   나머지  : PAGE_EDITED — 그 페이지(빌드 스크립트·정적 파일)를 고친 날. **고치면 이 날짜도 같이 바꾼다.**
+    PAGE_EDITED = {'/': '2026-10-18', '/map/': '2026-10-02', '/love/': '2026-10-18',
+                   '/about/': '2026-10-01', '/privacy/': '2026-10-01', '/ohaeng/': '2026-10-01'}
+    def pdate(m):
+        return str(m.get('updated') or m['date'])[:10]
+    pd = {m['slug']: pdate(m) for m, _ in posts}
+    newest = max(pd.values()) if pd else PAGE_EDITED['/']
+    kst = str(B.kst_today())
     slugs = sorted(f[:-5] for f in os.listdir(SITE)
                    if f.endswith('.html') and f not in ('index.html', 'game.html'))
-    urls  = [(SITE_ROOT + '/',      '1.0', str(today)),
-             (ILJIN_URL,            '0.9', str(today)),
-             (SITE_ROOT + '/map/',  '0.7', str(today)),
-             (LOVE,                 '0.8', str(today)),
-             (SITE_ROOT + '/about/',   '0.5', str(today)),
-             (SITE_ROOT + '/privacy/', '0.3', str(today))]
-    urls += [(BASE + '/', '0.9', str(today))]
-    urls += [(f'{BASE}/{s}.html', '0.8', str(today)) for s in slugs]
+    urls  = [(SITE_ROOT + '/',      '1.0', max(newest, PAGE_EDITED['/'])),
+             (ILJIN_URL,            '0.9', kst),
+             (SITE_ROOT + '/map/',  '0.7', PAGE_EDITED['/map/']),
+             (LOVE,                 '0.8', PAGE_EDITED['/love/']),
+             (SITE_ROOT + '/about/',   '0.5', PAGE_EDITED['/about/']),
+             (SITE_ROOT + '/privacy/', '0.3', PAGE_EDITED['/privacy/'])]
+    urls += [(BASE + '/', '0.9', max(newest, PAGE_EDITED['/ohaeng/']))]
+    urls += [(f'{BASE}/{s}.html', '0.8', pd.get(s, kst)) for s in slugs]
     sm = ('<?xml version="1.0" encoding="UTF-8"?>\n'
           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
           ''.join(f'  <url><loc>{u}</loc><lastmod>{d}</lastmod>'
