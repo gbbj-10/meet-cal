@@ -28,7 +28,7 @@ a{color:var(--acc)}
 header.site{border-bottom:1px solid var(--line)}
 header.site .in{max-width:640px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:12px 16px}
 header.site .nm{font-weight:800;font-size:17px;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:8px;min-height:40px}
-.fpchip{display:inline-flex;align-items:center;gap:5px;text-decoration:none;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:999px;padding:3px 9px 3px 3px;font-size:13px;font-weight:700;color:var(--ink)}.fpchip i{width:19px;height:19px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:800;color:#0a0f18;font-family:"Noto Serif KR",serif}@media(max-width:430px){.fpchip b{display:none}.fpchip{padding:3px}}.mk{width:24px;height:24px;flex:none;display:block}header nav a,.bar nav a,.top-bar nav a,footer a{display:inline-flex;align-items:center;min-height:40px}main .h a,main a[data-cta]:not([class]){display:inline-flex;align-items:center;min-height:40px}.bar .mk,.top-bar .mk{width:21px;height:21px}body header.site nav,body .bar nav,body .top-bar nav{flex-wrap:nowrap;white-space:nowrap}body header.site .wrap,body .bar{flex-wrap:nowrap}header.site .nm,.bar .nm,.top-bar .nm{flex:none}@media(max-width:430px){header.site nav a[href="/"],.bar nav a[href="/"],.top-bar nav a[href="/"]{display:none}body header.site nav,body .bar nav,body .top-bar nav{gap:10px}body header.site nav a,body .bar nav a,body .top-bar nav a{font-size:13.5px}body .bar .me{display:none}}
+.fpchip{display:inline-flex;align-items:center;gap:5px;text-decoration:none;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:999px;padding:3px 9px 3px 3px;font-size:13px;font-weight:700;color:var(--ink)}.fpchip i{width:19px;height:19px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:800;color:#0a0f18;font-family:"Noto Serif KR",serif}@media(max-width:430px){.fpchip b{display:none}.fpchip{padding:3px}}.mk{width:24px;height:24px;flex:none;display:block}header nav a,.bar nav a,.top-bar nav a,footer a{display:inline-flex;align-items:center;min-height:40px}main .h a,main a[data-cta]:not([class]){display:inline-flex;align-items:center;min-height:40px}.bar .mk,.top-bar .mk{width:21px;height:21px}body header.site nav,body .bar nav,body .top-bar nav{flex-wrap:nowrap;white-space:nowrap}body header.site .wrap,body .bar{flex-wrap:nowrap}header.site .nm,.bar .nm,.top-bar .nm{flex:none}@media(max-width:430px){header.site nav a[href="/"],.bar nav a[href="/"],.top-bar nav a[href="/"]{display:none}body header.site nav,body .bar nav,body .top-bar nav{gap:10px}body header.site nav a,body .bar nav a,body .top-bar nav a{font-size:13.5px}body .bar .me{display:none}}.page-guide{margin:30px 0 10px;padding:20px 18px;border:1px solid rgba(255,255,255,.09);border-radius:14px;background:rgba(255,255,255,.025);font-size:15.5px;line-height:1.8;color:#d6deea;text-align:left}.page-guide h2{font-size:18px;line-height:1.45;margin:22px 0 8px;color:#e9eef6}.page-guide h2:first-child{margin-top:0}.page-guide p,.page-guide ol,.page-guide ul{margin:0 0 10px}.page-guide ol,.page-guide ul{padding-left:22px}.page-guide li{margin-bottom:6px}.page-guide a{color:#ffd93d}.page-guide .note{font-size:14px;color:#96a3b6;margin-top:14px}
 header.site nav{margin-left:auto;display:flex;gap:14px;align-items:center}
 header.site nav a{font-size:14px;color:var(--mut);text-decoration:none}
 .wrap{max-width:640px;margin:0 auto;padding:18px 16px 40px}
@@ -107,11 +107,13 @@ header.site nav a{font-size:14px;color:var(--mut);text-decoration:none}
 
   <div class="stage" id="stage" hidden></div>
 
-  <section class="card" id="v-load"><p class="s">불러오는 중…</p></section>
+  <!-- 불러오는 중·연결 실패 문구는 HTML 에 기본값으로 두지 않는다(2026-10-18 애드센스 대응).
+       크롤러는 숨은 칸의 글자도 읽어서, '열 수 없어요'가 박혀 있으면 고장 난 페이지로 본다. JS 가 상황을 확인한 뒤에만 채운다. -->
+  <section class="card" id="v-load"><p class="s" id="load-p"></p></section>
 
   <section class="card" id="v-off" hidden>
-    <h2>지금은 궁합소를 열 수 없어요</h2>
-    <p class="s">계정 연결이 아직 준비되지 않았어요. 잠시 뒤에 다시 들어와 주세요.</p>
+    <h2 id="off-h"></h2>
+    <p class="s" id="off-p"></p>
   </section>
 
   <section class="card" id="v-login" hidden>
@@ -150,6 +152,30 @@ header.site nav a{font-size:14px;color:var(--mut);text-decoration:none}
     <p class="hsub" id="hunt-sub"></p>
     <a class="btn rose" href="/gunghap/" id="again">다른 사람과도 궁합 보기</a>
   </section>
+
+  <!-- 설명 글 — 원고 _content/pages/gunghap.html (블로그팀). 로그인 전에도 보이는 자리 -->
+  <!-- /gunghap/ 설명 글 — 로그인 칸 아래(로그인 전에도 보이는 자리)에 넣기 (2026-10-18 블로그팀) -->
+<section class="page-guide" id="guide-gunghap">
+  <h2>궁합소는 어떻게 궁합을 보나요?</h2>
+  <ol>
+    <li>카카오톡으로 로그인하고 내 생년월일을 넣습니다. 이미 캐릭터를 만들었다면 그 사주를 그대로 씁니다.</li>
+    <li>'카카오톡으로 상대 초대하기'로 링크를 보냅니다.</li>
+    <li>상대가 링크로 들어와 생년월일을 넣으면, 두 사람 화면에 같은 결과가 생깁니다.</li>
+  </ol>
+  <p>계산은 모두 브라우저 안에서 만세력으로 합니다. 저장하는 것은 계산한 여덟 글자와 오행 비율뿐이고, 생년월일 원문은 저장하지 않습니다.</p>
+  <h2>점수는 무엇으로 정해지나요?</h2>
+  <p>100점을 다섯 항목으로 나눕니다.</p>
+  <ul>
+    <li><strong>일간 30점</strong> — 태어난 날의 천간끼리. 천간합(갑기·을경·병신·정임·무계)이면 만점입니다.</li>
+    <li><strong>일지 25점</strong> — 태어난 날의 지지끼리. 육합·삼합은 높게, 충·원진은 낮게 봅니다.</li>
+    <li><strong>띠 15점</strong> — 태어난 해의 지지끼리, 같은 규칙입니다.</li>
+    <li><strong>오행 보완 20점</strong> — 각자 가장 적은 오행을 상대가 얼마나 갖고 있는지, 양쪽에 10점씩.</li>
+    <li><strong>주도 기운 10점</strong> — 두 사람의 가장 많은 오행이 서로 살려 주는지, 누르는지.</li>
+  </ul>
+  <h2>보통 몇 점이 나오나요?</h2>
+  <p>26만 명에서 두 사람씩 100만 쌍을 뽑아 같은 규칙으로 매겨 보니 <strong>평균 65.3점</strong>이었습니다. 열 쌍 중 여덟 쌍 넘게(85.3%)가 50~79점에 모이고, 80점 이상은 7.6%입니다. 점수 범위는 31~100점이라 낮게 나와도 0점에 가까운 일은 없습니다. 숫자 전체는 <a href="/ohaeng/ohaeng-gunghap.html">오행 궁합 점수 글</a>에 있습니다.</p>
+  <p class="note">궁합 점수는 전통 풀이를 점수로 옮긴 재미용 참고값입니다. 두 사람의 관계를 판단하지 않습니다.</p>
+</section>
 </main>
 <footer class="foot"><a href="/">처음으로</a><a href="/map/">선택목록</a><a href="/hunt/">사냥터</a><a href="/iljin/">오늘의 기운</a><a href="/ohaeng/">사주 이야기</a><a href="/love/">이성 조건 계산기</a><a href="/about/">소개·문의</a><a href="/privacy/">개인정보처리방침</a></footer>
 
@@ -308,7 +334,11 @@ var COL={목:'#4fb95f',화:'#e8483c',토:'#ffd93d',금:'#8e9bb0',수:'#3f8fe0'};
 var HJ={목:'木',화:'火',토:'土',금:'金',수:'水'};
 var ORDER=['목','화','토','금','수'];
 var VIEWS=['v-load','v-off','v-login','v-birth','v-host','v-msg','v-result'];
-function show(v){ VIEWS.forEach(function(x){ $(x).hidden=(x!==v); }); }
+function show(v){
+  if(v==='v-off'){ $('off-h').textContent='로그인 연결을 준비 중이에요'; $('off-p').textContent='잠시 뒤에 다시 들어와 주세요. 그동안 아래에서 궁합소가 궁합을 보는 방법을 먼저 읽어 보세요.'; }
+  VIEWS.forEach(function(x){ $(x).hidden=(x!==v); });
+}
+$('load-p').textContent='불러오는 중…';
 function qs(k){ var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search); return m?decodeURIComponent(m[1]):null; }
 function ev(n,p){ if(window.gtag) gtag('event',n,p||{}); }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }

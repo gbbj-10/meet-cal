@@ -45,7 +45,7 @@ header.site{border-bottom:1px solid var(--line);padding:16px 0}
 header.site .wrap{display:flex;align-items:center;gap:14px}
 header.site .nm{font-weight:800;font-size:19px;color:var(--ink);text-decoration:none;
   letter-spacing:-.02em;display:flex;align-items:center;gap:9px;min-height:40px}
-.fpchip{display:inline-flex;align-items:center;gap:5px;text-decoration:none;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:999px;padding:3px 9px 3px 3px;font-size:13px;font-weight:700;color:var(--ink)}.fpchip i{width:19px;height:19px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:800;color:#0a0f18;font-family:"Noto Serif KR",serif}@media(max-width:430px){.fpchip b{display:none}.fpchip{padding:3px}}.mk{width:24px;height:24px;flex:none;display:block}header nav a,.bar nav a,.top-bar nav a,footer a{display:inline-flex;align-items:center;min-height:40px}main .h a,main a[data-cta]:not([class]){display:inline-flex;align-items:center;min-height:40px}.bar .mk,.top-bar .mk{width:21px;height:21px}body header.site nav,body .bar nav,body .top-bar nav{flex-wrap:nowrap;white-space:nowrap}body header.site .wrap,body .bar{flex-wrap:nowrap}header.site .nm,.bar .nm,.top-bar .nm{flex:none}@media(max-width:430px){header.site nav a[href="/"],.bar nav a[href="/"],.top-bar nav a[href="/"]{display:none}body header.site nav,body .bar nav,body .top-bar nav{gap:10px}body header.site nav a,body .bar nav a,body .top-bar nav a{font-size:13.5px}body .bar .me{display:none}}
+.fpchip{display:inline-flex;align-items:center;gap:5px;text-decoration:none;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:999px;padding:3px 9px 3px 3px;font-size:13px;font-weight:700;color:var(--ink)}.fpchip i{width:19px;height:19px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:800;color:#0a0f18;font-family:"Noto Serif KR",serif}@media(max-width:430px){.fpchip b{display:none}.fpchip{padding:3px}}.mk{width:24px;height:24px;flex:none;display:block}header nav a,.bar nav a,.top-bar nav a,footer a{display:inline-flex;align-items:center;min-height:40px}main .h a,main a[data-cta]:not([class]){display:inline-flex;align-items:center;min-height:40px}.bar .mk,.top-bar .mk{width:21px;height:21px}body header.site nav,body .bar nav,body .top-bar nav{flex-wrap:nowrap;white-space:nowrap}body header.site .wrap,body .bar{flex-wrap:nowrap}header.site .nm,.bar .nm,.top-bar .nm{flex:none}@media(max-width:430px){header.site nav a[href="/"],.bar nav a[href="/"],.top-bar nav a[href="/"]{display:none}body header.site nav,body .bar nav,body .top-bar nav{gap:10px}body header.site nav a,body .bar nav a,body .top-bar nav a{font-size:13.5px}body .bar .me{display:none}}.page-guide{margin:30px 0 10px;padding:20px 18px;border:1px solid rgba(255,255,255,.09);border-radius:14px;background:rgba(255,255,255,.025);font-size:15.5px;line-height:1.8;color:#d6deea;text-align:left}.page-guide h2{font-size:18px;line-height:1.45;margin:22px 0 8px;color:#e9eef6}.page-guide h2:first-child{margin-top:0}.page-guide p,.page-guide ol,.page-guide ul{margin:0 0 10px}.page-guide ol,.page-guide ul{padding-left:22px}.page-guide li{margin-bottom:6px}.page-guide a{color:#ffd93d}.page-guide .note{font-size:14px;color:#96a3b6;margin-top:14px}
 header.site .tl{font-size:12.5px;color:var(--dim);margin-left:-4px}
 header.site nav{margin-left:auto;display:flex;gap:16px;flex-wrap:wrap}
 header.site nav a{font-size:14.5px;color:var(--mut);text-decoration:none}
@@ -254,6 +254,23 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
   </div>
 </section>
 
+<!-- 설명 글 — 원고 _content/pages/home.html (블로그팀). 입력 칸 아래, 글 카드 위 -->
+<!-- 사이트 루트(/) 설명 글 — 입력 칸 아래, '사주 이야기' 카드 위에 넣기 (2026-10-18 블로그팀) -->
+<section class="page-guide" id="guide-home">
+  <h2>포포즈는 사주를 어떻게 계산하나요?</h2>
+  <p>생년월일과 태어난 시각을 넣으면 만세력으로 <strong>사주 여덟 글자</strong>(연·월·일·시 네 기둥의 천간과 지지)를 직접 계산합니다. 달은 양력 1일이 아니라 <strong>절기</strong>가 바뀌는 날을 기준으로 나누고, 여덟 글자 하나하나를 목·화·토·금·수 다섯 오행으로 옮겨 비율을 냅니다.</p>
+  <ol>
+    <li>여덟 글자를 계산합니다.</li>
+    <li>글자마다 오행을 붙여 다섯 칸의 비율을 셉니다.</li>
+    <li>가장 많은 오행으로 내 '오행 댕댕이' 캐릭터를 만들고, 비어 있는 오행을 따로 표시합니다.</li>
+  </ol>
+  <h2>오행이 하나 비어 있으면 드문 건가요?</h2>
+  <p>아닙니다. 1950~2009년생의 모든 날짜를 열두 시진으로 나눠 262,980건을 계산해 보니, <strong>69.5%</strong>는 다섯 오행 중 하나가 아예 0%였습니다. 다섯을 고루 갖춘 사주는 30.5%입니다. 가장 자주 비는 오행은 목(木)이었습니다. 자세한 숫자는 <a href="/ohaeng/buljokhan-ohaeng.html">부족한 오행 글</a>에 정리했습니다.</p>
+  <h2>태어난 시각을 모르면요?</h2>
+  <p>'모름'으로 두면 시주 두 글자를 빼고 <strong>여섯 글자</strong>로 계산하고, 결과에 그 사실을 적어 둡니다. 같은 날 태어나도 시각에 따라 가장 많은 오행이 바뀌는 경우가 72.6%라, 아무 시각이나 넣는 것보다 비워 두는 편이 정확합니다.</p>
+  <p class="note">사주 해석은 통계적 사실이 아니라 전통적인 풀이입니다. 숫자는 글자가 얼마나 흔한지를 보여 줄 뿐, 성격이나 앞날을 판단하지 않습니다.</p>
+</section>
+
 <section class="sec">
   <div class="h"><h2>사주 이야기</h2><a href="/ohaeng/">전체 보기 &rarr;</a></div>
   <a class="card" href="/ohaeng/idol-saju-dohwa.html" data-cta="post"><img src="/ohaeng/img/idol-saju-dohwa-도화비교.png" alt="" loading="lazy" width="112" height="72"><div><div class="t">도화살 연예인, 정말 많을까 — 아이돌 1,202명 사주 세어 보니</div><div class="d">연예인은 도화살이 많다는 말, 아이돌 1,202명의 생년월일로 직접 확인했습니다. 도화살 비율은 29.4%로 같은 해·같은 달에 태어난 일반인 28.7%와 사실상 같았습니다. 일간·오행 분포도 정리했습니다.</div><div class="m">2026-10-16</div></div></a><a class="card" href="/ohaeng/cheoneul-gwiin.html" data-cta="post"><img src="/ohaeng/img/cheoneul-gwiin-기준별.png" alt="" loading="lazy" width="112" height="72"><div><div class="t">천을귀인 2개 있는 사주 9.7%, 하나라도 있으면 46%</div><div class="d">천을귀인 2개 있는 사주는 26만 건 중 9.7%, 하나라도 있는 사주는 46.0%였습니다. 정·계 일간만 60%를 넘는 이유와 태어난 달별 차이까지 직접 세어 봤습니다.</div><div class="m">2026-10-14</div></div></a><a class="card" href="/ohaeng/ohaeng-gunghap.html" data-cta="post"><img src="/ohaeng/img/ohaeng-gunghap-점수분포.png" alt="" loading="lazy" width="112" height="72"><div><div class="t">오행 궁합 점수 평균 65점, 80점 넘는 찰떡은 7.6%뿐</div><div class="d">오행 궁합 점수는 보통 몇 점이 나올까요. 26만 명에서 두 사람씩 100만 쌍을 뽑아 매겨 보니 평균 65.3점, 80점 이상 찰떡은 7.6%였습니다. 일간 궁합 10×10 표도 함께 봅니다.</div><div class="m">2026-10-12</div></div></a><a class="card" href="/ohaeng/hwagaesal-bindo.html" data-cta="post"><img src="/ohaeng/img/hwagaesal-bindo-기준별.png" alt="" loading="lazy" width="112" height="72"><div><div class="t">화개살 있는 사주 38.6%, 1·4·7·10월생은 절반</div><div class="d">화개살 있는 사주는 얼마나 될까요. 26만 건을 세 가지 기준으로 세어 보니 80.2%, 57.0%, 38.6%였습니다. 1·4·7·10월생은 절반이 넘고, 도화살·역마살과도 거의 같은 비율입니다.</div><div class="m">2026-10-09</div></div></a>
@@ -361,6 +378,12 @@ $('go').addEventListener('click', function(){
     notes+='<div class="note">시각을 넣으면 두 글자가 더 붙어 비율이 달라집니다. '+
       '실제로 <b>72.6%</b>의 경우 결과가 바뀝니다. '+
       '<a href="/ohaeng/taeeonan-sigak.html" data-cta="note_time">태어난 시간 확인하는 3가지 방법 &rarr;</a></div>';
+  }
+  /* 23시대 기준 안내(2026-10-15 블로그팀 요청) — 이 엔진은 '자정에 날이 바뀐다'(①)로 계산한다.
+     엔진 기준을 바꾸면 블로그 yajasi-jojasi 글의 한 줄도 같이 고쳐야 한다(블로그팀에 알림). */
+  if(hh===23){
+    notes+='<div class="note"><b>23시대</b>(23:00~23:59)에 태어난 경우 <b>자정 기준</b>으로 계산했습니다 &mdash; '+
+      '날은 그날 그대로 두고 시주만 자시(子時)로 봅니다. 23시에 날을 바꾸는 만세력도 있어 다른 곳과 결과가 다를 수 있습니다.</div>';
   }
   $('notes').innerHTML=notes;
 
