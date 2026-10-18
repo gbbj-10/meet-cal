@@ -32,8 +32,7 @@
     gtag('js', new Date());
     gtag('config', 'G-HMSZVTTJMB');
   </script>
-  <!-- Google AdSense (로더만. 광고는 결과 화면에서 1회 요청) -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6266949069255809" crossorigin="anonymous"></script>
+  <!-- 애드센스: 이 페이지에는 광고를 싣지 않는다(2026-10-18 사용자 결정 — 신체 항목 때문에 성인용 분류 위험). 다른 페이지·ads.txt·GA4 는 그대로. -->
   <!-- Kakao JavaScript SDK -->
   <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.8.3/kakao.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
@@ -43,11 +42,16 @@
 
     .mc-share{width:100%;margin-top:14px;padding:13px;border:0;border-radius:10px;
       background:#FEE500;color:#191600;font:inherit;font-size:15px;font-weight:700;cursor:pointer}
-    .mc-ad{margin:2.5rem 1rem;padding-top:18px;border-top:1px dashed #2b3546}
-    /* 광고가 안 채워지면 빈 상자가 남지 않게 통째로 접는다 */
-    .mc-ad:has(ins[data-ad-status="unfilled"]){display:none}
-    .mc-ad ins.adsbygoogle[data-ad-status="unfilled"]{display:none}
-    .mc-ad-l{font-size:11px;letter-spacing:.06em;color:#6b7789;margin-bottom:8px}
+    /* 설명 글 — 원고 _content/pages/love.html (블로그팀, 2026-10-18). 정적 페이지라 빌드가 못 끼운다 → 원고를 고치면 여기도 같이 고친다 */
+    .page-guide{margin:2.2rem 1rem 1rem;padding:20px 18px;border:1px solid rgba(255,255,255,.09);border-radius:14px;
+      background:rgba(255,255,255,.025);font-size:15.5px;line-height:1.8;color:#d6deea}
+    .page-guide h2{font-size:18px;line-height:1.45;margin:22px 0 8px;color:#e9eef6}
+    .page-guide h2:first-child{margin-top:0}
+    .page-guide p,.page-guide ol,.page-guide ul{margin:0 0 10px}
+    .page-guide ol,.page-guide ul{padding-left:22px}
+    .page-guide li{margin-bottom:6px}
+    .page-guide a{color:#ffd93d}
+    .page-guide .note{font-size:14px;color:#96a3b6;margin-top:14px}
     .mc-ohaeng{display:block;margin:2.5rem 1rem 1rem;padding:16px 18px;border:1px solid #242d3d;
       border-radius:12px;text-decoration:none;color:#e9eef6}
     .mc-ohaeng .k{display:block;font-size:12px;color:#6b7789;letter-spacing:.04em}
@@ -227,6 +231,21 @@
       </div>
     </div>
     <button class="calc-btn" onclick="startCalc()">맞춤 이성 조회하기</button>
+    <!-- /love/ 설명 글 — 결과 화면이 아닌 첫 입력 화면 아래에 넣기 (2026-10-18 블로그팀) -->
+    <section class="page-guide" id="guide-love">
+      <h2>이성 조건 계산기는 어떻게 계산하나요?</h2>
+      <p>나이·학력·연봉·자산·키와 체중 같은 내 조건을 넣으면, 항목마다 <strong>0~100점</strong>으로 바꾼 뒤 그 점수에 해당하는 상대 쪽 조건으로 다시 옮겨 보여 줍니다. 예를 들어 연봉이 높을수록 점수가 오르고, 그 점수만큼의 상대 연봉이 결과에 나옵니다.</p>
+      <ol>
+        <li>항목별 기준점 사이를 매끄러운 곡선으로 이어 점수를 매깁니다. 그래서 키 1cm, 연봉 100만 원 차이도 점수에 반영됩니다.</li>
+        <li>키는 키대로 점수를 매기고, 체중은 키와 묶은 체질량지수(BMI)로 봅니다. BMI 는 너무 낮아도 높아도 점수가 내려가는 산 모양입니다.</li>
+        <li>학력처럼 순서만 있는 항목은 단계별 점수를 그대로 씁니다.</li>
+      </ol>
+      <h2>결과가 마음에 안 들면요?</h2>
+      <p>결과 화면에서 원하는 항목을 <strong>최대 3개</strong> 골라 고정할 수 있습니다. 고정한 항목은 입력값 그대로 두고, 나머지 항목이 점수를 나눠 가지며 다시 조정됩니다. 한 조건을 높이면 다른 조건이 내려가는 모습을 직접 볼 수 있습니다.</p>
+      <h2>입력한 값은 저장되나요?</h2>
+      <p>계산은 화면 안에서만 합니다. 입력한 숫자는 서버로 보내지 않고, 방문 통계에는 성별 선택과 버튼을 눌렀다는 사실만 남습니다.</p>
+      <p class="note">점수와 결과는 재미로 만든 비교표이며, 사람의 가치나 실제 만남을 판단하지 않습니다. 사주로 보는 궁합은 <a href="/gunghap/">궁합소</a>에서 볼 수 있습니다.</p>
+    </section>
   </div>
 
   <!-- 페이지 2: 인터스티셜 -->
@@ -258,13 +277,6 @@
       <button type="button" id="share-kakao" class="mc-share">결과 카카오톡으로 공유하기</button>
     </div>
 
-    <!-- 광고: 결과가 모두 나온 뒤 1회만. 위아래로 여백을 둬 오클릭을 막는다. -->
-    <div id="res-ad" class="mc-ad" hidden>
-      <div class="mc-ad-l">광고</div>
-      <ins class="adsbygoogle" style="display:block"
-           data-ad-client="ca-pub-6266949069255809" data-ad-slot="6974474591"
-           data-ad-format="auto" data-full-width-responsive="true"></ins>
-    </div>
     <div class="edit-section">
       <h4>이성 조건이 마음에 들지 않으신가요?</h4>
       <p>원하는 조건 항목을 체크하고 조건을 바꿔주세요.<br>체크한 항목은 입력값으로 고정되고, 나머지 항목이 점수 재분배로 조정됩니다. 최대 3개까지 선택 가능합니다.</p>
@@ -586,21 +598,7 @@ updateSal();updateAst();
 <script>
 /* --- 2026-09 추가분: 광고 노출 시점, 카카오 공유, GA4 이벤트 --- */
 (function(){
-  var adDone = false;
-  function showAd(){
-    if (adDone) return; adDone = true;
-    var el = document.getElementById('res-ad');
-    if (!el) return;
-    el.hidden = false;
-    try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
-  }
-  /* 결과 화면이 실제로 뜰 때만 광고를 요청한다.
-     계산 대기(page-inter) 화면에는 절대 넣지 않는다 — 애드센스 프리롤 금지 조항. */
-  var _showPage = window.showPage;
-  window.showPage = function(id){
-    _showPage(id);
-    if (id === 'page-result') showAd();
-  };
+  /* 광고 요청(showAd)은 2026-10-18 뺐다 — 이 페이지는 광고 없음. */
 
   var _startCalc = window.startCalc;
   window.startCalc = function(){
