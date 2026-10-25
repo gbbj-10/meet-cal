@@ -7,6 +7,7 @@
 초고를 하나 올리면 루트 첫 화면도 같이 갱신됩니다.
 """
 import brand
+import coupang   # 애드센스 칸 → 쿠팡파트너스 배너 (2026-10-25)
 import html
 
 SITE_ROOT = 'https://meetcal.co.kr'
@@ -523,4 +524,4 @@ def render(posts, ga_snippet, ad_client, ad_slot, limit=4):
                  ('__ADSLOT__', ad_slot), ('__POSTS__', cards),
                  ('__GUIDE__', brand.guide('home'))):
         s = s.replace(k, v)
-    return s
+    return coupang.swap(s)

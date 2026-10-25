@@ -14,6 +14,7 @@
 계산 기준일은 data/saju-calculator.js 와 같습니다 (1900-01-31 = 갑자일).
 """
 import brand
+import coupang   # 애드센스 칸 → 쿠팡파트너스 배너 (2026-10-25)
 import datetime
 import html
 
@@ -83,7 +84,7 @@ def render(ga_snippet, ad_client, ad_slot):
         ('__ROWS__', week_rows(today)),
     ):
         page = page.replace(k, v)
-    return page
+    return coupang.swap(page)
 
 
 PAGE = r"""<!DOCTYPE html>

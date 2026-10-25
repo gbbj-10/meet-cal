@@ -7,6 +7,7 @@ PUB — 블로그 빌드
 import brand
 import os, re, json, html, datetime, sys
 import markdown, yaml
+import coupang   # 애드센스 승인 전까지 광고 칸 = 쿠팡파트너스 배너 (2026-10-25)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # content/
 DRAFT, POSTS = os.path.join(ROOT,'draft'), os.path.join(ROOT,'posts')
@@ -28,6 +29,8 @@ def ad_unit():
     """계산 결과가 나온 뒤 결과 블록 맨 아래에 한 번 노출되는 광고.
        프리롤(결과를 보려면 광고를 먼저 봐야 하는 형태)은 애드센스 게재위치 정책 위반이라
        결과를 모두 보여준 다음, 게임 CTA 아래에 충분한 간격을 두고 배치합니다."""
+    if coupang.ON:
+        return coupang.unit()
     if not ADS['on']:
         return ('<div class="cadph">광고 자리<br>'
                 '<span>애드센스 승인 후 이 자리에 노출됩니다</span></div>')
@@ -471,6 +474,10 @@ def check_aff(meta, fn):
 def aff_disc(meta):
     return f'\n  <p class="aff-disc">{AFF_DISC}</p>' if meta.get('affiliate') else ''
 
+def cp_disc(body):
+    """쿠팡 배너가 들어간 글(계산기가 있는 글)은 제목 아래에도 대가성 문구 (공정위 지침: 첫 부분)."""
+    return f'\n  <p class="aff-disc">{AFF_DISC}</p>' if 'class="cpb"' in body else ''
+
 def aff_block(meta):
     """계산기 CTA 아래·면책 위. 글자 링크만(이미지·위젯·배너 없음)."""
     if not meta.get('affiliate'): return ''
@@ -532,7 +539,7 @@ def build():
 <main class="wrap">
 <article>
   <h1>{html.escape(meta['title'])}</h1>
-  <div class="meta">{meta['date']} · {SITE['name']}</div>{aff_disc(meta)}
+  <div class="meta">{meta['date']} · {SITE['name']}</div>{aff_disc(meta) or cp_disc(body)}
   {body}
 </article>
 {cta('end')}
