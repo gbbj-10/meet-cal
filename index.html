@@ -86,7 +86,7 @@ header.site nav a.hl{color:var(--to);font-weight:700}
 .mine2 .fpacc:has(.fpacc-b.in){display:none}
 .sj{margin-top:4px}
 .sj .sj-k{font-size:12.5px;font-weight:700;color:var(--to);letter-spacing:.2px}
-.sj h1{font-size:26px;letter-spacing:-.02em;margin:4px 0 6px}
+.sj h1,.sj h2.sjh{font-size:26px;letter-spacing:-.02em;margin:4px 0 6px}
 .sj .sub{color:var(--mut);font-size:14px;margin:0 0 16px}
 .sj-say{margin:20px 0 4px;padding:16px 18px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
 .sj-say .l{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:0 0 6px}
@@ -140,6 +140,7 @@ header.site nav a.hl{color:var(--to);font-weight:700}
 .sec > .h{display:flex;align-items:baseline;gap:10px;margin-bottom:16px}
 .sec > .h h2{font-size:20px;margin:0;letter-spacing:-.01em}
 .sec > .h a{margin-left:auto;font-size:14px;text-decoration:none}
+.sec-l{font-size:14.5px;color:var(--mut);line-height:1.75;margin:-4px 0 14px}
 .card{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-top:1px solid var(--line);
   text-decoration:none;color:inherit}
 .card img{width:112px;height:72px;object-fit:cover;border-radius:9px;flex:none;background:var(--soft)}
@@ -239,7 +240,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 <!-- 나의 오행 조회 다음 화면 — 사주 여덟 글자만 따로 보여 주고, 캐릭터 생성으로 넘어간다 -->
 <section class="tool sj" id="saju" hidden>
   <div class="sj-k">나의 오행 조회</div>
-  <h1>당신의 사주 구성</h1>
+  <h2 class="sjh">당신의 사주 구성</h2>   <!-- 한 페이지 h1 은 하나 (2026-11-03) -->
   <p class="sub" id="dsub"></p>
   <div class="board" id="board"></div>
   <div class="sj-say" id="sj-say"></div>
@@ -271,7 +272,13 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 
 <section class="sec">
   <div class="h"><h2>사주 이야기</h2><a href="/ohaeng/">전체 보기 &rarr;</a></div>
-  <a class="card" href="/ohaeng/gwimungwansal-2gae.html" data-cta="post"><img src="/ohaeng/img/gwimungwansal-2gae-기준별.png" alt="" loading="lazy" width="112" height="72"><div><div class="t">귀문관살 2개 있는 사주 9.1%, 서로 다른 두 짝은 1.7%</div><div class="d">만세력에 귀문관살 2개가 떴다면 얼마나 드문 걸까요? 26만 사주를 세니 짝이 두 번 이상 맞는 사주는 9.1%, 서로 다른 두 짝은 1.7%였습니다. 보는 칸마다 16.0~40.3%로 갈리는 이유도 풀었습니다.</div><div class="m">2026-11-02</div></div></a><a class="card" href="/ohaeng/yajasi-jojasi.html" data-cta="post"><img src="/ohaeng/img/yajasi-jojasi-항목별.png" alt="" loading="lazy" width="112" height="72"><div><div class="t">야자시 조자시, 밤 11시생 절반은 일간 오행이 바뀝니다</div><div class="d">밤 11시~자정 사이에 태어났다면 야자시를 어떻게 보느냐에 따라 일주가 통째로 달라집니다. 60년치 모든 날짜를 세 기준으로 계산해 보니 일간 오행은 50%, 우세 오행은 49.6%가 바뀌었습니다.</div><div class="m">2026-10-30</div></div></a><a class="card" href="/ohaeng/baekhodaesal-2gae.html" data-cta="post"><img src="/ohaeng/img/baekhodaesal-2gae-기준별.png" alt="" loading="lazy" width="112" height="72"><div><div class="t">백호대살 2개 있는 사주 7.0%, 네 기둥으로 보면 39.1%</div><div class="d">백호대살(백호살) 2개가 나왔다면 얼마나 드문 걸까요? 26만 사주를 전부 세어 보니 2개 이상은 7.0%, 일주만 보면 11.7%, 네 기둥으로 넓히면 39.1%였습니다. 1·4·10월생에 많은 이유도 풀었습니다.</div><div class="m">2026-10-28</div></div></a><a class="card" href="/ohaeng/goegangsal-yeoja.html" data-cta="post"><img src="/ohaeng/img/goegangsal-yeoja-기준별.png" alt="" loading="lazy" width="112" height="72"><div><div class="t">괴강살 여자도 남자도 10%, 네 기둥까지 넓히면 34.7%</div><div class="d">괴강살 여자에게 많다는 말, 26만 사주로 확인했습니다. 일주만 보면 6.7~10.0%, 네 기둥 어디라도 보면 34.7%로 남녀가 같습니다. 4월·10월생과 1970·1982·2000년생이 유독 많은 이유도 풀었습니다.</div><div class="m">2026-10-26</div></div></a>
+  <p class="sec-l">풀이를 옮기지 않고 26만 건을 직접 세어 본 숫자로 씁니다. 처음이라면
+     <a href="/ohaeng/guide.html">길잡이</a>에서 용어와 숫자 읽는 법부터 —
+     주제별로 <a href="/ohaeng/guide.html#t-basic">사주 기초</a> ·
+     <a href="/ohaeng/guide.html#t-sinsal">신살</a> ·
+     <a href="/ohaeng/guide.html#t-sipseong">재물과 관성</a> ·
+     <a href="/ohaeng/guide.html#t-match">궁합과 띠</a>.</p>
+  <a class="card" href="/ohaeng/gwimungwansal-2gae.html" data-cta="post"><img src="/ohaeng/img/gwimungwansal-2gae-기준별.png" alt="" loading="lazy" width="112" height="72"><div><div class="t">귀문관살 2개 있는 사주 9.1%, 서로 다른 두 짝은 1.7%</div><div class="d">만세력에 귀문관살 2개가 떴다면 얼마나 드문 걸까요? 26만 사주를 세니 짝이 두 번 이상 맞는 사주는 9.1%, 서로 다른 두 짝은 1.7%였습니다. 보는 칸마다 16.0~40.3%로 갈리는 이유도 풀었습니다.</div><div class="m">2026-11-02</div></div></a><a class="card" href="/ohaeng/yajasi-jojasi.html" data-cta="post"><img src="/ohaeng/img/yajasi-jojasi-항목별.png" alt="" loading="lazy" width="112" height="72"><div><div class="t">야자시 조자시, 밤 11시생 절반은 일간 오행이 바뀝니다</div><div class="d">밤 11시~자정 사이에 태어났다면 야자시를 어떻게 보느냐에 따라 일주가 통째로 달라집니다. 60년치 모든 날짜를 세 기준으로 계산해 보니 일간 오행은 50%, 우세 오행은 49.6%가 바뀌었습니다.</div><div class="m">2026-10-30</div></div></a><a class="card" href="/ohaeng/baekhodaesal-2gae.html" data-cta="post"><img src="/ohaeng/img/baekhodaesal-2gae-기준별.png" alt="" loading="lazy" width="112" height="72"><div><div class="t">백호대살 2개 있는 사주 7.0%, 네 기둥으로 보면 39.1%</div><div class="d">백호대살(백호살) 2개가 나왔다면 얼마나 드문 걸까요? 26만 사주를 전부 세어 보니 2개 이상은 7.0%, 일주만 보면 11.7%, 네 기둥으로 넓히면 39.1%였습니다. 1·4·10월생에 많은 이유도 풀었습니다.</div><div class="m">2026-10-28</div></div></a><a class="card" href="/ohaeng/goegangsal-yeoja.html" data-cta="post"><img src="/ohaeng/img/goegangsal-yeoja-기준별.png" alt="" loading="lazy" width="112" height="72"><div><div class="t">괴강살 여자도 남자도 10%, 네 기둥까지 넓히면 34.7%</div><div class="d">괴강살 여자에게 많다는 말, 26만 사주로 확인했습니다. 일주만 보면 6.7~10.0%, 네 기둥 어디라도 보면 34.7%로 남녀가 같습니다. 4월·10월생과 1970·1982·2000년생이 유독 많은 이유도 풀었습니다.</div><div class="m">2026-10-26</div></div></a><a class="card" href="/ohaeng/yanginsal-tteut.html" data-cta="post"><img src="/ohaeng/img/yanginsal-tteut-기준별.png" alt="" loading="lazy" width="112" height="72"><div><div class="t">양인살 뜻과 비율, 26만 사주 중 15.3%가 가진 칼날 글자</div><div class="d">양인살 뜻부터 26만 사주로 센 비율까지. 정통 표(양간만)로는 15.3%, 음간까지 넣으면 30.7%로 두 배가 됩니다. 양인 일주는 5.0%, 일간·태어난 달별 차이도 세어 봤습니다.</div><div class="m">2026-10-23</div></div></a><a class="card" href="/ohaeng/hongyeomsal-yeoja.html" data-cta="post"><img src="/ohaeng/img/hongyeomsal-yeoja-기준별.png" alt="" loading="lazy" width="112" height="72"><div><div class="t">홍염살 여자에게 더 많을까? 26만 사주로 센 비율 32.1%</div><div class="d">홍염살 여자에게 더 많다는 말, 26만 사주로 세어 봤습니다. 네 지지 중 하나라도 있는 사주는 32.1%, 일지만 보면 11.7%. 성별은 계산에 들어가지 않아 남녀 비율이 같습니다.</div><div class="m">2026-10-21</div></div></a>
 </section>
 
 
