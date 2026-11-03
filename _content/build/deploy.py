@@ -107,7 +107,7 @@ def main():
     # 이번 빌드에서 실제로 만든 것만 옮긴다. 삭제가 막힌 폴더(OneDrive)에서는
     # 발행 대기 중인 글의 옛 html 이 posts/ 에 남아 있을 수 있는데, 그게 따라오면
     # 예약한 날짜보다 먼저 올라가 버린다.
-    live = set(m['slug'] + '.html' for m, _ in posts) | {'game.html'}
+    live = set(m['slug'] + '.html' for m, _ in posts) | {'game.html', 'guide.html'}   # guide = 길잡이(2026-11-03)
     n = 0
     for fn in sorted(os.listdir(B.POSTS)):
         if not fn.endswith('.html'): continue
@@ -174,11 +174,12 @@ def main():
     #   목록·허브: 가장 최근 글 날짜와 PAGE_EDITED 중 늦은 것(새 글이 올라오면 카드가 바뀐다)
     #   일진    : 매일 바뀌므로 오늘(KST)
     #   나머지  : PAGE_EDITED — 그 페이지(빌드 스크립트·정적 파일)를 고친 날. **고치면 이 날짜도 같이 바꾼다.**
-    PAGE_EDITED = {'/': '2026-10-18', '/map/': '2026-10-02', '/love/': '2026-10-18',
-                   '/about/': '2026-10-01', '/privacy/': '2026-10-01', '/ohaeng/': '2026-10-01'}
+    PAGE_EDITED = {'/': '2026-11-03', '/map/': '2026-10-02', '/love/': '2026-10-18',
+                   '/about/': '2026-11-03', '/privacy/': '2026-10-01', '/ohaeng/': '2026-11-03'}
     def pdate(m):
         return str(m.get('updated') or m['date'])[:10]
     pd = {m['slug']: pdate(m) for m, _ in posts}
+    pd['guide'] = max(list(pd.values()) + [PAGE_EDITED['/ohaeng/']])   # 길잡이: 글이 늘 때 목록이 바뀐다
     newest = max(pd.values()) if pd else PAGE_EDITED['/']
     kst = str(B.kst_today())
     slugs = sorted(f[:-5] for f in os.listdir(SITE)

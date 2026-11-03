@@ -15,7 +15,8 @@ SITE = {
     'name':  '사주 이야기',
     'tagline': '사주를 직접 계산해서 씁니다',
     'base':  'https://meetcal.co.kr/ohaeng',   # GitHub Pages 가 www→apex 로 리다이렉트하므로 non-www 가 정본
-    'author':'사주 이야기',
+    'author':'포포즈',                     # 글·계산 표기 (2026-11-03 — 소개 페이지의 운영자와 같은 이름)
+    'about': 'https://meetcal.co.kr/about/',
     'ga':    'G-HMSZVTTJMB',              # meetcal.co.kr GA4 속성 (2026-09-19 생성)
 }
 # 애드센스 — 승인 전에는 on=False (자리표시자만 보입니다)
@@ -29,7 +30,7 @@ def ad_unit():
     """계산 결과가 나온 뒤 결과 블록 맨 아래에 한 번 노출되는 광고.
        프리롤(결과를 보려면 광고를 먼저 봐야 하는 형태)은 애드센스 게재위치 정책 위반이라
        결과를 모두 보여준 다음, 게임 CTA 아래에 충분한 간격을 두고 배치합니다."""
-    if coupang.ON:
+    if coupang.ON and coupang.BLOG:      # 블로그 글은 재심사 기간 동안 쿠팡 배너를 끈다 (2026-11-03)
         return coupang.unit()
     if not ADS['on']:
         return ('<div class="cadph">광고 자리<br>'
@@ -375,9 +376,9 @@ gtag('js',new Date());gtag('config','{SITE['ga']}');</script>"""
         ld = '<script type="application/ld+json">' + json.dumps({
             "@context":"https://schema.org","@type":"Article",
             "headline":meta['title'],"description":meta['desc'],
-            "datePublished":str(meta['date']),"dateModified":str(meta['date']),
-            "author":{"@type":"Organization","name":SITE['author']},
-            "publisher":{"@type":"Organization","name":SITE['name']},
+            "datePublished":str(meta['date']),"dateModified":str(meta.get('updated') or meta['date']),
+            "author":{"@type":"Organization","name":SITE['author'],"url":SITE['about']},
+            "publisher":{"@type":"Organization","name":SITE['author'],"url":SITE['about']},
             "image":f"{SITE['base']}/{meta['image']}",
             "mainEntityOfPage":canon}, ensure_ascii=False) + '</script>'
     og = f'<meta property="og:image" content="{SITE["base"]}/{img}">' if img else ''
@@ -488,6 +489,121 @@ def aff_block(meta):
         for i, p in enumerate(meta['products'], 1))
     return f'<div class="aff"><div class="h">이 글과 이어지는 물건</div><ul>{items}</ul></div>\n'
 
+# ── 주제 묶음 (2026-11-03) ──────────────────────────────────────────────
+# 길잡이(guide.html)와 '같이 읽어 보세요'가 같은 묶음을 쓴다. 새 글은 slug 를 여기에 넣는다.
+# 넣지 않아도 제목 낱말로 대강 나뉜다(_topic). 묶음이 바뀌면 길잡이 설명도 같이 본다.
+TOPICS = [
+    ('basic', '사주 기초 — 여덟 글자와 오행',
+     '연·월·일·시 네 기둥이 어떻게 정해지고, 오행이 얼마나 흔하게 나오는지부터 봅니다. 처음이라면 이 묶음이 먼저입니다.',
+     ['wolbyeol-ohaeng', 'useh-ohaeng-to', 'buljokhan-ohaeng', 'ttibyeol-ohaeng',
+      'taeeonan-sigak', 'yajasi-jojasi', 'iljin-365']),
+    ('sinsal', '신살 — 이름은 무섭지만 생각보다 흔한 글자들',
+     '도화·역마·괴강처럼 이름이 붙은 글자 조합입니다. 책마다 표가 달라 어느 기준으로 세느냐에 따라 비율이 크게 바뀝니다. 글마다 기준을 나눠 적었습니다.',
+     ['dohwasal-bindo', 'idol-saju-dohwa', 'yeokmasal-bindo', 'hwagaesal-bindo',
+      'jangseongsal-tteut', 'banansal-tteut', 'mangsinsal-tteut',
+      'cheoneul-gwiin', 'cheondeok-woldeok-gwiin', 'hongyeomsal-yeoja', 'hyeonchimsal-2gae',
+      'yanginsal-tteut', 'goegangsal-yeoja', 'baekhodaesal-2gae', 'gwimungwansal-2gae']),
+    ('sipseong', '재물과 관성 — 십성으로 읽는 사주',
+     '일간과 다른 글자의 관계(십성)로 돈·일·관계를 읽는 해석입니다. 해석이 갈리는 부분은 두 가지 이상으로 세어 비교했습니다.',
+     ['don-beoneun-saju', 'don-saeneun-saju', 'mugwan-saju']),
+    ('match', '궁합과 띠',
+     '두 사람의 글자를 함께 보는 궁합, 그리고 띠가 언제 바뀌는지를 다룹니다.',
+     ['ohaeng-gunghap', 'ttigunghap-pyo', '2027nyeon-tti-samjae']),
+    ('etc', '그 밖의 계산', '사주 밖에서 직접 만든 계산기를 뜯어본 글입니다.', ['ki-yeonbong']),
+]
+
+def _topic(m):
+    for key, _, _, slugs in TOPICS:
+        if m['slug'] in slugs:
+            return key
+    t = m.get('title', '')
+    if '살' in t or '귀인' in t: return 'sinsal'
+    if '궁합' in t or '띠' in t: return 'match'
+    if '재' in t or '관' in t: return 'sipseong'
+    return 'basic'
+
+def related(meta, posts, n=3):
+    """같은 주제 묶음에서 키워드가 많이 겹치는 글 먼저, 모자라면 다른 묶음의 최신 글.
+       (예전엔 모든 글이 '최신 2편'을 똑같이 걸어 글끼리 이어지지 않았다 — 2026-11-03)"""
+    me = set(meta.get('keywords') or [])
+    words = lambda m: set(w for k in (m.get('keywords') or []) for w in str(k).split())
+    mine = set(w for k in me for w in str(k).split())
+    others = [m for m, _ in posts if m['slug'] != meta['slug']]
+    same = [m for m in others if _topic(m) == _topic(meta)]
+    same.sort(key=lambda m: str(m['date']), reverse=True)        # 같은 겹침이면 최근 글 먼저
+    same.sort(key=lambda m: -len(words(m) & mine))               # 안정 정렬 — 겹침 많은 순
+    pick = same[:n]
+    for m in others:
+        if len(pick) >= n: break
+        if m not in pick: pick.append(m)
+    return pick
+
+GUIDE_INTRO = """
+<p class="lead">사주 이야기는 사주 풀이를 그대로 옮기지 않고, <b>직접 만든 만세력 엔진으로 세어 본 숫자</b>를 함께 적는 블로그입니다.
+처음 오셨다면 아래 순서로 읽으면 덜 헷갈립니다.</p>
+
+<h2 id="read">숫자를 읽는 법</h2>
+<ul>
+<li><b>26만 건(262,980건)</b>은 1950년 1월 1일부터 2009년 12월 31일까지 모든 날짜를 열두 시진(2시간 칸)으로 나눈 조합 수입니다.
+설문이나 실제 인구가 아니라, 모든 날짜와 시진에 똑같이 한 명씩 태어났다고 놓고 센 비율입니다.</li>
+<li>같은 계산을 <b>1890~1949년</b>에도 돌려, 숫자가 특정 60년에만 나오는 우연이 아닌지 확인합니다. 두 구간이 다르면 글에 적습니다.</li>
+<li>신살처럼 <b>책마다 표가 다른 것</b>은 기준을 나눠 셉니다. 예를 들어 '일주만 보면 10%, 네 기둥 어디든 보면 35%'처럼 기준에 따라 숫자가 몇 배씩 달라집니다.
+글 제목의 숫자는 그중 하나일 뿐이니 본문의 기준 설명을 같이 봐 주세요.</li>
+<li>숫자는 그 글자가 <b>얼마나 흔한지</b>를 보여 줄 뿐, 성격이나 앞날이 맞는다는 증거가 아닙니다.</li>
+</ul>
+
+<h2 id="terms">자주 나오는 말</h2>
+<ul>
+<li><b>사주·팔자</b> — 태어난 연·월·일·시의 네 기둥(사주). 기둥마다 천간 하나와 지지 하나가 있어 모두 여덟 글자(팔자)입니다.</li>
+<li><b>천간</b> — 갑·을·병·정·무·기·경·신·임·계, 열 글자. <b>지지</b> — 자·축·인·묘·진·사·오·미·신·유·술·해, 열두 글자(띠와 같은 순서).</li>
+<li><b>오행</b> — 목·화·토·금·수. 천간은 갑을=목, 병정=화, 무기=토, 경신=금, 임계=수이고,
+지지는 인묘=목, 사오=화, 신유=금, 해자=수, 진술축미=토입니다.</li>
+<li><b>일간</b> — 태어난 날 기둥의 천간. 풀이에서는 '나'로 봅니다.</li>
+<li><b>절기</b> — 사주의 달은 양력 1일이 아니라 입춘·경칩 같은 절기가 바뀌는 시각에 넘어가고, 해는 입춘에 바뀝니다. 그래서 1월생·2월 초생은 띠가 앞 해 것일 수 있습니다.</li>
+<li><b>시진</b> — 하루를 두 시간씩 열두 칸으로 나눈 것. 밤 11시~새벽 1시가 자시입니다. 밤 11시대를 어느 날로 볼지는 풀이마다 달라 <a href="yajasi-jojasi.html">야자시 글</a>에 따로 정리했습니다.</li>
+<li><b>신살</b> — 특정 글자 조합에 붙인 이름(도화살·역마살·천을귀인 등). 길하다·흉하다는 이름과 달리, 세어 보면 열 명 중 서너 명이 가진 것이 많습니다.</li>
+<li><b>십성</b> — 일간과 다른 글자의 오행 관계를 열 가지(비견·겁재·식신·상관·편재·정재·편관·정관·편인·정인)로 나눈 것. 재물·직업 풀이에 씁니다.</li>
+</ul>
+"""
+
+GUIDE_METHOD = """
+<h2 id="method">계산 방법과 한계</h2>
+<ul>
+<li><b>엔진</b> — 운세 API 를 쓰지 않고 직접 만든 만세력 엔진으로 계산합니다. 첫 화면의 캐릭터 계산과 글의 통계가 같은 엔진을 씁니다.</li>
+<li><b>절기</b> — 달이 바뀌는 시각(절입)은 태양 황경을 천문 근사식(Meeus, <i>Astronomical Algorithms</i>)으로 계산합니다.
+근사식이라 몇 분 차이가 납니다. 예를 들어 2026년 한로는 우주항공청 월력요항을 인용한 보도에서 10월 8일 15시 29분, 엔진은 15시 30분입니다.
+절입 시각 몇 분 안에 태어났다면 월주가 바뀔 수 있으니 공식 만세력과 한 번 더 대조해 보세요.</li>
+<li><b>시각</b> — 입력한 시각을 한국 표준시 그대로 씁니다. 경도 보정(약 30분)과 1987·1988년 서머타임 보정은 하지 않습니다. 밤 11시대는 자시로 보되 날짜(일주)는 그날 그대로 둡니다.</li>
+<li><b>일주</b> — 1900년 1월 31일을 갑자일로 놓고 날짜 차이로 셉니다.</li>
+<li><b>표본</b> — 1950~2009년 모든 날짜 × 열두 시진. 실제 출생은 달·시간마다 고르지 않으므로, 실제 인구 비율과는 조금 다를 수 있습니다.</li>
+<li><b>표가 갈리는 신살</b> — 글마다 어떤 표를 썼는지, 다른 표로 세면 어떻게 달라지는지 같이 적습니다.</li>
+</ul>
+<p>숫자가 틀렸거나 다른 기준으로 세어 보고 싶다면 <a href="/about/#contact">문의 양식</a>으로 알려 주세요. 확인해서 글을 고치고 고친 날짜를 적습니다.</p>
+"""
+
+def guide_html(posts):
+    """사주 이야기 길잡이 — 주제별 목록 + 용어 + 계산 방법. 글이 늘면 목록만 자동으로 늘어난다."""
+    groups = {k: [] for k, *_ in TOPICS}
+    for m, _ in posts:
+        groups.setdefault(_topic(m), []).append(m)
+    sec = ''
+    for key, name, desc, slugs in TOPICS:
+        ms = groups.get(key) or []
+        if not ms: continue
+        order = {s: i for i, s in enumerate(slugs)}
+        ms = sorted(ms, key=lambda m: order.get(m['slug'], 999))
+        items = ''.join(f'<li><a href="{m["slug"]}.html">{html.escape(m["title"])}</a></li>' for m in ms)
+        sec += f'<h3 id="t-{key}">{html.escape(name)}</h3>\n<p>{html.escape(desc)}</p>\n<ul>{items}</ul>\n'
+    toc = ''.join(f'<a href="#t-{k}">{html.escape(n.split(" — ")[0])}</a> · ' for k, n, *_ in TOPICS if groups.get(k))
+    return f"""<h1>사주 이야기 길잡이</h1>
+<div class="meta">글·계산 <a href="/about/">{SITE['author']}</a> · 글이 올라올 때마다 목록이 함께 늘어납니다</div>
+{GUIDE_INTRO}
+<h2 id="topics">주제별로 읽기</h2>
+<p>{toc}<a href="#method">계산 방법</a></p>
+{sec}
+{GUIDE_METHOD}"""
+
+
 def kst_today():
     """한국 날짜. 발행 예정일이 오늘보다 뒤인 초안은 건너뛴다."""
     return datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).date()
@@ -525,24 +641,25 @@ def build():
         love = LOVECALC.replace('<!--AD_UNIT-->', ad_unit())
         body = body.replace('<p>{{LOVECALC}}</p>', love).replace('{{LOVECALC}}', love)
         # 링크: 같은 폴더 안이라 그대로
-        # CTA 두 군데 — 본문 중간(첫 h2 다음 두 번째 h2 앞)과 끝
-        parts = body.split('<h2')
-        if len(parts) >= 4:
-            mid = 3
-            body = ('<h2'.join(parts[:mid])) + cta('mid') + '<h2' + ('<h2'.join(parts[mid:]))
-        rel = [m for m,_ in posts if m['slug'] != slug][:2]
+        # 계산기 유도는 글당 한 번 (2026-11-03 — 예전엔 중간·끝 CTA + 글 안 계산기로 2~3번).
+        # 글 안에 계산기(CALC·LOVECALC)가 있으면 그것이 유도이고, 없을 때만 끝에 CTA 상자를 둔다.
+        has_tool = 'id="calc"' in body or 'class="calc"' in body
+        endcta = '' if has_tool else cta('end')
+        rel = related(meta, posts)
         relhtml = ''
         if rel:
             relhtml = '<div class="related"><div class="h">같이 읽어 보세요</div>' + \
-                ''.join(f'<a href="{m["slug"]}.html">{html.escape(m["title"])}</a>' for m in rel) + '</div>'
+                ''.join(f'<a href="{m["slug"]}.html">{html.escape(m["title"])}</a>' for m in rel) + \
+                '<a href="guide.html">사주 이야기 길잡이 — 주제별 목록과 계산 방법</a></div>'
+        upd = f" · 고친 날 {meta['updated']}" if meta.get('updated') else ''
         page = head(meta['title'], meta['desc'], canon, meta.get('image'), True, meta) + f"""
 <main class="wrap">
 <article>
   <h1>{html.escape(meta['title'])}</h1>
-  <div class="meta">{meta['date']} · {SITE['name']}</div>{aff_disc(meta) or cp_disc(body)}
+  <div class="meta">{meta['date']}{upd} · 글·계산 <a href="/about/">{SITE['author']}</a> · <a href="guide.html#method">계산 방법</a></div>{aff_disc(meta) or cp_disc(body)}
   {body}
 </article>
-{cta('end')}
+{endcta}
 {aff_block(meta)}<p class="disc">{DISCLAIMER}</p>
 {relhtml}
 </main>""" + FOOT
@@ -560,10 +677,25 @@ def build():
 <main class="wrap">
   <h1>{SITE['name']}</h1>
   <div class="intro">사주 여덟 글자를 <b>직접 계산해서</b> 씁니다.
-  글에 나오는 숫자는 전부 재현 가능한 계산 결과이고, 계산 방법과 한계도 같이 적습니다.</div>
+  글에 나오는 숫자는 전부 재현 가능한 계산 결과이고, 계산 방법과 한계도 같이 적습니다.<br>
+  처음이라면 <a href="posts/guide.html">길잡이</a>에서 용어와 숫자 읽는 법, 주제별 목록부터 보세요.</div>
   {cards}
 </main>""" + FOOT
     open(os.path.join(ROOT,'blog.html'),'w',encoding='utf-8').write(idx)
+
+    # 길잡이 (2026-11-03) — posts/guide.html → 배포에선 /ohaeng/guide.html
+    gcanon = f"{SITE['base']}/posts/guide.html"
+    gpage = head('사주 이야기 길잡이 — 용어·숫자 읽는 법·주제별 목록',
+                 '사주 이야기 블로그를 처음 읽는 분을 위한 안내. 천간·지지·오행·절기 같은 용어, 26만 건 통계를 읽는 법, 계산 방법과 한계, 주제별 글 목록.',
+                 gcanon, 'img/og-ohaeng.png') + f"""
+<main class="wrap">
+<article>
+{guide_html(posts)}
+</article>
+{cta('guide')}
+<p class="disc">{DISCLAIMER}</p>
+</main>""" + FOOT
+    open(os.path.join(POSTS, 'guide.html'), 'w', encoding='utf-8').write(gpage)
 
     # index.json (중복·카니발 방지 기준)
     json.dump([{ 'slug':m['slug'],'title':m['title'],'keywords':m['keywords'],

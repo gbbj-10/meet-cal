@@ -103,7 +103,7 @@ header.site nav a.hl{color:var(--to);font-weight:700}
 .mine2 .fpacc:has(.fpacc-b.in){display:none}
 .sj{margin-top:4px}
 .sj .sj-k{font-size:12.5px;font-weight:700;color:var(--to);letter-spacing:.2px}
-.sj h1{font-size:26px;letter-spacing:-.02em;margin:4px 0 6px}
+.sj h1,.sj h2.sjh{font-size:26px;letter-spacing:-.02em;margin:4px 0 6px}
 .sj .sub{color:var(--mut);font-size:14px;margin:0 0 16px}
 .sj-say{margin:20px 0 4px;padding:16px 18px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
 .sj-say .l{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:0 0 6px}
@@ -157,6 +157,7 @@ header.site nav a.hl{color:var(--to);font-weight:700}
 .sec > .h{display:flex;align-items:baseline;gap:10px;margin-bottom:16px}
 .sec > .h h2{font-size:20px;margin:0;letter-spacing:-.01em}
 .sec > .h a{margin-left:auto;font-size:14px;text-decoration:none}
+.sec-l{font-size:14.5px;color:var(--mut);line-height:1.75;margin:-4px 0 14px}
 .card{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-top:1px solid var(--line);
   text-decoration:none;color:inherit}
 .card img{width:112px;height:72px;object-fit:cover;border-radius:9px;flex:none;background:var(--soft)}
@@ -256,7 +257,7 @@ footer.site a{color:var(--mut);text-decoration:none;margin-right:14px}
 <!-- 나의 오행 조회 다음 화면 — 사주 여덟 글자만 따로 보여 주고, 캐릭터 생성으로 넘어간다 -->
 <section class="tool sj" id="saju" hidden>
   <div class="sj-k">나의 오행 조회</div>
-  <h1>당신의 사주 구성</h1>
+  <h2 class="sjh">당신의 사주 구성</h2>   <!-- 한 페이지 h1 은 하나 (2026-11-03) -->
   <p class="sub" id="dsub"></p>
   <div class="board" id="board"></div>
   <div class="sj-say" id="sj-say"></div>
@@ -276,6 +277,12 @@ __GUIDE__
 
 <section class="sec">
   <div class="h"><h2>사주 이야기</h2><a href="/ohaeng/">전체 보기 &rarr;</a></div>
+  <p class="sec-l">풀이를 옮기지 않고 26만 건을 직접 세어 본 숫자로 씁니다. 처음이라면
+     <a href="/ohaeng/guide.html">길잡이</a>에서 용어와 숫자 읽는 법부터 —
+     주제별로 <a href="/ohaeng/guide.html#t-basic">사주 기초</a> ·
+     <a href="/ohaeng/guide.html#t-sinsal">신살</a> ·
+     <a href="/ohaeng/guide.html#t-sipseong">재물과 관성</a> ·
+     <a href="/ohaeng/guide.html#t-match">궁합과 띠</a>.</p>
   __POSTS__
 </section>
 
@@ -513,7 +520,7 @@ def card(m):
         t=html.escape(m['title']), d=html.escape(m['desc']), dt=m['date'])
 
 
-def render(posts, ga_snippet, ad_client, ad_slot, limit=4):
+def render(posts, ga_snippet, ad_client, ad_slot, limit=6):   # 4 → 6 (2026-11-03, 첫 화면 글 비중)
     """posts: build.build() 가 돌려주는 [(meta, body), ...] — 최신순"""
     cards = ''.join(card(m) for m, _ in posts[:limit]) or \
         '<p style="color:var(--dim)">아직 올린 글이 없습니다.</p>'
