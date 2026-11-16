@@ -505,7 +505,7 @@ TOPICS = [
       'yanginsal-tteut', 'goegangsal-yeoja', 'baekhodaesal-2gae', 'gwimungwansal-2gae']),
     ('sipseong', '재물과 관성 — 십성으로 읽는 사주',
      '일간과 다른 글자의 관계(십성)로 돈·일·관계를 읽는 해석입니다. 해석이 갈리는 부분은 두 가지 이상으로 세어 비교했습니다.',
-     ['don-beoneun-saju', 'don-saeneun-saju', 'mugwan-saju']),
+     ['don-beoneun-saju', 'don-saeneun-saju', 'mugwan-saju', '2027-jeongminyeon-unse']),
     ('match', '궁합과 띠',
      '두 사람의 글자를 함께 보는 궁합, 그리고 띠가 언제 바뀌는지를 다룹니다.',
      ['ohaeng-gunghap', 'ttigunghap-pyo', '2027nyeon-tti-samjae']),
